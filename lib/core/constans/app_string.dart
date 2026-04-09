@@ -19,4 +19,7 @@ class AppString {
   static const String continueFacebook = 'Continue with Facebook';
   static const String donTHave = 'Don’t have an account?';
   static const String alreadyHave = 'Already have an account?';
+  static const String congratulations = 'Congratulations';
+  static const String yorPassHas= 'Your password has been successfully changed';
+  static const String conti = 'Continue';
 }
