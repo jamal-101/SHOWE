@@ -15,6 +15,7 @@ class AppImages {
   static const String myWalletImage = '$baseurl/my_wallet.png';
   static const String myEventImage = '$baseurl/my_event_image.png';
   static const String eventImage = '$baseurl/event_image.png';
+  static const String artistImage = '$baseurl/artist_image.png';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//
@@ -28,4 +29,7 @@ class AppImages {
   static const String favoriteIcon = "$baseurlIcon/favorite_icon.png";
   static const String tripPlan = "$baseurlIcon/trip_plan.png";
   static const String profileIcon = "$baseurlIcon/profile.png";
+  static const String location = "$baseurlIcon/Location.png";
+  static const String unFavoriteIcon = "$baseurlIcon/unfavorite_icon.png";
+  static const String FavoriteIcon = "$baseurlIcon/favorite_icon.png";
 }

@@ -4,6 +4,7 @@ import 'package:digital_event/fetures/authentication/screen/forgot_password_scre
 import 'package:digital_event/fetures/authentication/screen/set_new_password_screen.dart';
 import 'package:digital_event/fetures/authentication/screen/sing_up_or_login_screen.dart';
 import 'package:digital_event/fetures/authentication/screen/verify_otp_screen.dart';
+import 'package:digital_event/fetures/favorites/screen/favorite_screen.dart';
 import 'package:digital_event/fetures/home/screen/event_screen.dart';
 import 'package:digital_event/fetures/home/screen/home_screen.dart';
 import 'package:digital_event/fetures/onboarding/screen/onboarding_screen.dart';
@@ -27,6 +28,7 @@ class AppRoutes {
   static const String setFaceRecognition = '/setFaceRecognition';
   static const String homeScreen = '/homeScreen';
   static const String eventScreen = '/EventScreen';
+  static const String favoriteScreen = '/favoriteScreen';
   static List<GetPage> routes = [
     GetPage(
       name: AppRoutes.splashScreen,
@@ -101,6 +103,13 @@ class AppRoutes {
     GetPage(
       name: AppRoutes.eventScreen,
       page: () => EventScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<SplashController>(() => SplashController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.favoriteScreen,
+      page: () => FavoriteScreen(),
       binding: BindingsBuilder(() {
         // Get.lazyPut<SplashController>(() => SplashController());
       }),

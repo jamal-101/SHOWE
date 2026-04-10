@@ -1,8 +1,10 @@
 import 'package:digital_event/core/constans/app_images.dart';
+import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/bottom_navigation_controller.dart';
@@ -24,7 +26,6 @@ class BottomNavBar extends StatelessWidget {
         margin: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 25.h),
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         decoration: BoxDecoration(
-          // color: const Color(0x8F8F8F1A).withValues(alpha: 0.1),
           color: Colors.grey.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(999.r),
           boxShadow: [
@@ -52,7 +53,26 @@ class BottomNavBar extends StatelessWidget {
   Widget _buildNavItem(int index, String imagePath, String label) {
     bool isSelected = controller.currentIndex.value == index;
     return GestureDetector(
-      onTap: () => controller.changeIndex(index),
+      // onTap: () => controller.changeIndex(index),
+      onTap: () {
+        controller.changeIndex(index);
+        switch (index) {
+          case 0:
+          Get.toNamed(AppRoutes.homeScreen);
+            break;
+          case 1:
+            Get.toNamed(AppRoutes.favoriteScreen);
+            break;
+          case 2:
+          // Get.toNamed(AppRoute.tripPlan);
+            break;
+          case 3:
+          // Get.toNamed(AppRoute.profileScreen);
+            break;
+          default:
+            break;
+        }
+      },
       child: Container(
         color: Colors.transparent,
         child: Column(
