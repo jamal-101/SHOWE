@@ -7,14 +7,19 @@ import 'package:digital_event/fetures/authentication/screen/verify_otp_screen.da
 import 'package:digital_event/fetures/favorites/screen/favorite_screen.dart';
 import 'package:digital_event/fetures/home/screen/event_screen.dart';
 import 'package:digital_event/fetures/home/screen/home_screen.dart';
+import 'package:digital_event/fetures/my_event/screen/my_event_screen.dart';
+import 'package:digital_event/fetures/notification/screen/notification_screen.dart';
 import 'package:digital_event/fetures/onboarding/screen/onboarding_screen.dart';
 import 'package:digital_event/fetures/splash/controller/splash_controller.dart';
 import 'package:digital_event/fetures/splash/screen/splash_screen.dart';
+import 'package:digital_event/fetures/trip_plan/screen/trip_plan_screen.dart';
+import 'package:digital_event/fetures/wallet/screen/wallet_screen.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import '../../fetures/authentication/profile_information/face_recognition_screen.dart';
+import '../../fetures/trip_plan/controller/trip_plan_controller.dart';
 
 class AppRoutes {
   static const String splashScreen = "/splashScreen";
@@ -29,6 +34,10 @@ class AppRoutes {
   static const String homeScreen = '/homeScreen';
   static const String eventScreen = '/EventScreen';
   static const String favoriteScreen = '/favoriteScreen';
+  static const String tripPlanScreen = '/tripPlanScreen';
+  static const String walletScreen = '/walletScreen';
+  static const String myEventScreen = '/myEventScreen';
+  static const String notificationScreen = '/notificationScreen';
   static List<GetPage> routes = [
     GetPage(
       name: AppRoutes.splashScreen,
@@ -112,6 +121,34 @@ class AppRoutes {
       page: () => FavoriteScreen(),
       binding: BindingsBuilder(() {
         // Get.lazyPut<SplashController>(() => SplashController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.tripPlanScreen,
+      page: () => TripPlanScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.walletScreen,
+      page: () => WalletScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.myEventScreen,
+      page: () => MyEventScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.notificationScreen,
+      page: () => NotificationScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
       }),
     ),
   ];

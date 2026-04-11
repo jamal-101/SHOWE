@@ -44,13 +44,18 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: EdgeInsets.all(10.w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      shape: BoxShape.circle,
+                  GestureDetector(
+                    onTap: (){
+                      Get.toNamed(AppRoutes.notificationScreen);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(10.w),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.asset(AppImages.bellIcon),
                     ),
-                    child: Image.asset(AppImages.bellIcon),
                   ),
                 ],
               ),
@@ -66,16 +71,16 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 0.85,
                   children: [
                     _buildHomeCard(
-                      onTap: (){
-
-                      },
+                      onTap: (){},
                       title: "Scan\nQR",
                       imagePath: AppImages.scanQar,
                       bgColor: const Color(0xFFF2A900),
                       textColor: const Color(0xFF0F4C5C),
                     ),
                     _buildHomeCard(
-                      onTap: (){},
+                      onTap: (){
+                        Get.toNamed(AppRoutes.myEventScreen);
+                      },
                       title: "My\nProgrammes",
                       imagePath: AppImages.programImage,
                       bgColor: const Color(0xFF0F4C5C),
@@ -91,7 +96,9 @@ class HomeScreen extends StatelessWidget {
                       textColor: const Color(0xFF0F4C5C),
                     ),
                     _buildHomeCard(
-                      onTap: (){},
+                      onTap: (){
+                        Get.toNamed(AppRoutes.walletScreen);
+                      },
                       title: "My\nWallet",
                       imagePath: AppImages.myWalletImage,
                       bgColor: const Color(0xFF0F4C5C),

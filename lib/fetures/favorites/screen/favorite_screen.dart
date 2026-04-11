@@ -110,96 +110,124 @@ class FavoriteScreen extends StatelessWidget {
 
 
   Widget _buildFavoriteCard(Map<String, dynamic> data) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20.h),
-      height: 180.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.r),
-        image: DecorationImage(
-          image: AssetImage(data['image']),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.r),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.8),
-                ],
-              ),
+    return GetBuilder<HomController>(
+      init: HomController(),
+      builder: (controller) {
+        return Container(
+          margin: EdgeInsets.only(bottom: 20.h),
+          height: 180.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.r),
+            image: DecorationImage(
+              image: AssetImage(data['image']),
+              fit: BoxFit.cover,
             ),
           ),
-          Positioned(
-            top: 15.h,
-            right: 15.w,
-            child: Container(
+          child: Stack(
+            children: [
+              Container(
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.2)
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(AppImages.favoriteIcon,color: Colors.white,height: 25.h,width: 25.w),
-                )),
-          ),
-          Positioned(
-            bottom: 15.h,
-            left: 15.w,
-            right: 15.w,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Text(data['name'], style: TextStyle(color: Colors.white, fontSize: 10.sp)),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  data['title'],
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                  borderRadius: BorderRadius.circular(20.r),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.8),
+                    ],
                   ),
                 ),
-                SizedBox(height: 5.h),
-                Text(
-                  data['subtitle'],
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+              ),
+              Positioned(
+                top: 15.h,
+                right: 15.w,
+                child: GestureDetector(
+                  onTap: () => controller.toggleFavorite(data),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: (data['isFavorite'] ?? false)
+                          ? Image.asset(
+                        AppImages.unFavoriteIcon,
+                        color: Colors.white,
+                        height: 25.h,
+                        width: 25.w,
+                      )
+                          : Image.asset(
+                        AppImages.selectFavoriteIcon,
+                        height: 25.h,
+                        width: 25.w,
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(height: 5.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              Positioned(
+                bottom: 15.h,
+                left: 15.w,
+                right: 15.w,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Text(data['name'], style: TextStyle(
+                          color: Colors.white, fontSize: 10.sp)),
+                    ),
+                    SizedBox(height: 5.h),
+                    Text(
+                      data['title'],
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                    Text(
+                      data['subtitle'],
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.calendar_today, color: Colors.white, size: 14.sp),
-                        SizedBox(width: 5.w),
-                        Text("${data['date']} - ${data['time']}", style: TextStyle(color: Colors.white, fontSize: 12.sp)),
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today, color: Colors.white,
+                                size: 14.sp),
+                            SizedBox(width: 5.w),
+                            Text("${data['date']} - ${data['time']}",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12.sp)),
+                          ],
+                        ),
+                        Text(
+                            "\$${data['price']}", style: TextStyle(color: Colors
+                            .white, fontSize: 14.sp, fontWeight: FontWeight
+                            .bold)),
                       ],
                     ),
-                    Text("\$${data['price']}", style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold)),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      }
     );
   }
 

@@ -64,10 +64,10 @@ class BottomNavBar extends StatelessWidget {
             Get.toNamed(AppRoutes.favoriteScreen);
             break;
           case 2:
-          // Get.toNamed(AppRoute.tripPlan);
+          Get.toNamed(AppRoutes.tripPlanScreen);
             break;
           case 3:
-          // Get.toNamed(AppRoute.profileScreen);
+          // Get.toNamed(AppRoutes.walletScreen);
             break;
           default:
             break;

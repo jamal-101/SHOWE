@@ -35,7 +35,7 @@ class HomController extends GetxController{
 
   final List<Map<String, dynamic>> artistData = [
     {
-      'name': 'Music',
+      'name': 'Song',
       'title': 'Chester Bennington',
       'subtitle': 'The Rolling Stones Live in Concert',
       'time': '07:00 PM',

@@ -1,9 +1,12 @@
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/fetures/home/controller/hom_controller.dart';
+import 'package:digital_event/fetures/home/screen/venue_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'event_details_screen.dart';
 
 class EventScreen extends StatelessWidget {
   const EventScreen({super.key});
@@ -153,134 +156,138 @@ class EventScreen extends StatelessWidget {
     return GetBuilder<HomController>(
       init: HomController(),
       builder: (controller) {
-        return Container(
-          margin: EdgeInsets.only(bottom: 20.h),
-          height: 180.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.r),
-            image: DecorationImage(
-              image: AssetImage(data['image']),
-              fit: BoxFit.cover,
+        return GestureDetector(
+          onTap: () {
+            Get.to(EventDetailsScreen(), arguments: data);
+          },
+          child: Container(
+            margin: EdgeInsets.only(bottom: 20.h),
+            height: 180.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.r),
+              image: DecorationImage(
+                image: AssetImage(data['image']),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: Stack(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.r),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.8),
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.r),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.8),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 15.h,
+                  right: 15.w,
+                  child: GestureDetector(
+                    onTap: () => controller.toggleFavorite(data),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: (data['isFavorite'] ?? false)
+                            ? Image.asset(
+                                AppImages.unFavoriteIcon,
+                                color: Colors.white,
+                                height: 25.h,
+                                width: 25.w,
+                              )
+                            : Image.asset(
+                                AppImages.selectFavoriteIcon,
+                                height: 25.h,
+                                width: 25.w,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 15.h,
+                  left: 15.w,
+                  right: 15.w,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 4.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Text(
+                          data['name'],
+                          style: TextStyle(color: Colors.white, fontSize: 10.sp),
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      Text(
+                        data['title'],
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      Text(
+                        data['subtitle'],
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: Colors.white,
+                                size: 14.sp,
+                              ),
+                              SizedBox(width: 5.w),
+                              Text(
+                                "${data['date']} - ${data['time']}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            "\$${data['price']}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
-              Positioned(
-                top: 15.h,
-                right: 15.w,
-                child: GestureDetector(
-                  onTap: () => controller.toggleFavorite(data),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: (data['isFavorite'] ?? false)
-                          ? Image.asset(
-                              AppImages.unFavoriteIcon,
-                              color: Colors.white,
-                              height: 25.h,
-                              width: 25.w,
-                            )
-                          : Image.asset(
-                              AppImages.favoriteIcon,
-                              height: 25.h,
-                              width: 25.w,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              Positioned(
-                bottom: 15.h,
-                left: 15.w,
-                right: 15.w,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: Text(
-                        data['name'],
-                        style: TextStyle(color: Colors.white, fontSize: 10.sp),
-                      ),
-                    ),
-                    SizedBox(height: 5.h),
-                    Text(
-                      data['title'],
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5.h),
-                    Text(
-                      data['subtitle'],
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 5.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              color: Colors.white,
-                              size: 14.sp,
-                            ),
-                            SizedBox(width: 5.w),
-                            Text(
-                              "${data['date']} - ${data['time']}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "\$${data['price']}",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -288,54 +295,59 @@ class EventScreen extends StatelessWidget {
   }
 
   Widget _buildVenueCard(Map<String, dynamic> data) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9F0F2),
-        borderRadius: BorderRadius.circular(15.r),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data['name'] ?? "",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1D2125),
+    return GestureDetector(
+      onTap: (){
+        Get.to(VenueDetailsScreen(),arguments: data);
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 15.h),
+        padding: EdgeInsets.all(15.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE9F0F2),
+          borderRadius: BorderRadius.circular(15.r),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data['name'] ?? "",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF1D2125),
+                    ),
                   ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  data['address'] ?? "",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14.sp,
-                    color: Colors.grey[600],
+                  SizedBox(height: 5.h),
+                  Text(
+                    data['address'] ?? "",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
                   ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  data['date'] ?? "",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14.sp,
-                    color: Colors.grey[600],
+                  SizedBox(height: 5.h),
+                  Text(
+                    data['date'] ?? "",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                Image.asset(AppImages.location, height: 30.h, width: 30.w),
-              ],
+                  SizedBox(height: 10.h),
+                  Image.asset(AppImages.location, height: 30.h, width: 30.w),
+                ],
+              ),
             ),
-          ),
-          const Icon(
-            Icons.arrow_forward_ios,
-            color: Color(0xFF0F4C5C),
-            size: 18,
-          ),
-        ],
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Color(0xFF0F4C5C),
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }
