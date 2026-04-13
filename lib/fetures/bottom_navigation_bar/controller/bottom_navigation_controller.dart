@@ -1,3 +1,4 @@
+import 'package:digital_event/fetures/profile/screen/profile_screen.dart';
 import 'package:digital_event/fetures/wallet/screen/wallet_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -14,7 +15,7 @@ class BottomNavigationController extends GetxController {
     const HomeScreen(),
     const FavoriteScreen(),
     const TripPlanScreen(),
-    const WalletScreen(),
+    const ProfileScreen(),
   ];
 
   void changeIndex(int index) {

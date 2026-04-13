@@ -10,7 +10,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../controller/bottom_navigation_controller.dart';
 
 class BottomNavBar extends StatelessWidget {
-
   final int selectedIndex;
   BottomNavBar({super.key, this.selectedIndex = 0});
   final controller = Get.put(BottomNavigationController());
@@ -53,21 +52,20 @@ class BottomNavBar extends StatelessWidget {
   Widget _buildNavItem(int index, String imagePath, String label) {
     bool isSelected = controller.currentIndex.value == index;
     return GestureDetector(
-      // onTap: () => controller.changeIndex(index),
       onTap: () {
         controller.changeIndex(index);
         switch (index) {
           case 0:
-          Get.toNamed(AppRoutes.homeScreen);
+            Get.toNamed(AppRoutes.homeScreen);
             break;
           case 1:
             Get.toNamed(AppRoutes.favoriteScreen);
             break;
           case 2:
-          Get.toNamed(AppRoutes.tripPlanScreen);
+            Get.toNamed(AppRoutes.tripPlanScreen);
             break;
           case 3:
-          // Get.toNamed(AppRoutes.walletScreen);
+            Get.toNamed(AppRoutes.profileScreen);
             break;
           default:
             break;

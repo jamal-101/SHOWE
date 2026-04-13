@@ -18,6 +18,9 @@ class AppImages {
   static const String artistImage = '$baseurl/artist_image.png';
   static const String mapImage = '$baseurl/map_image.png';
   static const String hotelImage = '$baseurl/hotel_image.png';
+  static const String profileImage = '$baseurl/profile_image.png';
+  static const String myProgramImage = '$baseurl/my_program_image.png';
+  static const String eventTextImage = '$baseurl/event_text_imge.png';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//
@@ -40,4 +43,13 @@ class AppImages {
   static const String searchCalender = "$baseurlIcon/Calendar_1.png";
   static const String linkIcon = "$baseurlIcon/link_icon.png";
   static const String eventsIcon = "$baseurlIcon/my_events_icon.png";
+  static const String personIcon = "$baseurlIcon/person_icon.png";
+  static const String changePassIcon = "$baseurlIcon/changePass_icon.png";
+  static const String notificationIcon = "$baseurlIcon/notification_icon.png";
+  static const String securityIcon = "$baseurlIcon/securityt_icon.png";
+  static const String helpCenterIcon = "$baseurlIcon/help_center_icon.png";
+  static const String privacyPolicyIcon = "$baseurlIcon/privacy_policy_icon.png";
+  static const String termsConditionIcon = "$baseurlIcon/termsCondition.png";
+  static const String deleteAccountIcon = "$baseurlIcon/delet_icon.png";
+  static const String logoutIcon = "$baseurlIcon/logout_icon.png";
 }

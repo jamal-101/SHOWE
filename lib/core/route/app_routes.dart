@@ -10,6 +10,15 @@ import 'package:digital_event/fetures/home/screen/home_screen.dart';
 import 'package:digital_event/fetures/my_event/screen/my_event_screen.dart';
 import 'package:digital_event/fetures/notification/screen/notification_screen.dart';
 import 'package:digital_event/fetures/onboarding/screen/onboarding_screen.dart';
+import 'package:digital_event/fetures/profile/screen/change_password_screen.dart';
+import 'package:digital_event/fetures/profile/screen/delet_verification_screen.dart';
+import 'package:digital_event/fetures/profile/screen/help_center_screen.dart';
+import 'package:digital_event/fetures/profile/screen/notification_setting_screen.dart';
+import 'package:digital_event/fetures/profile/screen/privacy_policy_screen.dart';
+import 'package:digital_event/fetures/profile/screen/profile_information_screen.dart';
+import 'package:digital_event/fetures/profile/screen/profile_screen.dart';
+import 'package:digital_event/fetures/profile/screen/security_screen.dart';
+import 'package:digital_event/fetures/profile/screen/terms_condition_screen.dart';
 import 'package:digital_event/fetures/splash/controller/splash_controller.dart';
 import 'package:digital_event/fetures/splash/screen/splash_screen.dart';
 import 'package:digital_event/fetures/trip_plan/screen/trip_plan_screen.dart';
@@ -38,6 +47,15 @@ class AppRoutes {
   static const String walletScreen = '/walletScreen';
   static const String myEventScreen = '/myEventScreen';
   static const String notificationScreen = '/notificationScreen';
+  static const String profileScreen  = '/profileScreen';
+  static const String updateProfileInformationScreen = '/updateProfileInformationScreen';
+  static const String changePasswordScreen = '/changePasswordScreen';
+  static const String notificationSettingScreen = '/notificationSettingScreen';
+  static const String securityScreen = '/securityScreen';
+  static const String helpCenterScreen = '/helpCenterScreen';
+  static const String termsConditionScreen = '/termsConditionScreen';
+  static const String privacyPolicyScreen = '/privacyPolicyScreen';
+  static const String deleteVerificationScreen = '/deleteVerificationScreen';
   static List<GetPage> routes = [
     GetPage(
       name: AppRoutes.splashScreen,
@@ -147,6 +165,69 @@ class AppRoutes {
     GetPage(
       name: AppRoutes.notificationScreen,
       page: () => NotificationScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.profileScreen,
+      page: () => ProfileScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.updateProfileInformationScreen,
+      page: () => UpdateProfileInformationScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.changePasswordScreen,
+      page: () => ChangePasswordScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.notificationSettingScreen,
+      page: () => NotificationSettingScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.securityScreen,
+      page: () => SecurityScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.helpCenterScreen,
+      page: () => HelpCenterScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.termsConditionScreen,
+      page: () => TermsConditionScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.privacyPolicyScreen,
+      page: () => PrivacyPolicyScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.deleteVerificationScreen,
+      page: () => DeleteVerificationScreen(),
       binding: BindingsBuilder(() {
         // Get.lazyPut<TripPlanController>(() => TripPlanController());
       }),
