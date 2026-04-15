@@ -44,6 +44,10 @@ dependencies:
   dotted_border: ^3.1.0
   file_picker: ^11.0.2
   barcode_widget: ^2.0.4
+  flutter_staggered_animations: ^1.1.1
+  image_picker: ^1.2.1
+  page_flip_builder: ^0.1.4
+  page_flip: ^0.2.5+1
 
 dev_dependencies:
   flutter_test:

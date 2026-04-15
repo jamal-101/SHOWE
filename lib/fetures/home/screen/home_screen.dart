@@ -4,9 +4,11 @@ import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
+import '../../scan/controller/scan_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -71,7 +73,9 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 0.85,
                   children: [
                     _buildHomeCard(
-                      onTap: (){},
+                      onTap: (){
+                        Get.put(ScanController()).pickImageAndNavigate();
+                      },
                       title: "Scan\nQR",
                       imagePath: AppImages.scanQar,
                       bgColor: const Color(0xFFF2A900),
@@ -79,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     _buildHomeCard(
                       onTap: (){
-                        Get.toNamed(AppRoutes.myEventScreen);
+                        Get.toNamed(AppRoutes.myProgramScreen);
                       },
                       title: "My\nProgrammes",
                       imagePath: AppImages.programImage,
@@ -159,67 +163,72 @@ class HomeScreen extends StatelessWidget {
 
 
   Widget _buildMyEventsCard() {
-    return Container(
-      width: double.infinity,
-      height: 160.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24.r),
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color(0xFFE5A11F),
-            Color(0xFF0F4C5C),
-          ],
+    return GestureDetector(
+      onTap: (){
+        Get.toNamed(AppRoutes.myEventScreen);
+      },
+      child: Container(
+        width: double.infinity,
+        height: 160.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.r),
+          gradient: const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFFE5A11F),
+              Color(0xFF0F4C5C),
+            ],
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: 20.w,
-            bottom: -10.h,
-            child: ShaderMask(
-              shaderCallback: (Rect bounds) {
-                return const LinearGradient(
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
-                  colors: [
-                    Color(0xFFF2A900),
-                    Color(0xFF0F4C5C),
-                  ],
-                ).createShader(bounds);
-              },
-              blendMode: BlendMode.srcIn,
-              child: Text(
-                "02",
-                style: GoogleFonts.montserrat(
-                  fontSize: 140.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white.withValues(alpha: 0.3),
+        child: Stack(
+          children: [
+            Positioned(
+              right: 20.w,
+              bottom: -10.h,
+              child: ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    begin: Alignment.centerRight,
+                    end: Alignment.centerLeft,
+                    colors: [
+                      Color(0xFFF2A900),
+                      Color(0xFF0F4C5C),
+                    ],
+                  ).createShader(bounds);
+                },
+                blendMode: BlendMode.srcIn,
+                child: Text(
+                  "02",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 140.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white.withValues(alpha: 0.3),
+                  ),
                 ),
               ),
             ),
-          ),
 
-          Padding(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "My\nEvents",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0F4C5C),
+            Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "My\nEvents",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF0F4C5C),
+                    ),
                   ),
-                ),
-                Image.asset(AppImages.myEventImage,height: 30.h,width: 30.w,),
-              ],
+                  Image.asset(AppImages.myEventImage,height: 30.h,width: 30.w,),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

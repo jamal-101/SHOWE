@@ -21,6 +21,10 @@ class AppImages {
   static const String profileImage = '$baseurl/profile_image.png';
   static const String myProgramImage = '$baseurl/my_program_image.png';
   static const String eventTextImage = '$baseurl/event_text_imge.png';
+  // static const String myProgramImag = '$baseurl/my_program.jpg';
+  static const String myProgramImag = '$baseurl/my_programme.png';
+  static const String singleImage = '$baseurl/single_image.png';
+  static const String programImages = '$baseurl/programs_image.png';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//
@@ -52,4 +56,5 @@ class AppImages {
   static const String termsConditionIcon = "$baseurlIcon/termsCondition.png";
   static const String deleteAccountIcon = "$baseurlIcon/delet_icon.png";
   static const String logoutIcon = "$baseurlIcon/logout_icon.png";
+  static const String scanIcon = "$baseurlIcon/scan_icon.png";
 }

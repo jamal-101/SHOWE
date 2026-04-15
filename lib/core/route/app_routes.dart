@@ -7,7 +7,7 @@ import 'package:digital_event/fetures/authentication/screen/verify_otp_screen.da
 import 'package:digital_event/fetures/favorites/screen/favorite_screen.dart';
 import 'package:digital_event/fetures/home/screen/event_screen.dart';
 import 'package:digital_event/fetures/home/screen/home_screen.dart';
-import 'package:digital_event/fetures/my_event/screen/my_event_screen.dart';
+import 'package:digital_event/fetures/my_program/screen/my_program_screen.dart';
 import 'package:digital_event/fetures/notification/screen/notification_screen.dart';
 import 'package:digital_event/fetures/onboarding/screen/onboarding_screen.dart';
 import 'package:digital_event/fetures/profile/screen/change_password_screen.dart';
@@ -19,6 +19,8 @@ import 'package:digital_event/fetures/profile/screen/profile_information_screen.
 import 'package:digital_event/fetures/profile/screen/profile_screen.dart';
 import 'package:digital_event/fetures/profile/screen/security_screen.dart';
 import 'package:digital_event/fetures/profile/screen/terms_condition_screen.dart';
+import 'package:digital_event/fetures/scan/screen/library_screen.dart';
+import 'package:digital_event/fetures/scan/screen/program_details_screen.dart';
 import 'package:digital_event/fetures/splash/controller/splash_controller.dart';
 import 'package:digital_event/fetures/splash/screen/splash_screen.dart';
 import 'package:digital_event/fetures/trip_plan/screen/trip_plan_screen.dart';
@@ -28,6 +30,7 @@ import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import '../../fetures/authentication/profile_information/face_recognition_screen.dart';
+import '../../fetures/my_event/screen/my_event_screen.dart';
 import '../../fetures/trip_plan/controller/trip_plan_controller.dart';
 
 class AppRoutes {
@@ -56,6 +59,9 @@ class AppRoutes {
   static const String termsConditionScreen = '/termsConditionScreen';
   static const String privacyPolicyScreen = '/privacyPolicyScreen';
   static const String deleteVerificationScreen = '/deleteVerificationScreen';
+  static const String myProgramScreen = '/myProgramScreen';
+  static const String libraryScreen = '/libraryScreen';
+  static const String programDetailsScreen = '/programDetailsScreen';
   static List<GetPage> routes = [
     GetPage(
       name: AppRoutes.splashScreen,
@@ -228,6 +234,27 @@ class AppRoutes {
     GetPage(
       name: AppRoutes.deleteVerificationScreen,
       page: () => DeleteVerificationScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.myProgramScreen,
+      page: () => MyProgramScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.libraryScreen,
+      page: () => LibraryScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.programDetailsScreen,
+      page: () => ProgramDetailsScreen(),
       binding: BindingsBuilder(() {
         // Get.lazyPut<TripPlanController>(() => TripPlanController());
       }),

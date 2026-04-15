@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 import 'event_details_screen.dart';
 
 class EventScreen extends StatelessWidget {
@@ -52,20 +53,72 @@ class EventScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8F8F8),
-                    borderRadius: BorderRadius.circular(30.r),
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search",
-                      hintStyle: GoogleFonts.montserrat(color: Colors.grey),
-                      border: InputBorder.none,
-                      icon: const Icon(Icons.search, color: Colors.grey),
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 15.w),
+                //   decoration: BoxDecoration(
+                //     color: const Color(0xFFF8F8F8),
+                //     borderRadius: BorderRadius.circular(30.r),
+                //   ),
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       hintText: controller.selectedTabIndex == 2
+                //           ? "Search venue"
+                //           : "Search",
+                //       hintStyle: GoogleFonts.montserrat(color: Colors.grey),
+                //       border: InputBorder.none,
+                //       icon: const Icon(Icons.search, color: Colors.grey),
+                //     ),
+                //   ),
+                //
+                // ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 55.h,
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8F8F8),
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search, color: Colors.grey),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: controller.selectedTabIndex == 2
+                                      ? "Search venue"
+                                      : "Search",
+                                  hintStyle: GoogleFonts.montserrat(
+                                    color: Colors.grey,
+                                    fontSize: 14.sp,
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                            if (controller.selectedTabIndex == 2) ...[
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                child: VerticalDivider(
+                                  color: Colors.grey.withValues(alpha: 0.5),
+                                  thickness: 1,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  _showCalendarDialog(context);
+                                },
+                                icon: Image.asset( AppImages.searchCalender,height: 25.h,width: 25.w,),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 SizedBox(height: 20.h),
                 Row(
@@ -347,6 +400,117 @@ class EventScreen extends StatelessWidget {
               size: 18,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showCalendarDialog(BuildContext context) {
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: GetBuilder<HomController>(
+          builder: (controller) {
+            return Container(
+              padding: EdgeInsets.all(20.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          controller.focusedDay = DateTime(
+                            controller.focusedDay.year,
+                            controller.focusedDay.month - 1,
+                          );
+                          controller.update();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          size: 18,
+                          color: Color(0xFF0F4C5C),
+                        ),
+                      ),
+                      Text(
+                        DateFormat('MMMM, yyyy').format(controller.focusedDay),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF0F4C5C),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          controller.focusedDay = DateTime(
+                            controller.focusedDay.year,
+                            controller.focusedDay.month + 1,
+                          );
+                          controller.update();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 18,
+                          color: Color(0xFF0F4C5C),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                  TableCalendar(
+                    firstDay: DateTime.utc(2020, 1, 1),
+                    lastDay: DateTime.utc(2030, 12, 31),
+                    focusedDay: controller.focusedDay,
+                    selectedDayPredicate: (day) =>
+                        isSameDay(controller.selectedDay, day),
+                    onDaySelected: controller.onDaySelected,
+                    headerVisible: false,
+                    calendarStyle: CalendarStyle(
+                      isTodayHighlighted: true,
+                      selectedDecoration: const BoxDecoration(
+                        color: Color(0xFF0F4C5C),
+                        shape: BoxShape.circle,
+                      ),
+                      todayDecoration: BoxDecoration(
+                        color: const Color(0xFF0F4C5C).withValues(alpha: 0.3),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48.h,
+                    child: ElevatedButton(
+                      onPressed: () => Get.back(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF2A900),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                      ),
+                      child: Text(
+                        "Search",
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

@@ -55,5 +55,37 @@ class HomController extends GetxController{
     },
   ];
 
+
+  List<Map<String, dynamic>> venues = [];
+
+  @override
+  void onInit() {
+    super.onInit();
+    venues = List.from(venues);
+  }
+
+
+  void searchVenue(String query) {
+    if (query.isEmpty) {
+      venues = List.from(venues);
+    } else {
+      venues = venues
+          .where((venue) =>
+      venue['name'].toLowerCase().contains(query.toLowerCase()) ||
+          venue['address'].toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    update();
+  }
+
+  DateTime focusedDay = DateTime.now();
+  DateTime? selectedDay;
+
+  void onDaySelected(DateTime selectDay, DateTime focusDay) {
+    selectedDay = selectDay;
+    focusedDay = focusDay;
+    update();
+  }
+
 }
 

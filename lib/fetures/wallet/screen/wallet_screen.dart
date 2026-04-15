@@ -1,5 +1,3 @@
-import 'dart:ui' as BorderType;
-
 import 'package:digital_event/core/common_text/common_text.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
