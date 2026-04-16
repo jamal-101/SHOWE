@@ -133,7 +133,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: CommonButton(title: AppString.login, onTap: () {}),
+              child: CommonButton(title: AppString.login, onTap: () {
+                Get.toNamed(AppRoutes.homeScreen);
+              }),
             ),
             SizedBox(width: 5.w),
             GestureDetector(
@@ -189,7 +191,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
           onIconTap: () => controller.toggleConfirmPasswordVisibility(),
         ),
         SizedBox(height: 30.h),
-        CommonButton(title: AppString.singUp, onTap: () {}),
+        CommonButton(title: AppString.singUp, onTap: () {
+          controller.isLoginSelected.value = true;
+        }),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -202,11 +206,16 @@ class SingUpOrLoginScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
             SizedBox(width: 10.w),
-            CommonText(
-              text: AppString.login,
-              color: Color(0xFFF2A900),
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+            GestureDetector(
+              onTap: (){
+                controller.isLoginSelected.value = true;
+              },
+              child: CommonText(
+                text: AppString.login,
+                color: Color(0xFFF2A900),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -366,11 +375,16 @@ class SingUpOrLoginScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
             SizedBox(width: 10.w),
-            CommonText(
-              text: AppString.singUp,
-              color: Color(0xFFF2A900),
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+            GestureDetector(
+              onTap: (){
+                controller.isLoginSelected.value = false;
+              },
+              child: CommonText(
+                text: AppString.singUp,
+                color: Color(0xFFF2A900),
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
         ),
@@ -455,14 +469,14 @@ class SingUpOrLoginScreen extends StatelessWidget {
 
   Widget _socialButton(String title, String iconPath, {required VoidCallback onTap, required bool isLoading}) {
     return GestureDetector(
-      onTap: isLoading ? null : onTap, // লোডিং চলাকালীন ক্লিক বন্ধ থাকবে
+      onTap: isLoading ? null : onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 12.h),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade300),
           borderRadius: BorderRadius.circular(50.r),
         ),
-        child: Center( // সেন্টার ব্যবহার করলে লোডার মাঝখানে থাকবে
+        child: Center(
           child: isLoading
               ? SizedBox(
             height: 20.h,

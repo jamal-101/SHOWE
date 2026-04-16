@@ -16,6 +16,28 @@ class EventScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      // appBar: AppBar(
+      //   backgroundColor: Colors.white,
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon: const Icon(
+      //       Icons.arrow_back_ios,
+      //       color: Color(0xFF0F4C5C),
+      //       size: 20,
+      //     ),
+      //     onPressed: () => Navigator.pop(context),
+      //   ),
+      //   title: Text(
+      //     "Events",
+      //     style: GoogleFonts.montserrat(
+      //       fontSize: 18.sp,
+      //       fontWeight: FontWeight.bold,
+      //       color: const Color(0xFF0F4C5C),
+      //     ),
+      //   ),
+      //   // build মেথডের ভেতর AppBar এ এভাবে লিখুন
+      //   centerTitle: true,
+      // ),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -27,13 +49,24 @@ class EventScreen extends StatelessWidget {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          "Popular Events",
-          style: GoogleFonts.montserrat(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF0F4C5C),
-          ),
+        title: GetBuilder<HomController>( // GetBuilder দিয়ে র্যাপ করুন যাতে ট্যাব চেঞ্জ হলে আপডেট হয়
+          builder: (controller) {
+            String title = "Events"; // Default
+            if (controller.selectedTabIndex == 1) {
+              title = "Artists";
+            } else if (controller.selectedTabIndex == 2) {
+              title = "Venues";
+            }
+
+            return Text(
+              title,
+              style: GoogleFonts.montserrat(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF0F4C5C),
+              ),
+            );
+          },
         ),
         centerTitle: true,
       ),

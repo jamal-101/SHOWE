@@ -1,6 +1,7 @@
 import 'package:digital_event/core/common_text/common_text.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
+import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/authentication/profile_information/profile_information_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,7 +45,9 @@ class FaceRecognitionScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Get.toNamed(AppRoutes.homeScreen);
+                    },
                     child: Container(
                       height: 48.h,
                       decoration: BoxDecoration(

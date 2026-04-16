@@ -7,12 +7,12 @@ class OnboardingController extends GetxController {
 
   RxList<Map<String, String>> onboardingData = [
     {
-      'title': "Exploring Upcoming And Nearby Events",
+      'title': "Be part of the moment",
       'description': "Your digital companion for events, performances and experiences.",
       'image': AppImages.secondOnboardingImage,
     },
     {
-      'title': "Scan For Instant Access at Any Event",
+      'title': "Scan to step into the story",
       'description': "Simply scan a QR code at the event or on your email to unlock your event program in seconds",
       'image': AppImages.firstOnboardingImage,
     },

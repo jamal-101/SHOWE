@@ -9,8 +9,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controller/onboarding_controller.dart';
 
-
-
 class OnboardingScreen extends StatelessWidget {
   final OnboardingController controller = Get.put(OnboardingController());
   OnboardingScreen({super.key});
@@ -27,7 +25,7 @@ class OnboardingScreen extends StatelessWidget {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                height: MediaQuery.of(context).size.height * 0.45,
+                height: MediaQuery.of(context).size.height * 0.35,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
                 decoration: BoxDecoration(
@@ -55,10 +53,11 @@ class OnboardingScreen extends StatelessWidget {
                         Text(
                           currentData['description']!,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey[600],
-                            height: 1.5,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 16.sp,
+                            color: Color(0xFF5B5A5A),
+                            fontWeight: FontWeight.w400,
+                            // height: 1.5,
                           ),
                         ),
                       ],
