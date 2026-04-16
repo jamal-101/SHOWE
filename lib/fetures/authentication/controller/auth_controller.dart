@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 
 class AuthController extends GetxController{
 
+  var isGoogleLoading = false.obs;
+  var isFacebookLoading = false.obs;
+
   //>>>>>>>>>>>>>>>> logIn <<<<<<<<<<<<<<//
 
   var isLoginSelected = true.obs;
@@ -37,5 +40,19 @@ class AuthController extends GetxController{
 
   void toggleNewPasswordVisibility() => newPasswordVisible.value = !newPasswordVisible.value;
   void toggleConfirmNewPasswordVisibility() => confirmNewPasswordVisible.value = !confirmNewPasswordVisible.value;
+
+  ///>>>>>>>>>>>>>>>>> google Login <<<<<<<<<<<<<<<<<///
+
+  void googleLogin() async {
+    isGoogleLoading.value = true;
+    await Future.delayed(const Duration(seconds: 2));
+    isGoogleLoading.value = false;
+  }
+
+  void faceBookLogin() async {
+    isFacebookLoading.value = true;
+    await Future.delayed(const Duration(seconds: 2));
+    isFacebookLoading.value = false;
+  }
 
 }

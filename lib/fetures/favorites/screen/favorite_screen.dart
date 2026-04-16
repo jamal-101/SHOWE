@@ -1,3 +1,4 @@
+import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/favorites/controller/favorite_controller.dart';
 import 'package:digital_event/fetures/home/controller/hom_controller.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constans/app_images.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
+import '../../home/screen/venue_details_screen.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -233,50 +235,53 @@ class FavoriteScreen extends StatelessWidget {
 
 
   Widget _buildVenueCard(Map<String, dynamic> data) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9F0F2),
-        borderRadius: BorderRadius.circular(15.r),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data['name'] ?? "",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF1D2125),
+    return GestureDetector(
+        onTap: () => Get.to(VenueDetailsScreen(), arguments: data),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 15.h),
+        padding: EdgeInsets.all(15.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE9F0F2),
+          borderRadius: BorderRadius.circular(15.r),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data['name'] ?? "",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF1D2125),
+                    ),
                   ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  data['address'] ?? "",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14.sp,
-                    color: Colors.grey[600],
+                  SizedBox(height: 5.h),
+                  Text(
+                    data['address'] ?? "",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
                   ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  data['date'] ?? "",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14.sp,
-                    color: Colors.grey[600],
+                  SizedBox(height: 5.h),
+                  Text(
+                    data['date'] ?? "",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
                   ),
-                ),
-                SizedBox(height: 10.h),
-                Image.asset(AppImages.location,height: 30.h,width: 30.w)
-              ],
+                  SizedBox(height: 10.h),
+                  Image.asset(AppImages.location,height: 30.h,width: 30.w)
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.arrow_forward_ios, color: Color(0xFF0F4C5C), size: 18),
-        ],
+            const Icon(Icons.arrow_forward_ios, color: Color(0xFF0F4C5C), size: 18),
+          ],
+        ),
       ),
     );
   }

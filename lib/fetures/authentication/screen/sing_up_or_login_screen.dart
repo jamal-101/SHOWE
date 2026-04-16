@@ -54,7 +54,6 @@ class SingUpOrLoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30.h),
                   Obx(
                     () => controller.isLoginSelected.value
                         ? _buildLoginForm(controller)
@@ -131,8 +130,38 @@ class SingUpOrLoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20.h),
-        CommonButton(title: AppString.login, onTap: () {}),
-        _buildSocialLogin(),
+        Row(
+          children: [
+            Expanded(
+              child: CommonButton(title: AppString.login, onTap: () {}),
+            ),
+            SizedBox(width: 5.w),
+            GestureDetector(
+              onTap: () {
+                Get.toNamed(AppRoutes.setFaceRecognition);
+              },
+              child: Container(
+                height: 48.h,
+                width: 48.w,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF2A900),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      AppImages.loginQrIcon,
+                      height: 24.h,
+                      width: 24.w,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        _buildSocialLogin(controller),
       ],
     );
   }
@@ -160,9 +189,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
           onIconTap: () => controller.toggleConfirmPasswordVisibility(),
         ),
         SizedBox(height: 30.h),
-        CommonButton(title: AppString.singUp, onTap: () {
-
-        }),
+        CommonButton(title: AppString.singUp, onTap: () {}),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -302,7 +329,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialLogin() {
+  Widget _buildSocialLogin(AuthController controller) {
     return Column(
       children: [
         SizedBox(height: 20.h),
@@ -324,9 +351,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20.h),
-        _socialButton(AppString.continueGoogle, AppImages.googleIcon),
-        SizedBox(height: 10.h),
-        _socialButton(AppString.continueFacebook, AppImages.facebookIcon),
+        _socialButton(AppString.continueGoogle,isLoading: controller.isGoogleLoading.value, AppImages.googleIcon,onTap: () => controller.googleLogin()),
+        SizedBox(height: 12.h),
+        _socialButton(AppString.continueFacebook,isLoading: controller.isFacebookLoading.value, AppImages.facebookIcon,onTap: ()=>controller.faceBookLogin()),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -405,21 +432,54 @@ class SingUpOrLoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _socialButton(String title, String iconPath) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(50.r),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(iconPath, height: 24.h, width: 24.w, fit: BoxFit.contain),
-          SizedBox(width: 10.w),
-          Text(title),
-        ],
+  // Widget _socialButton(String title, String iconPath,{required VoidCallback onTap}) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       padding: EdgeInsets.symmetric(vertical: 12.h),
+  //       decoration: BoxDecoration(
+  //         border: Border.all(color: Colors.grey.shade300),
+  //         borderRadius: BorderRadius.circular(50.r),
+  //       ),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Image.asset(iconPath, height: 24.h, width: 24.w, fit: BoxFit.contain),
+  //           SizedBox(width: 10.w),
+  //           Text(title),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _socialButton(String title, String iconPath, {required VoidCallback onTap, required bool isLoading}) {
+    return GestureDetector(
+      onTap: isLoading ? null : onTap, // লোডিং চলাকালীন ক্লিক বন্ধ থাকবে
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(50.r),
+        ),
+        child: Center( // সেন্টার ব্যবহার করলে লোডার মাঝখানে থাকবে
+          child: isLoading
+              ? SizedBox(
+            height: 20.h,
+            width: 20.h,
+            child: const CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F4C5C)),
+          )
+              : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(iconPath, height: 24.h, width: 24.w, fit: BoxFit.contain),
+              SizedBox(width: 10.w),
+              Text(title),
+            ],
+          ),
+        ),
       ),
     );
   }
+
 }

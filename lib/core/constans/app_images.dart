@@ -21,10 +21,12 @@ class AppImages {
   static const String profileImage = '$baseurl/profile_image.png';
   static const String myProgramImage = '$baseurl/my_program_image.png';
   static const String eventTextImage = '$baseurl/event_text_imge.png';
-  // static const String myProgramImag = '$baseurl/my_program.jpg';
   static const String myProgramImag = '$baseurl/my_programme.png';
   static const String singleImage = '$baseurl/single_image.png';
   static const String programImages = '$baseurl/programs_image.png';
+  static const String loginQrIcon = '$baseurl/login_qr_icon.png';
+  static const String firstOnboardingImage = '$baseurl/first_onbording_image.png';
+  static const String secondOnboardingImage = '$baseurl/second_onbording_image.jpg';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//
