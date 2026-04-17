@@ -16,7 +16,8 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
-        var currentData = controller.onboardingData[controller.currentIndex.value];
+        var currentData =
+            controller.onboardingData[controller.currentIndex.value];
         return Stack(
           children: [
             Positioned.fill(
@@ -40,6 +41,7 @@ class OnboardingScreen extends StatelessWidget {
                   children: [
                     Column(
                       children: [
+                        SizedBox(height: 40.h),
                         Text(
                           currentData['title']!,
                           textAlign: TextAlign.center,
@@ -63,7 +65,9 @@ class OnboardingScreen extends StatelessWidget {
                       ],
                     ),
                     Obx(() {
-                      bool isLastPage = controller.currentIndex.value == controller.onboardingData.length - 1;
+                      bool isLastPage =
+                          controller.currentIndex.value ==
+                          controller.onboardingData.length - 1;
                       return _buildAnimatedButton(isLastPage);
                     }),
                   ],
@@ -75,11 +79,11 @@ class OnboardingScreen extends StatelessWidget {
       }),
     );
   }
+
   Widget _buildAnimatedButton(bool isLastPage) {
     return InkWell(
       onTap: () {
         if (isLastPage) {
-          Get.offAllNamed(AppRoutes.singUpLoginScreen);
         } else {
           controller.nextPage();
         }
@@ -93,9 +97,7 @@ class OnboardingScreen extends StatelessWidget {
           color: const Color(0xFFF2A900),
           borderRadius: BorderRadius.circular(50.r),
         ),
-        child: isLastPage
-            ? _buildGetStartedLayout()
-            : _buildNextLayout(),
+        child: isLastPage ? _buildGetStartedLayout() : _buildNextLayout(),
       ),
     );
   }
@@ -111,40 +113,69 @@ class OnboardingScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildGetStartedLayout() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-          width: 48.w,
-          height: 48.h,
-          decoration: const BoxDecoration(
-            color: Color(0xFFFBF5E9),
-            shape: BoxShape.circle,
+    return Container(
+      width: double.infinity,
+      height: 60.h,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2A900),
+        borderRadius: BorderRadius.circular(50.r),
+      ),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: EdgeInsets.only(right: 20.w),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 18),
+                  Icon(Icons.arrow_forward_ios, color: Color(0xFFFEFEFEBF), size: 18),
+                  Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
+                ],
+              ),
+            ),
           ),
-          child:Padding(
-            padding: const EdgeInsets.all(14),
-            child: Image.asset(AppImages.playVideo,fit: BoxFit.contain),
+          Dismissible(
+            key: const Key("get_started"),
+            direction: DismissDirection.startToEnd,
+            confirmDismiss: (direction) async {
+              Get.offAllNamed(AppRoutes.singUpLoginScreen);
+              return false;
+            },
+            background: Container(color: Colors.transparent),
+            child: Row(
+              children: [
+                Container(
+                  width: 50.w,
+                  height: 50.h,
+                  margin: EdgeInsets.all(5.w),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFBF5E9),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Image.asset(AppImages.playVideo, fit: BoxFit.contain),
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Text(
+                  "Get Started",
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFFF7F4EF),
+                  ),
+                ),
+                const Spacer(),
+              ],
+            ),
           ),
-        ),
-        Text(
-          "Get Started",
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        Row(
-          children: const [
-            Icon(Icons.arrow_forward_ios, color: Color(0xFFFBF5E9), size: 16),
-            Icon(Icons.arrow_forward_ios, color: Color(0xFFFBF5E9), size: 16),
-            Icon(Icons.arrow_forward_ios, color: Color(0xFFFBF5E9), size: 16),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
-
-

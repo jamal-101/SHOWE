@@ -19,6 +19,7 @@ import 'package:digital_event/fetures/profile/screen/profile_information_screen.
 import 'package:digital_event/fetures/profile/screen/profile_screen.dart';
 import 'package:digital_event/fetures/profile/screen/security_screen.dart';
 import 'package:digital_event/fetures/profile/screen/terms_condition_screen.dart';
+import 'package:digital_event/fetures/scan/controller/scan_controller.dart';
 import 'package:digital_event/fetures/scan/screen/library_screen.dart';
 import 'package:digital_event/fetures/scan/screen/program_details_screen.dart';
 import 'package:digital_event/fetures/splash/controller/splash_controller.dart';
@@ -256,7 +257,7 @@ class AppRoutes {
       name: AppRoutes.programDetailsScreen,
       page: () => ProgramDetailsScreen(),
       binding: BindingsBuilder(() {
-        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+        Get.put<ScanController>(ScanController());
       }),
     ),
   ];

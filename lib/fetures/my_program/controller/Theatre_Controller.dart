@@ -9,7 +9,8 @@ class TheatreController extends GetxController {
     CategoryModel(name: 'Sports', backgroundAsset: AppImages.myProgramImag),
     CategoryModel(name: 'Music', backgroundAsset: AppImages.myProgramImag),
     CategoryModel(name: 'Events', backgroundAsset: AppImages.myProgramImag),
-    CategoryModel(name: 'Games', backgroundAsset: AppImages.myProgramImag),
+    CategoryModel(name: 'Community', backgroundAsset: AppImages.myProgramImag),
+    CategoryModel(name: 'Ceremonies', backgroundAsset: AppImages.myProgramImag),
   ].obs;
 
 
@@ -18,7 +19,6 @@ class TheatreController extends GetxController {
     selectedCategoryIndex.value = index;
     update();
   }
-
   String get currentBackground =>
       categories[selectedCategoryIndex.value].backgroundAsset;
 

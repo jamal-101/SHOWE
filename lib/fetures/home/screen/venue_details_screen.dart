@@ -1,3 +1,4 @@
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +16,7 @@ class VenueDetailsScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: AppColors.appBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -134,7 +136,7 @@ class VenueDetailsScreen extends StatelessWidget {
                 _buildSmallCard("Erram", AppImages.artistImage),
               ],
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 30.h),
           ],
         ),
       ),

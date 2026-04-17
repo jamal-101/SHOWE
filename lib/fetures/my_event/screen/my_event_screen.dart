@@ -30,7 +30,7 @@ class MyEventScreen extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-        itemCount: 1,
+        itemCount: 2,
         itemBuilder: (context, index) {
           return Container(
             margin: EdgeInsets.only(bottom: 22.h),
@@ -46,232 +46,223 @@ class MyEventScreen extends StatelessWidget {
                 ),
               ],
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Music Event Ticket",
-                            style: GoogleFonts.montserrat(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF1F2A37),
-                            ),
-                          ),
-                          Text(
-                            "01 January, 2026",
-                            style: GoogleFonts.montserrat(
-                              fontSize: 12.sp,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Icon(
-                        Icons.delete_outline,
-                        color: Color(0xFF0F4C5C),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 190.h,
-                        decoration: BoxDecoration(
-                          image: const DecorationImage(
-                            image: AssetImage(AppImages.myProgramImage),
-                            fit: BoxFit.fill,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Music Event Ticket",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF262626),
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  right: 30,
-                                  left: 15,
-                                  top: 12,
-                                  bottom: 12,
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(
-                                      width: 1.5.w,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "Music",
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 28.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            SizedBox(width: 8.w),
-                                            Image.asset(
-                                              AppImages.eventTextImage,
-                                              height: 60.h,
-                                              width: 60.w,
-                                            ),
-                                          ],
-                                        ),
-                                        const Divider(
-                                          height: 1,
-                                          color: Color(0xFFBE1012),
-                                          thickness: 3,
-                                          endIndent: 25,
-                                        ),
-                                        Text(
-                                          "TICKET",
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 40.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        const Divider(
-                                          color: Color(0xFFBE1012),
-                                          height: 1,
-                                          thickness: 3,
-                                          endIndent: 25,
-                                        ),
-                                        SizedBox(height: 10.h),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 14,
-                                            top: 4,
-                                          ),
-                                          child: Text(
-                                            "Date - 1st Jan, 7-9 PM",
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xFFF7F4EF),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                        Text(
+                          "01 January, 2026",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Image.asset(AppImages.deleteAccountIcon,height: 25.h,width: 25.w)
+                  ],
+                ),
+                SizedBox(height: 12.h),
+                CustomPaint(
+                  painter: TicketPainter(),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 175.h,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 65,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(12.w, 15.h, 12.w, 15.h),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(color: Colors.black.withValues(alpha: 0.7), width: 1.w),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 0.h, left: 25.w, right: 10.w, bottom: 0.h),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(width: 2, color: const Color(0xFF062027)),
-                                  ),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FittedBox(
                                     child: Padding(
-                                      padding: EdgeInsets.all(0.w),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          RotatedBox(
-                                            quarterTurns: 3,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  "ADMIN",
-                                                  style: GoogleFonts.montserrat(
-                                                    fontSize: 18.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 5.w),
-                                                Text(
-                                                  "ONE",
-                                                  style: GoogleFonts.montserrat(
-                                                    fontSize: 18.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(width: 4.w),
-                                          BarcodeWidget(
-                                            barcode: Barcode.code128(),
-                                            data: 'A1234567890A',
-                                            width: 25.w,
-                                            height: 120.h,
-                                            drawText: false,
-                                          ),
-                                          SizedBox(width: 2.w),
-                                          RotatedBox(
-                                            quarterTurns: 3,
-                                            child: Text(
-                                              "A1234567890A",
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 16.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text("Event Ticket",
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 28.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white)),
                                     ),
+                                  ),
+                                  Divider(
+                                      color: const Color(0xFFBE1012),
+                                      thickness: 2,
+                                      height: 6.h,
+                                      indent: 20.w,
+                                      endIndent: 20.w
+                                  ),
+                                  FittedBox(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text("TICKET",
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 32.sp,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              letterSpacing: 2)),
+                                    ),
+                                  ),
+                                  Divider(
+                                      color: const Color(0xFFBE1012),
+                                      thickness: 2,
+                                      height: 6.h,
+                                      indent: 20.w,
+                                      endIndent: 20.w
+                                  ),
+                                  FittedBox(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                      child: Text("Date - 1st Jan, 7-9 PM",
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color(0xFFF7F4EF))),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 35,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(15.w, 15.h, 10.w, 15.h),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(color: Colors.black, width: 1.w),
+                              ),
+                              child: Center(
+                                child: FittedBox(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      RotatedBox(
+                                        quarterTurns: 3,
+                                        child: RichText(
+                                          text: TextSpan(children: [
+                                            TextSpan(
+                                                text: "ADMIN ",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 20.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFFFFFFFF))),
+                                            TextSpan(
+                                                text: "ONE",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 20.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Color(0xFF000000))),
+                                          ]),
+                                        ),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      BarcodeWidget(
+                                        barcode: Barcode.code128(),
+                                        data: 'A1234567890A',
+                                        width: 30.w,
+                                        height: 130.h,
+                                        drawText: false,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(width: 5.w),
+                                      RotatedBox(
+                                        quarterTurns: 7,
+                                        child: Text("A1234567890A",
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black)),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
       ),
     );
   }
+}
+
+class TicketPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final gradientPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [Color(0xFFE5A11F), Color(0xFF0F4C5C)],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..style = PaintingStyle.fill;
+    const double notchRadius = 10;
+    final double notchCenterPath = size.width * 0.65;
+    final path = Path()
+      ..moveTo(15, 0)
+      ..lineTo(notchCenterPath - notchRadius, 0)
+      ..arcToPoint(Offset(notchCenterPath + notchRadius, 0),
+          radius: const Radius.circular(notchRadius), clockwise: false)
+      ..lineTo(size.width - 15, 0)
+      ..quadraticBezierTo(size.width, 0, size.width, 15)
+      ..lineTo(size.width, size.height - 15)
+      ..quadraticBezierTo(size.width, size.height, size.width - 15, size.height)
+      ..lineTo(notchCenterPath + notchRadius, size.height)
+      ..arcToPoint(Offset(notchCenterPath - notchRadius, size.height),
+          radius: const Radius.circular(notchRadius), clockwise: false)
+      ..lineTo(15, size.height)
+      ..quadraticBezierTo(0, size.height, 0, size.height - 15)
+      ..lineTo(0, 15)
+      ..quadraticBezierTo(0, 0, 15, 0)
+      ..close();
+    canvas.drawPath(path, gradientPaint);
+    final dashPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.3)
+      ..strokeWidth = 1.2
+      ..style = PaintingStyle.stroke;
+    double dashHeight = 4;
+    double dashSpace = 4;
+    double startY = 12;
+    while (startY < size.height - 12) {
+      canvas.drawLine(Offset(notchCenterPath, startY),
+          Offset(notchCenterPath, startY + dashHeight), dashPaint);
+      startY += dashHeight + dashSpace;
+    }
+  }
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/route/app_routes.dart';
 import '../controller/wallet_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
 
@@ -38,17 +39,22 @@ class WalletScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 15.w),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(AppImages.eventsIcon, height: 25.h, width: 25.w),
-                CommonText(
-                  text: "My Events",
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF1F2A37),
-                ),
-              ],
+            child: GestureDetector(
+              onTap: (){
+                Get.toNamed(AppRoutes.myEventScreen);
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(AppImages.eventsIcon, height: 25.h, width: 25.w),
+                  CommonText(
+                    text: "My Events",
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF1F2A37),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
