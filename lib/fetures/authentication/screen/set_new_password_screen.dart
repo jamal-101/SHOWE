@@ -128,11 +128,11 @@ class SetNewPasswordScreen extends StatelessWidget {
                         padding: EdgeInsets.all(14.w),
                         child: Image.asset(
                           visibilityVariable?.value == true
-                              ? AppImages.passDisable
-                              : AppImages.appLogo,
+                              ? AppImages.toggleOn
+                              : AppImages.toggleoff,
                           height: 10.h,
                           fit: BoxFit.cover,
-                          color: Color(0xFFACB5BB),
+                          // color: Color(0xFFACB5BB),
                         ),
                       ),
                     )

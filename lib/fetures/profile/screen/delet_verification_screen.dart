@@ -1,4 +1,5 @@
 import 'package:digital_event/core/global_widget/common_button.dart';
+import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -86,7 +87,10 @@ class DeleteVerificationScreen extends StatelessWidget {
                 SizedBox(height: 50.h),
                 CommonButton(
                   title: "Delete Account",
-                  onTap: () => controller.finalDeleteAccount(),
+                  onTap: (){
+                    Get.toNamed(AppRoutes.singUpLoginScreen);
+                  },
+                  // onTap: () => controller.finalDeleteAccount(),
                 ),
                 SizedBox(height: 40.h),
               ],

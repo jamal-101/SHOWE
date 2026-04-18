@@ -1,17 +1,18 @@
-import 'package:digital_event/core/constans/app_images.dart';
-import 'package:flutter/material.dart';
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/constans/app_images.dart';
+import '../controller/my_event_controller.dart';
 
 class MyEventScreen extends StatelessWidget {
   const MyEventScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
+        appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -28,194 +29,226 @@ class MyEventScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-        itemCount: 2,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.only(bottom: 22.h),
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Music Event Ticket",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF262626),
-                          ),
-                        ),
-                        Text(
-                          "01 January, 2026",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                      ],
+      body: GetBuilder<MyEventController>(
+        builder: (controller) {
+          return controller.events.isEmpty
+              ? const Center(child: Text("No Events Available"))
+              : ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+            itemCount: controller.events.length,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: EdgeInsets.only(bottom: 22.h),
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
                     ),
-                    Image.asset(AppImages.deleteAccountIcon,height: 25.h,width: 25.w)
                   ],
                 ),
-                SizedBox(height: 12.h),
-                CustomPaint(
-                  painter: TicketPainter(),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 175.h,
-                    child: Row(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          flex: 65,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(12.w, 15.h, 12.w, 15.h),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(color: Colors.black.withValues(alpha: 0.7), width: 1.w),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FittedBox(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                      child: Text("Event Ticket",
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 28.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.white)),
-                                    ),
-                                  ),
-                                  Divider(
-                                      color: const Color(0xFFBE1012),
-                                      thickness: 2,
-                                      height: 6.h,
-                                      indent: 20.w,
-                                      endIndent: 20.w
-                                  ),
-                                  FittedBox(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                      child: Text("TICKET",
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 32.sp,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              letterSpacing: 2)),
-                                    ),
-                                  ),
-                                  Divider(
-                                      color: const Color(0xFFBE1012),
-                                      thickness: 2,
-                                      height: 6.h,
-                                      indent: 20.w,
-                                      endIndent: 20.w
-                                  ),
-                                  FittedBox(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                      child: Text("Date - 1st Jan, 7-9 PM",
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color(0xFFF7F4EF))),
-                                    ),
-                                  ),
-                                ],
+                        Column(
+                          children: [
+                            Text(
+                              controller.events[index],
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 35,
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(15.w, 15.h, 10.w, 15.h),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(color: Colors.black, width: 1.w),
+                            Text(
+                              "01 January, 2026",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF6B7280),
                               ),
-                              child: Center(
-                                child: FittedBox(
-                                  child: Row(
+                            ),
+                          ],
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            controller.deleteEvent(
+                                index);
+                            Get.snackbar(
+                              "Deleted",
+                              "Event removed successfully",
+                              snackPosition: SnackPosition.TOP,
+                            );
+                          },
+                          child: Image.asset(
+                            AppImages.deleteAccountIcon,
+                            height: 22.h,
+                            width: 22.w,
+                          ),
+                        )
+                      ],
+                    ),
+                    CustomPaint(
+                      painter: TicketPainter(),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 175.h,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 65,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    12.w, 15.h, 12.w, 15.h),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 5.w, vertical: 5.h),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    border: Border.all(
+                                        color: Colors.black.withValues(
+                                            alpha: 0.7), width: 1.w),
+                                  ),
+                                  child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
                                     children: [
-                                      RotatedBox(
-                                        quarterTurns: 3,
-                                        child: RichText(
-                                          text: TextSpan(children: [
-                                            TextSpan(
-                                                text: "ADMIN ",
-                                                style: GoogleFonts.montserrat(
-                                                    fontSize: 20.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xFFFFFFFF))),
-                                            TextSpan(
-                                                text: "ONE",
-                                                style: GoogleFonts.montserrat(
-                                                    fontSize: 20.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xFF000000))),
-                                          ]),
+                                      FittedBox(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 15),
+                                          child: Text("Event Ticket",
+                                              style: GoogleFonts.montserrat(
+                                                  fontSize: 28.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white)),
                                         ),
                                       ),
-                                      SizedBox(width: 8.w),
-                                      BarcodeWidget(
-                                        barcode: Barcode.code128(),
-                                        data: 'A1234567890A',
-                                        width: 30.w,
-                                        height: 130.h,
-                                        drawText: false,
-                                        color: Colors.black,
+                                      Divider(
+                                          color: const Color(0xFFBE1012),
+                                          thickness: 2,
+                                          height: 6.h,
+                                          indent: 20.w,
+                                          endIndent: 20.w
                                       ),
-                                      SizedBox(width: 5.w),
-                                      RotatedBox(
-                                        quarterTurns: 7,
-                                        child: Text("A1234567890A",
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black)),
+                                      FittedBox(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 15),
+                                          child: Text("TICKET",
+                                              style: GoogleFonts.montserrat(
+                                                  fontSize: 32.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  letterSpacing: 2)),
+                                        ),
+                                      ),
+                                      Divider(
+                                          color: const Color(0xFFBE1012),
+                                          thickness: 2,
+                                          height: 6.h,
+                                          indent: 20.w,
+                                          endIndent: 20.w
+                                      ),
+                                      FittedBox(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 15),
+                                          child: Text("Date - 1st Jan, 7-9 PM",
+                                              style: GoogleFonts.montserrat(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFFF7F4EF))),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
                             ),
-                          ),
+                            Expanded(
+                              flex: 35,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    15.w, 15.h, 10.w, 15.h),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 8.h, horizontal: 4.w),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    border: Border.all(
+                                        color: Colors.black, width: 1.w),
+                                  ),
+                                  child: Center(
+                                    child: FittedBox(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .center,
+                                        children: [
+                                          RotatedBox(
+                                            quarterTurns: 3,
+                                            child: RichText(
+                                              text: TextSpan(children: [
+                                                TextSpan(
+                                                    text: "ADMIN ",
+                                                    style: GoogleFonts
+                                                        .montserrat(
+                                                        fontSize: 20.sp,
+                                                        fontWeight: FontWeight
+                                                            .w500,
+                                                        color: Color(
+                                                            0xFFFFFFFF))),
+                                                TextSpan(
+                                                    text: "ONE",
+                                                    style: GoogleFonts
+                                                        .montserrat(
+                                                        fontSize: 20.sp,
+                                                        fontWeight: FontWeight
+                                                            .w500,
+                                                        color: Color(
+                                                            0xFF000000))),
+                                              ]),
+                                            ),
+                                          ),
+                                          SizedBox(width: 8.w),
+                                          BarcodeWidget(
+                                            barcode: Barcode.code128(),
+                                            data: 'A1234567890A',
+                                            width: 30.w,
+                                            height: 130.h,
+                                            drawText: false,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(width: 5.w),
+                                          RotatedBox(
+                                            quarterTurns: 7,
+                                            child: Text("A1234567890A",
+                                                style: GoogleFonts.montserrat(
+                                                    fontSize: 14.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black)),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
-        },
-      ),
+        }
+      )
     );
   }
 }

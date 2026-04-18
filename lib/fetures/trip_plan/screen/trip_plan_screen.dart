@@ -1,3 +1,4 @@
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/fetures/home/screen/venue_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class TripPlanScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavBar(selectedIndex: 2),
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: AppColors.appBackgroundColor,
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(

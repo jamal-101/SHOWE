@@ -48,6 +48,8 @@ dependencies:
   image_picker: ^1.2.1
   page_flip_builder: ^0.1.4
   page_flip: ^0.2.5+1
+  slide_to_act: ^2.0.2
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

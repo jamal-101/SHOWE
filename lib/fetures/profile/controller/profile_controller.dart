@@ -65,6 +65,7 @@ class ProfileController extends GetxController{
   void finalDeleteAccount() {
     if (otpCode.length == 6) {
       print("Deleting account with OTP: $otpCode");
+      Get.back();
       // এখানে আপনার API কল করুন
     } else {
       Get.snackbar("Error", "Please enter a valid 6-digit OTP");

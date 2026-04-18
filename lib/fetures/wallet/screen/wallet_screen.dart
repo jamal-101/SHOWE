@@ -198,7 +198,9 @@ class WalletScreen extends StatelessWidget {
                 SizedBox(height: 40.h),
                 CommonButton(
                   title: "Upload",
-                  onTap: () => controller.uploadTicket(),
+                  onTap:(){
+                    Get.toNamed(AppRoutes.myEventScreen);
+                  },
                 ),
               ],
             ),

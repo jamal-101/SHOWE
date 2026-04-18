@@ -7,6 +7,7 @@ import 'package:digital_event/fetures/authentication/screen/verify_otp_screen.da
 import 'package:digital_event/fetures/favorites/screen/favorite_screen.dart';
 import 'package:digital_event/fetures/home/screen/event_screen.dart';
 import 'package:digital_event/fetures/home/screen/home_screen.dart';
+import 'package:digital_event/fetures/my_event/controller/my_event_controller.dart';
 import 'package:digital_event/fetures/my_program/screen/my_program_screen.dart';
 import 'package:digital_event/fetures/notification/screen/notification_screen.dart';
 import 'package:digital_event/fetures/onboarding/screen/onboarding_screen.dart';
@@ -68,7 +69,8 @@ class AppRoutes {
       name: AppRoutes.splashScreen,
       page: () => SplashScreen(),
       binding: BindingsBuilder(() {
-        Get.lazyPut<SplashController>(() => SplashController());
+        // Get.lazyPut<SplashController>(() => SplashController());
+        Get.put<SplashController>(SplashController());
       }),
     ),
     GetPage(
@@ -166,7 +168,7 @@ class AppRoutes {
       name: AppRoutes.myEventScreen,
       page: () => MyEventScreen(),
       binding: BindingsBuilder(() {
-        // Get.lazyPut<TripPlanController>(() => TripPlanController());
+        Get.put<MyEventController>(MyEventController());
       }),
     ),
     GetPage(

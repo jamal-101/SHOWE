@@ -72,7 +72,9 @@ class HelpCenterScreen extends StatelessWidget {
                           children: [
                             CommonButton(
                               title: "Submit",
-                              onTap: () => controller.submitHelpRequest(),
+                              onTap: (){
+                                Get.back();
+                              },
                             ),
                             SizedBox(height: 15.h),
                             Text(

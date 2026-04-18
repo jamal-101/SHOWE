@@ -133,9 +133,12 @@ class SingUpOrLoginScreen extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: CommonButton(title: AppString.login, onTap: () {
-                Get.toNamed(AppRoutes.homeScreen);
-              }),
+              child: CommonButton(
+                title: AppString.login,
+                onTap: () {
+                  Get.toNamed(AppRoutes.homeScreen);
+                },
+              ),
             ),
             SizedBox(width: 5.w),
             GestureDetector(
@@ -191,9 +194,12 @@ class SingUpOrLoginScreen extends StatelessWidget {
           onIconTap: () => controller.toggleConfirmPasswordVisibility(),
         ),
         SizedBox(height: 30.h),
-        CommonButton(title: AppString.singUp, onTap: () {
-          controller.isLoginSelected.value = true;
-        }),
+        CommonButton(
+          title: AppString.singUp,
+          onTap: () {
+            controller.isLoginSelected.value = true;
+          },
+        ),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -207,7 +213,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 controller.isLoginSelected.value = true;
               },
               child: CommonText(
@@ -313,8 +319,8 @@ class SingUpOrLoginScreen extends StatelessWidget {
                         padding: EdgeInsets.all(14.w),
                         child: Image.asset(
                           visibilityVariable.value
-                              ? AppImages.appLogo
-                              : AppImages.passDisable,
+                              ? AppImages.toggleOn
+                              : AppImages.toggleoff,
                           height: 10.h,
                           fit: BoxFit.contain,
                         ),
@@ -360,9 +366,19 @@ class SingUpOrLoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20.h),
-        _socialButton(AppString.continueGoogle,isLoading: controller.isGoogleLoading.value, AppImages.googleIcon,onTap: () => controller.googleLogin()),
+        _socialButton(
+          AppString.continueGoogle,
+          isLoading: controller.isGoogleLoading.value,
+          AppImages.googleIcon,
+          onTap: () => controller.googleLogin(),
+        ),
         SizedBox(height: 12.h),
-        _socialButton(AppString.continueFacebook,isLoading: controller.isFacebookLoading.value, AppImages.facebookIcon,onTap: ()=>controller.faceBookLogin()),
+        _socialButton(
+          AppString.continueFacebook,
+          isLoading: controller.isFacebookLoading.value,
+          AppImages.facebookIcon,
+          onTap: () => controller.faceBookLogin(),
+        ),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -376,7 +392,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 controller.isLoginSelected.value = false;
               },
               child: CommonText(
@@ -427,7 +443,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
                     bottom: BorderSide(
                       color: Color(0xFF060606),
                       width: 1,
-                    ), // আন্ডারলাইন
+                    ),
                   ),
                 ),
                 child: Text(
@@ -467,7 +483,12 @@ class SingUpOrLoginScreen extends StatelessWidget {
   //   );
   // }
 
-  Widget _socialButton(String title, String iconPath, {required VoidCallback onTap, required bool isLoading}) {
+  Widget _socialButton(
+    String title,
+    String iconPath, {
+    required VoidCallback onTap,
+    required bool isLoading,
+  }) {
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
@@ -479,21 +500,28 @@ class SingUpOrLoginScreen extends StatelessWidget {
         child: Center(
           child: isLoading
               ? SizedBox(
-            height: 20.h,
-            width: 20.h,
-            child: const CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F4C5C)),
-          )
+                  height: 20.h,
+                  width: 20.h,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Color(0xFF0F4C5C),
+                  ),
+                )
               : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(iconPath, height: 24.h, width: 24.w, fit: BoxFit.contain),
-              SizedBox(width: 10.w),
-              Text(title),
-            ],
-          ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      iconPath,
+                      height: 24.h,
+                      width: 24.w,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(title),
+                  ],
+                ),
         ),
       ),
     );
   }
-
 }

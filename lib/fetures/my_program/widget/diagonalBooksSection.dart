@@ -1,5 +1,6 @@
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controller/Theatre_Controller.dart';
 import 'bookCard.dart';
@@ -39,18 +40,37 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
     super.dispose();
   }
 
+  // void _swipe(int dir, VoidCallback onMidpoint) {
+  //   if (_isAnimating) return;
+  //   final c = Get.find<TheatreController>();
+  //   _prevKeys = [c.leftItem.title, c.middleItem.title, c.rightItem.title];
+  //   _direction = dir;
+  //   _isAnimating = true;
+  //
+  //   _ctrl.forward(from: 0).then((_) {
+  //     onMidpoint();
+  //     _currKeys = [c.leftItem.title, c.middleItem.title, c.rightItem.title];
+  //     _ctrl.reset();
+  //     setState(() => _isAnimating = false);
+  //   });
+  // }
+
+
   void _swipe(int dir, VoidCallback onMidpoint) {
     if (_isAnimating) return;
-    final c = Get.find<TheatreController>();
-    _prevKeys = [c.leftItem.title, c.middleItem.title, c.rightItem.title];
-    _direction = dir;
-    _isAnimating = true;
 
+    setState(() {
+      _direction = dir;
+      _isAnimating = true;
+    });
+    onMidpoint();
     _ctrl.forward(from: 0).then((_) {
-      onMidpoint();
-      _currKeys = [c.leftItem.title, c.middleItem.title, c.rightItem.title];
       _ctrl.reset();
-      setState(() => _isAnimating = false);
+      if (mounted) {
+        setState(() {
+          _isAnimating = false;
+        });
+      }
     });
   }
 
@@ -91,17 +111,14 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
         return AnimatedBuilder(
           animation: _anim,
           builder: (context, _) {
-            final t = _anim.value; // 0 → 1
-
+            final t = _anim.value;
             return SizedBox(
               width: screenWidth,
               height: totalHeight,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-
                   ...List.generate(3, (i) {
-                    // current position: slot[i] → exitTo (t=0 থেকে t=1)
                     final double left = _isAnimating
                         ? slots[i].dx + (exitTo.dx - slots[i].dx) * t
                         : slots[i].dx;
