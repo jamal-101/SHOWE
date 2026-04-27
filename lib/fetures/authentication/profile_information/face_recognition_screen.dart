@@ -1,4 +1,5 @@
 import 'package:digital_event/core/common_text/common_text.dart';
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
 import 'package:digital_event/core/route/app_routes.dart';
@@ -17,9 +18,9 @@ class FaceRecognitionScreen extends StatelessWidget {
       init: ProfileInformationController(),
       builder: (controller) {
         return Scaffold(
-          backgroundColor: Colors.white,
+
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.appBackgroundColor,
             elevation: 0,
             leading: IconButton(
               icon: const Icon(

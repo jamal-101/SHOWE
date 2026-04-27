@@ -5,6 +5,7 @@ import 'package:digital_event/fetures/authentication/screen/set_new_password_scr
 import 'package:digital_event/fetures/authentication/screen/sing_up_or_login_screen.dart';
 import 'package:digital_event/fetures/authentication/screen/verify_otp_screen.dart';
 import 'package:digital_event/fetures/favorites/screen/favorite_screen.dart';
+import 'package:digital_event/fetures/home/screen/artist_profile_view.dart';
 import 'package:digital_event/fetures/home/screen/event_screen.dart';
 import 'package:digital_event/fetures/home/screen/home_screen.dart';
 import 'package:digital_event/fetures/my_event/controller/my_event_controller.dart';
@@ -64,6 +65,7 @@ class AppRoutes {
   static const String myProgramScreen = '/myProgramScreen';
   static const String libraryScreen = '/libraryScreen';
   static const String programDetailsScreen = '/programDetailsScreen';
+  static const String artistProfileView = '/artistProfileView';
   static List<GetPage> routes = [
     GetPage(
       name: AppRoutes.splashScreen,
@@ -258,6 +260,13 @@ class AppRoutes {
     GetPage(
       name: AppRoutes.programDetailsScreen,
       page: () => ProgramDetailsScreen(),
+      binding: BindingsBuilder(() {
+        Get.put<ScanController>(ScanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.artistProfileView,
+      page: () => ArtistProfileView(),
       binding: BindingsBuilder(() {
         Get.put<ScanController>(ScanController());
       }),

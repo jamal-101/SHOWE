@@ -1,3 +1,4 @@
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/authentication/profile_information/profile_information_controller.dart';
@@ -14,7 +15,7 @@ class ProfileInformationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(

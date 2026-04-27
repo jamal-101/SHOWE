@@ -27,6 +27,8 @@ class AppImages {
   static const String loginQrIcon = '$baseurl/login_qr_icon.png';
   static const String firstOnboardingImage = '$baseurl/first_onbording_image.png';
   static const String secondOnboardingImage = '$baseurl/second_onbording_image.jpg';
+  static const String venueDetailsImage = '$baseurl/venue_details_image.png';
+  static const String venueLogoImage = '$baseurl/vanue_logo.png';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//

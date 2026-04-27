@@ -4,7 +4,7 @@ import '../constans/app_colors.dart';
 
 
 ThemeData themeData = ThemeData(
-  scaffoldBackgroundColor: AppColors.appBackgroundColor,
+  scaffoldBackgroundColor:  AppColors.appBackgroundColor,
   appBarTheme: AppBarTheme(
     backgroundColor: AppColors.appBackgroundColor,
     centerTitle: true,

@@ -1,6 +1,5 @@
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controller/Theatre_Controller.dart';
 import 'bookCard.dart';
@@ -21,8 +20,8 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
   int _direction = 0;
   bool _isAnimating = false;
 
-  List<String> _prevKeys = [];
-  List<String> _currKeys = [];
+  // List<String> _prevKeys = [];
+  // List<String> _currKeys = [];
 
   @override
   void initState() {

@@ -13,7 +13,6 @@ class SetNewPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: GetBuilder<AuthController>(
         builder: (controller) {
           return SafeArea(

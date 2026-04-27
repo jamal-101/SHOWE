@@ -11,7 +11,6 @@ class MyEventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
         appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -193,7 +192,7 @@ class MyEventScreen extends StatelessWidget {
                                             child: RichText(
                                               text: TextSpan(children: [
                                                 TextSpan(
-                                                    text: "ADMIN ",
+                                                    text: "Admit ",
                                                     style: GoogleFonts
                                                         .montserrat(
                                                         fontSize: 20.sp,

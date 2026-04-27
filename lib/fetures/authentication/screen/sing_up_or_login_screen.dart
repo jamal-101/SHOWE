@@ -15,7 +15,6 @@ class SingUpOrLoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: GetBuilder<AuthController>(
         init: AuthController(),
         builder: (controller) {

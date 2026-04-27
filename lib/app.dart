@@ -7,7 +7,6 @@ import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'core/route/app_routes.dart';
 import 'core/theme/theme_data.dart';
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

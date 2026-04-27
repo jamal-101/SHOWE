@@ -15,13 +15,11 @@ class TripPlanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(TripPlanController());
-
     return Scaffold(
       bottomNavigationBar: BottomNavBar(selectedIndex: 2),
-      backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: AppColors.appBackgroundColor,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBackgroundColor,
         elevation: 0,
         title: Text(
           "Trip Planner",

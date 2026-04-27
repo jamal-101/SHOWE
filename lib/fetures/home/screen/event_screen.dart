@@ -15,31 +15,7 @@ class EventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: const Icon(
-      //       Icons.arrow_back_ios,
-      //       color: Color(0xFF0F4C5C),
-      //       size: 20,
-      //     ),
-      //     onPressed: () => Navigator.pop(context),
-      //   ),
-      //   title: Text(
-      //     "Events",
-      //     style: GoogleFonts.montserrat(
-      //       fontSize: 18.sp,
-      //       fontWeight: FontWeight.bold,
-      //       color: const Color(0xFF0F4C5C),
-      //     ),
-      //   ),
-      //   // build মেথডের ভেতর AppBar এ এভাবে লিখুন
-      //   centerTitle: true,
-      // ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -49,15 +25,14 @@ class EventScreen extends StatelessWidget {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: GetBuilder<HomController>( // GetBuilder দিয়ে র্যাপ করুন যাতে ট্যাব চেঞ্জ হলে আপডেট হয়
+        title: GetBuilder<HomController>(
           builder: (controller) {
-            String title = "Events"; // Default
+            String title = "Events";
             if (controller.selectedTabIndex == 1) {
               title = "Artists";
             } else if (controller.selectedTabIndex == 2) {
               title = "Venues";
             }
-
             return Text(
               title,
               style: GoogleFonts.montserrat(
@@ -86,24 +61,6 @@ class EventScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
               children: [
-                // Container(
-                //   padding: EdgeInsets.symmetric(horizontal: 15.w),
-                //   decoration: BoxDecoration(
-                //     color: const Color(0xFFF8F8F8),
-                //     borderRadius: BorderRadius.circular(30.r),
-                //   ),
-                //   child: TextField(
-                //     decoration: InputDecoration(
-                //       hintText: controller.selectedTabIndex == 2
-                //           ? "Search venue"
-                //           : "Search",
-                //       hintStyle: GoogleFonts.montserrat(color: Colors.grey),
-                //       border: InputBorder.none,
-                //       icon: const Icon(Icons.search, color: Colors.grey),
-                //     ),
-                //   ),
-                //
-                // ),
                 Row(
                   children: [
                     Expanded(
@@ -187,10 +144,12 @@ class EventScreen extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: currentData.length,
                     itemBuilder: (context, index) {
-                      if (controller.selectedTabIndex == 2) {
-                        return _buildVenueCard(currentData[index]);
-                      } else {
+                      if (controller.selectedTabIndex == 0) {
                         return _buildEventCard(currentData[index]);
+                      } else if (controller.selectedTabIndex == 1) {
+                        return _buildArtistCard(currentData[index], controller); // Artist কার্ড
+                      } else {
+                        return _buildVenueCard(currentData[index]); // Venue কার্ড
                       }
                     },
                   ),
@@ -377,6 +336,75 @@ class EventScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+
+
+  Widget _buildArtistCard(Map<String, dynamic> data, HomController controller) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 15.h),
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15.r),
+            child: Image.asset(
+              data['image'],
+              height: 80.h,
+              width: 80.h,
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(width: 15.w),
+          // আর্টিস্ট ডিটেইলস
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data['title'],
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF1D2125),
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                Text(
+                  data['name'],
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14.sp,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          GestureDetector(
+            onTap: () => controller.toggleFavorite(data),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE0E0E0),
+                shape: BoxShape.circle,
+              ),
+              child: (data['isFavorite'] ?? false)
+                  ? Image.asset(
+                AppImages.unFavoriteIcon,
+                color: Colors.white,
+                height: 25.h,
+                width: 25.w,
+              )
+                  : Image.asset(
+                AppImages.selectFavoriteIcon,
+                height: 25.h,
+                width: 25.w,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

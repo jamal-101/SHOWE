@@ -1,4 +1,5 @@
 import 'package:digital_event/core/common_text/common_text.dart';
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/fetures/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,9 +12,8 @@ class TermsConditionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(

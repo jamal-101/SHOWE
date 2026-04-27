@@ -40,7 +40,6 @@ class VerifyOtpScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: GetBuilder<AuthController>(
         init: AuthController(),
         builder: (controller) {
@@ -115,7 +114,7 @@ class VerifyOtpScreen extends StatelessWidget {
 
                   SizedBox(height: 25.h),
                   Text(
-                    "Resend code in 00:15",
+                    "Resend code in 00:17",
                     style: TextStyle(
                       color: const Color(0xFF0F4C5C),
                       fontSize: 14.sp,

@@ -22,4 +22,5 @@ class AppString {
   static const String congratulations = 'Congratulations';
   static const String yorPassHas= 'Your password has been successfully changed';
   static const String conti = 'Continue';
+  static const String venuAboutText = """To have a successful hotel business in the modern age, it is essential to have a strong online Presence  Guests ...""";
 }

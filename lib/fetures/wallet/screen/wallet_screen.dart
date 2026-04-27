@@ -1,4 +1,5 @@
 import 'package:digital_event/core/common_text/common_text.dart';
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,8 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.appBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -59,7 +59,6 @@ class WalletScreen extends StatelessWidget {
           ),
         ],
       ),
-
       body: GetBuilder<WalletController>(
         init: WalletController(),
         builder: (controller) {

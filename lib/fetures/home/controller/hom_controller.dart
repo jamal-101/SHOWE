@@ -16,6 +16,19 @@ class HomController extends GetxController{
     update();
   }
 
+  // void venueHeaderFavorite(Map<String, dynamic> item) {
+  //   item['isFavorite'] = !(item['isFavorite'] ?? false);
+  //   update();
+  // }
+  // void venueEventFavorite(Map<String, dynamic> item) {
+  //   item['isFavorite'] = !(item['isFavorite'] ?? false);
+  //   update();
+  // }
+  // void venueArtistFavorite(Map<String, dynamic> item) {
+  //   item['isFavorite'] = !(item['isFavorite'] ?? false);
+  //   update();
+  // }
+
   ///>>>>>>>>>>>>>>>> Event <<<<<<<<<///
 
   final List<Map<String, dynamic>> eventData = [

@@ -14,10 +14,9 @@ class EventDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> data = Get.arguments;
+    final Map<String, dynamic> data = Get.arguments ?? {};
     final RxInt activeIndex = 0.obs;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: GetBuilder<HomController>(
         builder: (controller) {
           return SingleChildScrollView(
@@ -38,7 +37,7 @@ class EventDetailsScreen extends StatelessWidget {
                       ),
                       itemBuilder: (context, index, realIndex) {
                         return Image.asset(
-                          data['image'],
+                          data['image'] ?? AppImages.eventImage,
                           height: 300.h,
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -116,19 +115,21 @@ class EventDetailsScreen extends StatelessWidget {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF7C7C7C1A).withValues(alpha: 0.1),
+                          color: const Color(
+                            0xFF7C7C7C1A,
+                          ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(5.r),
                         ),
                         child: CommonText(
-                         text:  data['name'],
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF0F4C5C),
-                          ),
+                          text: data['name'] ?? "Event",
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF0F4C5C),
                         ),
+                      ),
                       SizedBox(height: 10.h),
                       Text(
-                        data['title'],
+                        data['title']?? "Event Details",
                         style: GoogleFonts.montserrat(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
@@ -138,20 +139,20 @@ class EventDetailsScreen extends StatelessWidget {
                       SizedBox(height: 20.h),
                       _buildInfoTile(
                         AppImages.calender,
-                        "${data['date']}, 2026",
+                        "${data['date'] ?? 'TBA'}, 2026",
                         "Friday, 4:00 PM - 6:00 PM",
                       ),
                       SizedBox(height: 15.h),
                       _buildInfoTile(
                         AppImages.location_1,
-                        "Gala Convention Center",
+                        data['address'] ?? "Gala Convention Center",
                         "123 Golf Street, UK",
                         isFollow: true,
                       ),
                       SizedBox(height: 15.h),
                       _buildInfoTile(
-                        AppImages.eventImage,
-                        data['title'],
+                        data['artistImage'] ?? AppImages.artistImage,
+                        data['artistName'] ?? "Artist Name",
                         "Artist",
                         isFollow: true,
                         isFullImage: true,
@@ -180,7 +181,7 @@ class EventDetailsScreen extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(20.0),
         child: CommonButton(
-          title: "Get Ticket - \$${data['price']}",
+          title: "Get Ticket - \$${data['price']} ?? '0,00",
           onTap: () {},
         ),
       ),
