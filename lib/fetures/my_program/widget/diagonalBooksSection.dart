@@ -106,7 +106,6 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
       },
       child: Obx(() {
         final items = [c.leftItem, c.middleItem, c.rightItem];
-
         return AnimatedBuilder(
           animation: _anim,
           builder: (context, _) {
@@ -151,11 +150,8 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
                       final double top =
                           enterFrom.dy + (slots[i].dy - enterFrom.dy) * t;
                       final double opacity = t.clamp(0, 1);
-
-                      // next items
                       final TheatreController cc = Get.find();
                       final nextItems = [cc.leftItem, cc.middleItem, cc.rightItem];
-
                       return Positioned(
                         left: left,
                         top: top,

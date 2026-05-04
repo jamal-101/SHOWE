@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../controller/hom_controller.dart';
 import 'event_details_screen.dart';
 
@@ -50,12 +51,28 @@ class VenueDetailsScreen extends StatelessWidget {
                       Container(
                         height: 150.h,
                         width: double.infinity,
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.r),
-                          image: const DecorationImage(
-                            image: AssetImage(AppImages.mapImage),
-                            fit: BoxFit.cover,
+                        ),
+                        child: GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(23.8103, 90.4125),
+                            zoom: 14.0,
                           ),
+                          mapType: MapType.normal,
+                          myLocationEnabled: true,
+                          zoomControlsEnabled: false,
+                          onMapCreated: (GoogleMapController controller) {},
+                          markers: {
+                            Marker(
+                              markerId: const MarkerId('venue_location'),
+                              position: LatLng(23.8103, 90.4125),
+                              infoWindow: const InfoWindow(
+                                title: 'Gala Convention Center',
+                              ),
+                            ),
+                          },
                         ),
                       ),
                       SizedBox(height: 20.h),
@@ -443,7 +460,6 @@ class VenueDetailsScreen extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildArtistSection(
     Map<String, dynamic> data,
     HomController controller,

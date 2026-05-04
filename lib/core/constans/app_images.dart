@@ -20,7 +20,6 @@ class AppImages {
   static const String hotelImage = '$baseurl/hotel_image.png';
   static const String profileImage = '$baseurl/profile_image.png';
   static const String myProgramImage = '$baseurl/my_program_image.png';
-  static const String eventTextImage = '$baseurl/event_text_imge.png';
   static const String myProgramImag = '$baseurl/my_programme.png';
   static const String singleImage = '$baseurl/single_image.png';
   static const String programImages = '$baseurl/programs_image.png';
@@ -29,6 +28,11 @@ class AppImages {
   static const String secondOnboardingImage = '$baseurl/second_onbording_image.jpg';
   static const String venueDetailsImage = '$baseurl/venue_details_image.png';
   static const String venueLogoImage = '$baseurl/vanue_logo.png';
+  static const String selectEventImage = '$baseurl/select_event_image.png';
+  static const String selectCommunityImage = '$baseurl/select_community_image.png';
+  static const String ceremoniesImage = '$baseurl/ceremonies.png';
+  static const String sportsImage = '$baseurl/sports_image.png';
+  static const String musicImage = '$baseurl/musicImage.png';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//
