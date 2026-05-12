@@ -19,4 +19,8 @@ class AppString {
   static const String continueFacebook = 'Continue with Facebook';
   static const String donTHave = 'Don’t have an account?';
   static const String alreadyHave = 'Already have an account?';
+  static const String congratulations = 'Congratulations';
+  static const String yorPassHas= 'Your password has been successfully changed';
+  static const String conti = 'Continue';
+  static const String venuAboutText = """To have a successful hotel business in the modern age, it is essential to have a strong online Presence  Guests ...""";
 }

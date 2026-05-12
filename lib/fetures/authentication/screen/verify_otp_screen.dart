@@ -1,9 +1,11 @@
 import 'package:digital_event/core/constans/app_images.dart';
+import 'package:digital_event/core/global_widget/common_button.dart';
+import 'package:digital_event/core/route/app_routes.dart';
+import 'package:digital_event/fetures/authentication/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
@@ -28,103 +30,121 @@ class VerifyOtpScreen extends StatelessWidget {
     );
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(
       color: Colors.white,
-      border: Border.all(color: const Color(0xFF0F4C5C).withOpacity(0.5)),
+      border: Border.all(color: const Color(0xFF0F4C5C).withValues(alpha: 0.5)),
     );
     final submittedPinTheme = defaultPinTheme.copyWith(
       decoration: defaultPinTheme.decoration?.copyWith(
         color: Colors.white,
-        border: Border.all(color: const Color(0xFF0F4C5C).withOpacity(0.5)),
+        border: Border.all(color: const Color(0xFF0F4C5C).withValues(alpha: 0.5)),
       ),
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: GetBuilder<AuthController>(
+        init: AuthController(),
+        builder: (controller) {
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF0F4C5C), size: 20),
-                    onPressed: () => Navigator.pop(context),
+                  SizedBox(height: 10.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Color(0xFF0F4C5C),
+                          size: 20,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      Image.asset(
+                        AppImages.appLogo,
+                        height: 40.h,
+                        fit: BoxFit.contain,
+                      ),
+                      SizedBox(width: 48.w),
+                    ],
                   ),
-                  Image.asset(AppImages.appLogo, height: 40.h, fit: BoxFit.contain),
-                  SizedBox(width: 48.w),
+                  SizedBox(height: 40.h),
+                  Text(
+                    "Verify Account",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF0F4C5C),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    "Enter your verification code that we have sent to your email sm*********3@gmail.com",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14.sp,
+                      color: Colors.grey.shade600,
+                      height: 1.4,
+                    ),
+                  ),
+                  SizedBox(height: 30.h),
+                  Text(
+                    "Enter OTP",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF0F4C5C),
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  SizedBox(height: 15.h),
+                  Center(
+                    child: Pinput(
+                      controller: controller.otpController,
+                      length: 6,
+                      defaultPinTheme: defaultPinTheme,
+                      focusedPinTheme: focusedPinTheme,
+                      submittedPinTheme: submittedPinTheme,
+                      // pinputAutoresize: false,
+                      showCursor: true,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onCompleted: (pin) => debugPrint(pin),
+                    ),
+                  ),
+
+                  SizedBox(height: 25.h),
+                  Text(
+                    "Resend code in 00:17",
+                    style: TextStyle(
+                      color: const Color(0xFF0F4C5C),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 40.h),
+                  CommonButton(
+                    title: 'Verify',
+                    backgroundColor: controller.isSheetOpen
+                        ? const Color(0xFFF2A900).withValues(alpha: 0.5)
+                        : const Color(0xFFF2A900),
+                    // onTap: controller.isSheetOpen
+                    //     ? () {}
+                    //     : () {
+                    //   bool isOtpCorrect = false;
+                    //   if (!isOtpCorrect) {
+                    //     controller.setSheetState(true);
+                    //     showIncorrectOtpSheet(context,controller);
+                    //   }
+                    // },
+                    onTap: (){
+                      Get.toNamed(AppRoutes.setNewPass);
+                    },
+                  ),
                 ],
               ),
-              SizedBox(height: 40.h),
-              Text(
-                "Verify Account",
-                style: GoogleFonts.montserrat(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF0F4C5C),
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                "Enter your verification code that we have sent to your email sm*********3@gmail.com",
-                style: GoogleFonts.montserrat(fontSize: 14.sp, color: Colors.grey.shade600, height: 1.4),
-              ),
-              SizedBox(height: 30.h),
-              Text(
-                "Enter OTP",
-                style: TextStyle(fontWeight: FontWeight.bold, color: const Color(0xFF0F4C5C), fontSize: 14.sp),
-              ),
-              SizedBox(height: 15.h),
-              Center(
-                child: Pinput(
-                  length: 6,
-                  defaultPinTheme: defaultPinTheme,
-                  focusedPinTheme: focusedPinTheme,
-                  submittedPinTheme: submittedPinTheme,
-                  // pinputAutoresize: false,
-                  showCursor: true,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  onCompleted: (pin) => print(pin),
-                ),
-              ),
-
-              SizedBox(height: 25.h),
-              Text(
-                "Resend code in 00:15",
-                style: TextStyle(color: const Color(0xFF0F4C5C), fontSize: 14.sp, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 40.h),
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    bool isOtpCorrect = false;
-
-                    if (!isOtpCorrect) {
-                      showIncorrectOtpSheet(context);
-                    }
-                    else {}
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF2A900),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.r)),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    "Verify",
-                    style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -132,7 +152,7 @@ class VerifyOtpScreen extends StatelessWidget {
 
 //>>>>>>>>>>>>>>>>>>>> show incorrectSheet <<<<<<<<<<<<<<<<<<<<<<<<<<//
 
-void showIncorrectOtpSheet(BuildContext context) {
+void showIncorrectOtpSheet(BuildContext context,AuthController controller) {
   Get.bottomSheet(
     Container(
       padding: EdgeInsets.all(24.w),
@@ -161,11 +181,7 @@ void showIncorrectOtpSheet(BuildContext context) {
               color: Color(0xFFFFEBEB),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.close,
-              color: Colors.red,
-              size: 30.sp,
-            ),
+            child: Icon(Icons.close, color: Colors.red, size: 30.sp),
           ),
           SizedBox(height: 20.h),
           Text(
@@ -216,5 +232,7 @@ void showIncorrectOtpSheet(BuildContext context) {
       ),
     ),
     isScrollControlled: true,
-  );
+  ).whenComplete(() {
+    controller.setSheetState(false);
+  });
 }

@@ -1,4 +1,5 @@
 import 'package:digital_event/core/constans/app_images.dart';
+import 'package:digital_event/core/global_widget/common_button.dart';
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -85,29 +86,11 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 40.h),
-            SizedBox(
-              width: double.infinity,
-              height: 50.h,
-              child: ElevatedButton(
-                onPressed: () {
-                  Get.toNamed(AppRoutes.verifyOtpScreen);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF2A900),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50.r),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  "Get OTP",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            CommonButton(
+              title: 'Get OTP',
+              onTap: () {
+                Get.toNamed(AppRoutes.verifyOtpScreen);
+              },
             ),
           ],
         ),
