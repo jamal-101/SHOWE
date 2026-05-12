@@ -252,6 +252,8 @@ class MyEventScreen extends StatelessWidget {
   }
 }
 
+
+
 class TicketPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
