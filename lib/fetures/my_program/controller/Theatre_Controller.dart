@@ -5,12 +5,13 @@ import '../model/theatre_model.dart';
 class TheatreController extends GetxController {
   var selectedCategoryIndex = 0.obs;
   final RxList<CategoryModel> categories = <CategoryModel>[
-    CategoryModel(name: 'Theatre', backgroundAsset: AppImages.myProgramImag),
-    CategoryModel(name: 'Sports', backgroundAsset: AppImages.myProgramImag),
-    CategoryModel(name: 'Music', backgroundAsset: AppImages.myProgramImag),
-    CategoryModel(name: 'Events', backgroundAsset: AppImages.myProgramImag),
-    CategoryModel(name: 'Community', backgroundAsset: AppImages.myProgramImag),
-    CategoryModel(name: 'Ceremonies', backgroundAsset: AppImages.myProgramImag),
+    CategoryModel(name: 'Theatre', backgroundAsset: AppImages.theatre),
+    CategoryModel(name: 'Sports', backgroundAsset: AppImages.sport),
+    CategoryModel(name: 'Music', backgroundAsset: AppImages.music),
+    CategoryModel(name: 'Events', backgroundAsset: AppImages.events),
+    CategoryModel(name: 'Community', backgroundAsset: AppImages.community),
+    CategoryModel(name: 'Museum', backgroundAsset: AppImages.museum),
+    CategoryModel(name: 'Ceremonies', backgroundAsset: AppImages.ceremonies),
   ].obs;
 
 

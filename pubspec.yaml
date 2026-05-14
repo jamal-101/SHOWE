@@ -51,6 +51,7 @@ dependencies:
   slide_to_act: ^2.0.2
   shimmer: ^3.0.0
   google_maps_flutter: ^2.17.0
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
