@@ -63,11 +63,6 @@ class TheatreController extends GetxController {
 
   final RxInt currentOffset = 0.obs;
 
-  // TheatreItem get leftItem => allItems[currentOffset.value % allItems.length];
-  // TheatreItem get middleItem => allItems[(currentOffset.value + 1) % allItems.length];
-  // TheatreItem get rightItem => allItems[(currentOffset.value + 2) % allItems.length];
-
-
   TheatreItem get leftItem => currentItems[currentOffset.value % currentItems.length];
   TheatreItem get middleItem => currentItems[(currentOffset.value + 1) % currentItems.length];
   TheatreItem get rightItem => currentItems[(currentOffset.value + 2) % currentItems.length];

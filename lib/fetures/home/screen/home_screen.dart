@@ -51,9 +51,9 @@ class HomeScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () => Get.toNamed(AppRoutes.notificationScreen),
                     child: Container(
-                      padding: EdgeInsets.all(10.w),
+                      padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: Colors.blueGrey.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Image.asset(AppImages.bellIcon),
@@ -124,6 +124,50 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // Widget _buildHomeCard({
+  //   required VoidCallback onTap,
+  //   required String title,
+  //   required String imagePath,
+  //   required Color bgColor,
+  //   required Color textColor,
+  //   double? height,
+  // }) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       height: height,
+  //       padding: EdgeInsets.all(16.w),
+  //       decoration: BoxDecoration(
+  //         color: bgColor,
+  //         borderRadius: BorderRadius.circular(16.r),
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         mainAxisSize: MainAxisSize.min,
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Text(
+  //             title,
+  //             style: GoogleFonts.montserrat(
+  //               fontSize: 18.sp,
+  //               fontWeight: FontWeight.bold,
+  //               color: textColor,
+  //             ),
+  //           ),
+  //           SizedBox(height: 10.h),
+  //           Image.asset(
+  //             imagePath,
+  //             height: 35.h,
+  //             width: 35.w,
+  //             color: textColor,
+  //             fit: BoxFit.contain,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildHomeCard({
     required VoidCallback onTap,
     required String title,
@@ -134,16 +178,33 @@ class HomeScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         height: height,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.2.w),
+          boxShadow: [
+
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              offset: Offset(4, 8),
+              blurRadius: 12,
+              spreadRadius: -5,
+              // spreadRadius: 1,
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.5),
+              offset: Offset(-3, -3),
+              blurRadius: 8,
+              spreadRadius: -5,
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
@@ -154,19 +215,22 @@ class HomeScreen extends StatelessWidget {
                 color: textColor,
               ),
             ),
-            SizedBox(height: 10.h),
-            Image.asset(
-              imagePath,
-              height: 35.h,
-              width: 35.w,
-              color: textColor,
-              fit: BoxFit.contain,
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Image.asset(
+                imagePath,
+                height: 40.h,
+                width: 40.w,
+                color: textColor.withValues(alpha: 0.8),
+                fit: BoxFit.contain,
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
 
   Widget _buildMyEventsCard() {
     return GestureDetector(
@@ -178,7 +242,21 @@ class HomeScreen extends StatelessWidget {
         height: 180.h,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              offset: Offset(7, 1),
+              blurRadius: 10,
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.7),
+              offset: Offset(-3, -3),
+              blurRadius: 2,
+            ),
+          ],
           borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.2.w),
           gradient: const LinearGradient(
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
@@ -243,4 +321,5 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+
 }
