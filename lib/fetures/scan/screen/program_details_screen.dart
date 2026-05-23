@@ -23,15 +23,7 @@ class ProgramDetailsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () => Get.back(),
         ),
-        title: Text(
-          "Programmes",
-          style: GoogleFonts.montserrat(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: GetBuilder<ScanController>(
         builder: (controller) {

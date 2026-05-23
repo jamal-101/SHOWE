@@ -1,9 +1,12 @@
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:digital_event/fetures/my_event/screen/widget/event_delete_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constans/app_images.dart';
+import '../../../core/route/app_routes.dart';
+import '../../profile/widget/account_delet_dialog.dart';
 import '../controller/my_event_controller.dart';
 
 class MyEventScreen extends StatelessWidget {
@@ -76,13 +79,9 @@ class MyEventScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            controller.deleteEvent(
-                                index);
-                            Get.snackbar(
-                              "Deleted",
-                              "Event removed successfully",
-                              snackPosition: SnackPosition.TOP,
-                            );
+                                Get.dialog(
+                                  EventDeleteDialog(index: index),
+                                );
                           },
                           child: Image.asset(
                             AppImages.deleteAccountIcon,
@@ -251,7 +250,6 @@ class MyEventScreen extends StatelessWidget {
     );
   }
 }
-
 
 
 class TicketPainter extends CustomPainter {

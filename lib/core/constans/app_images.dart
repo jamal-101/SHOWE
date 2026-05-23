@@ -33,6 +33,13 @@ class AppImages {
   static const String ceremoniesImage = '$baseurl/ceremonies.png';
   static const String sportsImage = '$baseurl/sports_image.png';
   static const String musicImage = '$baseurl/musicImage.png';
+  static const String theatre = '$baseurl/threateImage.png';
+  static const String music = '$baseurl/music.png';
+  static const String sport = '$baseurl/sport.png';
+  static const String community = '$baseurl/comunity.png';
+  static const String events = '$baseurl/events.png';
+  static const String museum = '$baseurl/museum.png';
+  static const String ceremonies = '$baseurl/ceremoniesImage.png';
 
 
   //>>>>>>>>>>>>>>>> Icons <<<<<<<<<<<<<<<<<<//
