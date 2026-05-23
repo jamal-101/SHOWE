@@ -1,5 +1,6 @@
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controller/Theatre_Controller.dart';
 import 'bookCard.dart';
@@ -172,9 +173,9 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
 
                   ...List.generate(3, (i) {
                     final infoOffsets = [
-                      Offset(45, 340 + h),
-                      Offset(193, 225 + h),
-                      Offset(325, 120 + h),
+                      Offset(45.w, 300.h + h),
+                      Offset(193.w, 180.h + h),
+                      Offset(325.w, 80.h + h),
                     ];
                     final double left = _isAnimating
                         ? infoOffsets[i].dx + (exitTo.dx - slots[i].dx) * t * 0.3
