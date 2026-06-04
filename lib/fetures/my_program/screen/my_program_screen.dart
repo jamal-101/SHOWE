@@ -18,7 +18,7 @@ class MyProgramScreen extends StatelessWidget {
              fit: StackFit.expand,
              children: [
                AnimatedSwitcher(
-                 duration: const Duration(milliseconds: 90),
+                 duration: const Duration(milliseconds: 10),
                  child: Image.asset(
                    controller.currentBackground,
                    key: ValueKey(controller.currentBackground),

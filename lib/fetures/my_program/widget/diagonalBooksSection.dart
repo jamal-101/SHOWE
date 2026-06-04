@@ -1,9 +1,9 @@
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../controller/Theatre_Controller.dart';
 import 'bookCard.dart';
-import 'infoTile.dart';
 
 class DiagonalBooksSection extends StatefulWidget {
   const DiagonalBooksSection({super.key});
@@ -12,65 +12,52 @@ class DiagonalBooksSection extends StatefulWidget {
   State<DiagonalBooksSection> createState() => _DiagonalBooksSectionState();
 }
 
-class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late Animation<double> _anim;
+class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
+  late PageController _pageController;
+  double _currentPage = 0.0;
 
-  int _direction = 0;
-  bool _isAnimating = false;
+  final int _loopCount = 10000000;
 
-  // List<String> _prevKeys = [];
-  // List<String> _currKeys = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 450),
-    );
-    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeInOutCubic);
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  // void _swipe(int dir, VoidCallback onMidpoint) {
-  //   if (_isAnimating) return;
-  //   final c = Get.find<TheatreController>();
-  //   _prevKeys = [c.leftItem.title, c.middleItem.title, c.rightItem.title];
-  //   _direction = dir;
-  //   _isAnimating = true;
-  //
-  //   _ctrl.forward(from: 0).then((_) {
-  //     onMidpoint();
-  //     _currKeys = [c.leftItem.title, c.middleItem.title, c.rightItem.title];
-  //     _ctrl.reset();
-  //     setState(() => _isAnimating = false);
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _pageController = PageController(
+  //     viewportFraction: 0.32,
+  //     initialPage: _loopCount ~/ 2,
+  //   )..addListener(() {
+  //     setState(() {
+  //       _currentPage = _pageController.page!;
+  //     });
   //   });
   // }
 
 
-  void _swipe(int dir, VoidCallback onMidpoint) {
-    if (_isAnimating) return;
+  @override
+  void initState() {
+    super.initState();
+    // শুরুর পেজটি এমনভাবে নিন যেন items.length এর সাথে মেলে
+    final int initialPage = (_loopCount ~/ 2);
 
-    setState(() {
-      _direction = dir;
-      _isAnimating = true;
-    });
-    onMidpoint();
-    _ctrl.forward(from: 0).then((_) {
-      _ctrl.reset();
-      if (mounted) {
+    _pageController = PageController(
+      viewportFraction: 0.32,
+      initialPage: initialPage,
+    )..addListener(() {
+      // শুধু মান পরিবর্তন হলেই স্টেট আপডেট করুন
+      if (_pageController.page != null) {
         setState(() {
-          _isAnimating = false;
+          _currentPage = _pageController.page!;
         });
       }
     });
+
+    // শুরুতে currentPage সেট করে দিন যেন প্রথম ফ্রেমেই ডাটা পায়
+    _currentPage = initialPage.toDouble();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -78,130 +65,115 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection>
     final TheatreController c = Get.find();
     final screenWidth = MediaQuery.of(context).size.width;
 
-    final double w = screenWidth * 0.30;
+    final double w = screenWidth * 0.28;
     final double h = w * 2.15;
-    final double totalHeight = h + 300;
-    final slots = [
-      Offset(screenWidth * 0.02, 260),
-      Offset(screenWidth * 0.35, 145),
-      Offset(screenWidth * 0.67, 40),
-    ];
 
-    final Offset enterFrom = _direction >= 0
-        ? Offset(screenWidth * 1.1, -h * 0.5)
-        : Offset(-w * 1.2, h * 1.2);
+    return Obx(() {
+      final items = c.currentItems;
+      if (items.isEmpty) return const SizedBox.shrink();
 
-    final Offset exitTo = _direction >= 0
-        ? Offset(-w * 1.2, h * 1.2)
-        : Offset(screenWidth * 1.1, -h * 0.5);
+      return SizedBox(
+        height: 600.h,
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: _loopCount,
+          clipBehavior: Clip.none,
+          itemBuilder: (context, index) {
+            final int actualIndex = index % items.length;
+            double relativePosition = index - _currentPage;
+            if (relativePosition.abs() > 2) return const SizedBox.shrink();
+            double bookTop;
+            double infoTop;
+            double infoLeft;
+            if (relativePosition < -0.5) {
+              bookTop = -20.h;
+              infoTop = h + 78.h;
+              infoLeft = 40.w;
+            } else if (relativePosition.abs() <= 0.5) {
+              bookTop = -0.h;
+              infoTop = h + 78.h;
+              infoLeft = 46.w;
+            } else {
+              bookTop = 10.h;
+              infoTop = h + 105.h;
+              infoLeft = 30.w;
+            }
+            double xOffset = relativePosition * (screenWidth * 0.02);
+            double yOffset = 160.h + (relativePosition * -120.h);
+            double scale = (1 - (relativePosition.abs() * 0.12)).clamp(0.8, 1.0);
+            double opacity = (1 - (relativePosition.abs() * 0.15)).clamp(0.85, 1.0);
 
-    return GestureDetector(
-      onHorizontalDragEnd: (details) {
-        if (_isAnimating) return;
-        if ((details.primaryVelocity ?? 0) < -200) {
-          _swipe(1, () => c.onSwipeLeft());
-        } else if ((details.primaryVelocity ?? 0) > 200) {
-          _swipe(-1, () => c.onSwipePrev());
-        }
-      },
-      child: Obx(() {
-        final items = [c.leftItem, c.middleItem, c.rightItem];
-        return AnimatedBuilder(
-          animation: _anim,
-          builder: (context, _) {
-            final t = _anim.value;
-            return SizedBox(
-              width: screenWidth,
-              height: totalHeight,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ...List.generate(3, (i) {
-                    final double left = _isAnimating
-                        ? slots[i].dx + (exitTo.dx - slots[i].dx) * t
-                        : slots[i].dx;
-                    final double top = _isAnimating
-                        ? slots[i].dy + (exitTo.dy - slots[i].dy) * t
-                        : slots[i].dy;
-                    final double opacity = _isAnimating ? (1 - t).clamp(0, 1) : 1.0;
-
-                    return Positioned(
-                      left: left,
-                      top: top,
-                      child: Opacity(
-                        opacity: opacity,
-                        child: BookCard(
-                          key: ValueKey('curr_${items[i].title}'),
-                          item: items[i],
-                          width: w,
-                          height: h,
-                          // onTap: () => c.onItemTap(items[i]),
-                          onTap: (){
-                            Get.toNamed(AppRoutes.programDetailsScreen);
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                  if (_isAnimating)
-                    ...List.generate(3, (i) {
-                      final double left =
-                          enterFrom.dx + (slots[i].dx - enterFrom.dx) * t;
-                      final double top =
-                          enterFrom.dy + (slots[i].dy - enterFrom.dy) * t;
-                      final double opacity = t.clamp(0, 1);
-                      final TheatreController cc = Get.find();
-                      final nextItems = [cc.leftItem, cc.middleItem, cc.rightItem];
-                      return Positioned(
-                        left: left,
-                        top: top,
-                        child: Opacity(
-                          opacity: opacity,
+            return Transform.translate(
+              offset: Offset(xOffset, yOffset),
+              child: Transform.scale(
+                scale: scale,
+                child: Opacity(
+                  opacity: opacity,
+                  child: SizedBox(
+                    width: w,
+                    height: h + 250.h,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        // ১. বইয়ের কার্ড (BookCard)
+                        Positioned(
+                          top: bookTop, // বাম/মাঝ/ডান অনুযায়ী ডাইনামিক
+                          left: 0,
                           child: BookCard(
-                            key: ValueKey('next_${nextItems[i].title}_$i'),
-                            item: nextItems[i],
+                            item: items[actualIndex],
                             width: w,
                             height: h,
-                            onTap: () {
-                              Get.toNamed(AppRoutes.programDetailsScreen,arguments: items[i]);
-                            },
+                            onTap: () => Get.toNamed(
+                              AppRoutes.programDetailsScreen,
+                              arguments: items[actualIndex],
+                            ),
                           ),
                         ),
-                      );
-                    }),
 
-                  ...List.generate(3, (i) {
-                    final infoOffsets = [
-                      Offset(45, 340 + h),
-                      Offset(193, 225 + h),
-                      Offset(325, 120 + h),
-                    ];
-                    final double left = _isAnimating
-                        ? infoOffsets[i].dx + (exitTo.dx - slots[i].dx) * t * 0.3
-                        : infoOffsets[i].dx;
-                    final double top = _isAnimating
-                        ? infoOffsets[i].dy + (exitTo.dy - slots[i].dy) * t * 0.3
-                        : infoOffsets[i].dy;
-                    final opacity = _isAnimating ? (1 - t * 2).clamp(0.0, 1.0) : 1.0;
-                    return Positioned(
-                      left: left,
-                      top: top,
-                      width: w - 4,
-                      child: Opacity(
-                        opacity: opacity,
-                        child: InfoTile(
-                          key: ValueKey('info_${items[i].title}'),
-                          item: items[i],
+                        Positioned(
+                          top: infoTop,
+                          left: infoLeft,
+                          right: -80.w,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                items[actualIndex].title,
+                                style: TextStyle(
+                                  color: const Color(0xFFE5A000),
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.2,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 10.h),
+                              Text(
+                                items[actualIndex].description,
+                                style: TextStyle(
+                                  color: const Color(0xFFCCCCCC),
+                                  fontSize: 10.sp,
+                                  height: 1.5,
+                                ),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-                ],
+                      ],
+                    ),
+                  ),
+                ),
               ),
             );
           },
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }
+
+

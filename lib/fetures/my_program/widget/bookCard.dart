@@ -40,7 +40,7 @@ class BookCard extends StatelessWidget {
               item.imageAsset,
               key: ValueKey(item.imageAsset), // ⬅️ Key for image change
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              errorBuilder: (_, _, _) => Container(
                 color: const Color(0xFF1A2A3A),
                 child: const Center(
                   child: Icon(Icons.image, color: Colors.white24, size: 32),
