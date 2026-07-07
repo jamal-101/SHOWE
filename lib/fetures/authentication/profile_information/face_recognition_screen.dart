@@ -76,11 +76,68 @@ class FaceRecognitionScreen extends StatelessWidget {
               ],
             ),
           ),
+          // body: Column(
+          //   children: [
+          //     SizedBox(height: 40.h),
+          //     Padding(
+          //       padding: EdgeInsets.only(left: 40,right: 40),
+          //       child: CommonText(
+          //         text: 'Add a face recognition to make your account more secure',
+          //         style: TextStyle(
+          //           fontSize: 14.sp,
+          //           color: Colors.grey.shade600,
+          //           fontWeight: FontWeight.w400,
+          //         ),
+          //       ),
+          //     ),
+          //     SizedBox(height: 20.h),
+          //     Center(
+          //       child: Stack(
+          //         alignment: Alignment.center,
+          //         children: [
+          //           if (!controller.isScanning)
+          //             SizedBox(height: 550),
+          //             Image.asset(
+          //               AppImages.faceRecognition,
+          //               height: 294.h,
+          //               width: 294.w,
+          //             ),
+          //           if (controller.isScanning)
+          //             Container(
+          //               height: 600,
+          //               width: double.infinity,
+          //               decoration: BoxDecoration(
+          //                 image: const DecorationImage(
+          //                   image: AssetImage(AppImages.scanFace),
+          //                   fit: BoxFit.cover,
+          //                 ),
+          //                 border: Border.all(
+          //                   color: Colors.white.withValues(alpha: 0.5),
+          //                   width: 2,
+          //                 ),
+          //                 borderRadius: BorderRadius.circular(20.r),
+          //               ),
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.end,
+          //                 children: [
+          //                   Text("100%", style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+          //                   Text("Verifying your face...", style: TextStyle(color: Colors.white, fontSize: 12.sp)),
+          //                   SizedBox(height: 20.h),
+          //                 ],
+          //               ),
+          //             ),
+          //         ],
+          //       ),
+          //     ),
+          //     const Spacer(),
+          //   ],
+          // ),
+
           body: Column(
             children: [
               SizedBox(height: 40.h),
               Padding(
-                padding: EdgeInsets.only(left: 40,right: 40),
+                padding: EdgeInsets.symmetric(horizontal: 40.w),
                 child: CommonText(
                   text: 'Add a face recognition to make your account more secure',
                   style: TextStyle(
@@ -90,48 +147,42 @@ class FaceRecognitionScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 40.h),
               Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    if (!controller.isScanning)
-                      SizedBox(height: 550),
-                      Image.asset(
-                        AppImages.faceRecognition,
-                        height: 294.h,
-                        width: 294.w,
-                      ),
-                    if (controller.isScanning)
-                      Container(
-                        height: 600,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          image: const DecorationImage(
-                            image: AssetImage(AppImages.scanFace),
-                            fit: BoxFit.cover,
-                          ),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.5),
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text("100%", style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold)),
-                            Text("Verifying your face...", style: TextStyle(color: Colors.white, fontSize: 12.sp)),
-                            SizedBox(height: 20.h),
-                          ],
-                        ),
-                      ),
-                  ],
+                child: !controller.isScanning
+                    ? Image.asset(
+                  AppImages.faceRecognition,
+                  height: 294.h,
+                  width: 294.w,
+                )
+                    : Container(
+                  height: 350.h,
+                  width: 300.w,
+                  decoration: BoxDecoration(
+                    image: const DecorationImage(
+                      image: AssetImage(AppImages.scanFace),
+                      fit: BoxFit.cover,
+                    ),
+                    border: Border.all(
+                      color: const Color(0xFF0F4C5C).withValues(alpha: 0.5),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("100%", style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold)),
+                      Text("Verifying your face...", style: TextStyle(color: Colors.white, fontSize: 12.sp)),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
                 ),
               ),
               const Spacer(),
             ],
           ),
+
         );
       },
     );

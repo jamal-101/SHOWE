@@ -1,13 +1,20 @@
+import 'dart:io';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:image_picker/image_picker.dart';
+import '../../../core/storage/local_storage.dart';
+import '../../../core/utils/api_enpoint.dart';
+import '../../../core/utils/api_response_model.dart';
+import '../../../core/utils/api_service.dart';
 import '../../home/screen/home_screen.dart';
+import 'package:dio/dio.dart' as dio;
 
 enum Gender { male, female, other}
 
@@ -35,16 +42,70 @@ class ProfileInformationController extends GetxController {
   /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> faceRecognition <<<<<<<<<<<<<<<<<<<<<<///
 
 
-  bool isScanning = false;
 
-  void startScanning() {
-    isScanning = true;
-    update();
-    Future.delayed(const Duration(seconds: 3), () {
+
+  // void startScanning() {
+  //   isScanning = true;
+  //   update();
+  //   Future.delayed(const Duration(seconds: 3), () {
+  //     update();
+  //     // isScanning = false;
+  //     showSuccessDialog();
+  //   });
+  // }
+
+  bool isScanning = false;
+  File? capturedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> startScanning() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+        imageQuality: 50,
+      );
+
+      if (image != null) {
+        capturedImage = File(image.path);
+        isScanning = true;
+        update();
+
+        dio.FormData formData = dio.FormData.fromMap({
+          "device_id": LocalStorage.deviceId,
+          "image": await dio.MultipartFile.fromFile(
+            capturedImage!.path,
+            filename: capturedImage!.path.split('/').last,
+          ),
+        });
+
+        String token = LocalStorage.token;
+        String authHeader = token.startsWith("Bearer") ? token : "Bearer $token";
+
+        // >>>>>>>>>>> হেডারে JWT Token পাস করা হলো <<<<<<<<<<<
+        Map<String, String> headers = {
+          "Authorization": authHeader,
+        };
+
+        ApiResponseModel response = await ApiService.post(
+          ApiEndPoint.saveFaceVerification,
+          body: formData,
+          header: headers, // আপনার ApiService যদি ৩য় প্যারামিটার হিসেবে হেডার নেয়
+        );
+
+        if (response.isSuccess) {
+          showSuccessDialog();
+        } else {
+          isScanning = false;
+          update();
+          Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
+        }
+      }
+    } catch (e) {
+      isScanning = false;
       update();
-      // isScanning = false;
-      showSuccessDialog();
-    });
+      Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
+    }
   }
 
   void showSuccessDialog() {
