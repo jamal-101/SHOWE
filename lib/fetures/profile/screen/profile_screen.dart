@@ -205,11 +205,7 @@ class ProfileScreen extends StatelessWidget {
             break;
           case 8:
             Get.dialog(
-              AccountLogoutDialog(
-                onDelete: () {
-                  Get.toNamed(AppRoutes.singUpLoginScreen);
-                },
-              ),
+              AccountLogoutDialog(),
             );
             break;
           default:

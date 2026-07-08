@@ -1,5 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../core/route/app_routes.dart';
+import '../../../core/storage/local_storage.dart';
+import '../../../core/storage/storage_key.dart';
 
 
 enum Gender { male, female, other}
@@ -31,7 +36,26 @@ class ProfileController extends GetxController{
         break;
     }
   }
-  void logout() {
+
+  // void logout() {
+  // }
+
+  Future<void> logout() async {
+    try {
+      // ১. আপনার তৈরি করা মেথড যা SharedPreferences ক্লিয়ার করে সব ভেরিয়েবল রিসেট করে দেবে
+      await LocalStorage.removeAllPrefData();
+
+      // ২. ডায়ালগ বন্ধ করে সরাসরি লগইন স্ক্রিনে পাঠিয়ে দেওয়া
+      Get.offAllNamed(AppRoutes.singUpLoginScreen);
+    } catch (e) {
+      Get.snackbar(
+          "Logout Error",
+          e.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white
+      );
+    }
   }
 
   ///>>>>>>>>>>>>>>>>>>>>> NotificationSwitch<<<<<<<<<<<<<<<<<<<///

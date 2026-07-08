@@ -168,22 +168,35 @@ class SingUpOrLoginScreen extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: CommonButton(
-                title: AppString.login,
-                onTap: () {
-                  Get.toNamed(AppRoutes.homeScreen);
-                },
+              child: Obx(
+                    () => controller.isLoginLoading.value
+                    ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF0F4C5C),
+                  ),
+                )
+                    : CommonButton(
+                  title: AppString.login,
+                  onTap: () {
+                    if (_loginFormKey.currentState!.validate()) {
+                      controller.loginUser(
+                        email: _loginEmailController.text.trim(),
+                        password: _loginPasswordController.text.trim(),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
             SizedBox(width: 5.w),
             GestureDetector(
               onTap: () {
-                Get.toNamed(AppRoutes.setFaceRecognition);
+                Get.toNamed(AppRoutes.faceRecognitionLoginScreen);
               },
               child: Container(
                 height: 48.h,
                 width: 48.w,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFFF2A900),
                   shape: BoxShape.circle,
                 ),
