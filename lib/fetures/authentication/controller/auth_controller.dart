@@ -359,12 +359,16 @@ class AuthController extends GetxController {
         "oneTimeCode": int.parse(otpController.text.trim()),
         "email": email,
       };
+
       ApiResponseModel response = await ApiService.post(
         ApiEndPoint.otpVerify,
         body: requestBody,
       );
+
       if (response.isSuccess) {
         otpController.clear();
+        String resetToken = response.data['data'] ?? "";
+
         Get.snackbar(
           "Success",
           response.message,
@@ -372,7 +376,7 @@ class AuthController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.toNamed(AppRoutes.setNewPass, arguments: email);
+        Get.toNamed(AppRoutes.setNewPass, arguments: resetToken);
       } else {
         setSheetState(true);
         showIncorrectOtpSheet(Get.context!, this);
@@ -392,7 +396,7 @@ class AuthController extends GetxController {
       TextEditingController();
   var newPasswordVisible = false.obs;
   var confirmPasswordVisible = false.obs;
-  Future<void> resetPassword({required String email}) async {
+  Future<void> resetPassword({required String resetToken}) async {
     String newPass = newPasswordController.text.trim();
     String confirmPass = confirmPasswordController.text.trim();
 
@@ -422,9 +426,14 @@ class AuthController extends GetxController {
         "newPassword": newPass,
         "confirmPassword": confirmPass,
       };
+      Map<String, String> headers = {
+        "Authorization": resetToken,
+      };
+
       ApiResponseModel response = await ApiService.post(
         "/auth/reset-password",
         body: requestBody,
+        header: headers,
       );
 
       if (response.isSuccess) {
@@ -434,7 +443,7 @@ class AuthController extends GetxController {
         Get.snackbar(
           "Success",
           response.message,
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );

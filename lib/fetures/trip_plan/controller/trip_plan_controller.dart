@@ -1,58 +1,162 @@
+// import 'package:get/get.dart';
+//
+// class TripPlanController extends GetxController {
+//   final List<Map<String, dynamic>> allVenues = [
+//     {
+//       "name": "Gala Convention Center",
+//       "address": "123 Golf Street, UK",
+//       "date": "12 April, 2026",
+//     },
+//     {
+//       "name": "Royal Palace",
+//       "address": "456 Side Road, USA",
+//       "date": "15 April, 2026",
+//     },
+//     {
+//       "name": "Convention Hall",
+//       "address": "789 North Street, UK",
+//       "date": "18 April, 2026",
+//     },
+//     {
+//       "name": "Grand Arena",
+//       "address": "101 South Street, UK",
+//       "date": "20 April, 2026",
+//     },
+//   ];
+//
+//   List<Map<String, dynamic>> venues = [];
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     venues = List.from(allVenues);
+//   }
+//
+//
+//   void searchVenue(String query) {
+//     if (query.isEmpty) {
+//       venues = List.from(allVenues);
+//     } else {
+//       venues = allVenues
+//           .where((venue) =>
+//       venue['name'].toLowerCase().contains(query.toLowerCase()) ||
+//           venue['address'].toLowerCase().contains(query.toLowerCase()))
+//           .toList();
+//     }
+//     update();
+//   }
+//
+//   DateTime focusedDay = DateTime.now();
+//   DateTime? selectedDay;
+//
+//   void onDaySelected(DateTime selectDay, DateTime focusDay) {
+//     selectedDay = selectDay;
+//     focusedDay = focusDay;
+//     update();
+//   }
+//
+// }
+
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/api_enpoint.dart';
+import '../../../core/utils/api_response_model.dart';
+import '../../../core/utils/api_service.dart';
+import '../../home/model/venue_model.dart' as VenueModel; // তোমার প্রজেক্টের সঠিক পাথ দাও
 
 class TripPlanController extends GetxController {
-  final List<Map<String, dynamic>> allVenues = [
-    {
-      "name": "Gala Convention Center",
-      "address": "123 Golf Street, UK",
-      "date": "12 April, 2026",
-    },
-    {
-      "name": "Royal Palace",
-      "address": "456 Side Road, USA",
-      "date": "15 April, 2026",
-    },
-    {
-      "name": "Convention Hall",
-      "address": "789 North Street, UK",
-      "date": "18 April, 2026",
-    },
-    {
-      "name": "Grand Arena",
-      "address": "101 South Street, UK",
-      "date": "20 April, 2026",
-    },
-  ];
+  // এপিআই থেকে আসা মূল ভেন্যু লিস্ট এবং স্টেট ট্র্যাকিং
+  List<VenueModel.Data> allVenuesFromApi = [];
+  List<VenueModel.Data> venues = [];
 
-  List<Map<String, dynamic>> venues = [];
-
-  @override
-  void onInit() {
-    super.onInit();
-    venues = List.from(allVenues);
-  }
-
-
-  void searchVenue(String query) {
-    if (query.isEmpty) {
-      venues = List.from(allVenues);
-    } else {
-      venues = allVenues
-          .where((venue) =>
-      venue['name'].toLowerCase().contains(query.toLowerCase()) ||
-          venue['address'].toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-    update();
-  }
+  var isLoading = false.obs;
+  String searchQuery = "";
 
   DateTime focusedDay = DateTime.now();
   DateTime? selectedDay;
 
-  void onDaySelected(DateTime selectDay, DateTime focusDay) {
-    selectedDay = selectDay;
-    focusedDay = focusDay;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchVenuesFromApi(); // স্ক্রিন ওপেন হওয়ার সাথে সাথে এপিআই কল হবে
+  }
+
+  // ১. সম্পূর্ণ আলাদাভাবে এই কন্ট্রোলারের নিজস্ব এপিআই মেথড
+  Future<void> fetchVenuesFromApi() async {
+    try {
+      isLoading.value = true;
+      update();
+
+      // তোমার প্রজেক্টের এপিআই এন্ডপয়েন্ট (যেমন: /vanue অথবা ApiEndPoint.getVenues)
+      String url = "${ApiEndPoint.getVenues}?page=1&limit=20";
+      ApiResponseModel response = await ApiService.get(url);
+
+      if (response.isSuccess) {
+        VenueModel.Venue_model incomingVenueModel = VenueModel.Venue_model.fromJson(
+          Map<String, dynamic>.from(response.data),
+        );
+
+        if (incomingVenueModel.success == true && incomingVenueModel.data != null) {
+          allVenuesFromApi = incomingVenueModel.data!;
+          _applyFilters(); // ডেটা আসার পর ফিল্টার অ্যাপ্লাই হবে
+        }
+      } else {
+        Get.snackbar("Error", response.message, backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      debugPrint("Error fetching venues in TripPlanController: $e");
+    } finally {
+      isLoading.value = false;
+      update();
+    }
+  }
+
+  // ২. ফিল্টার এবং সার্চ লজিক হ্যান্ডেল করার কমন মেথড
+  void _applyFilters() {
+    List<VenueModel.Data> tempResult = List.from(allVenuesFromApi);
+
+    // সার্চ ফিল্টার
+    if (searchQuery.isNotEmpty) {
+      tempResult = tempResult.where((venue) {
+        final name = venue.name?.toLowerCase() ?? "";
+        final city = venue.city?.toLowerCase() ?? "";
+        final country = venue.country?.toLowerCase() ?? "";
+        return name.contains(searchQuery.toLowerCase()) ||
+            city.contains(searchQuery.toLowerCase()) ||
+            country.contains(searchQuery.toLowerCase());
+      }).toList();
+    }
+
+    // ক্যালেন্ডার ডেট ফিল্টার
+    if (selectedDay != null) {
+      tempResult = tempResult.where((venue) {
+        if (venue.createdAt == null || venue.createdAt!.isEmpty) return false;
+        try {
+          DateTime venueDate = DateTime.parse(venue.createdAt!);
+          return venueDate.year == selectedDay!.year &&
+              venueDate.month == selectedDay!.month &&
+              venueDate.day == selectedDay!.day;
+        } catch (e) {
+          return false;
+        }
+      }).toList();
+    }
+
+    venues = tempResult;
     update();
   }
 
+  // সার্চ কুয়েরি হ্যান্ডলার
+  void searchVenue(String query) {
+    searchQuery = query;
+    _applyFilters();
+  }
+
+  // ক্যালেন্ডার ডেট সিলেক্ট হ্যান্ডলার
+  void onDaySelected(DateTime selectDay, DateTime focusDay) {
+    selectedDay = selectDay;
+    focusedDay = focusDay;
+    _applyFilters();
+  }
 }

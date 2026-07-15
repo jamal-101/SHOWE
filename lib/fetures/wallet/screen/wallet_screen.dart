@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/route/app_routes.dart';
+import '../../../core/utils/api_enpoint.dart';
+import '../../my_event/controller/my_event_controller.dart';
 import '../controller/wallet_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
 
@@ -15,6 +17,7 @@ class WalletScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(WalletController());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBackgroundColor,
@@ -25,10 +28,13 @@ class WalletScreen extends StatelessWidget {
             color: Color(0xFF0F4C5C),
             size: 20,
           ),
-          onPressed: () => Get.back(),
+          onPressed: () {
+            Get.back();
+            Get.find<MyEventController>().fetchTickets();
+          },
         ),
         title: Text(
-          "Wallet",
+          controller.isEditMode ? "Edit Ticket" : "Wallet",
           style: GoogleFonts.montserrat(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
@@ -40,7 +46,7 @@ class WalletScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: 15.w),
             child: GestureDetector(
-              onTap: (){
+              onTap: () {
                 Get.toNamed(AppRoutes.myEventScreen);
               },
               child: Column(
@@ -69,7 +75,9 @@ class WalletScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 20.h),
                 Text(
-                  "Upload your tickets to My Events for\neasy access",
+                  controller.isEditMode
+                      ? "Edit your ticket details below"
+                      : "Upload your tickets to My Events for\neasy access",
                   style: GoogleFonts.montserrat(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
@@ -150,57 +158,73 @@ class WalletScreen extends StatelessWidget {
                         dashPattern: [10, 5],
                         strokeWidth: 1,
                       ),
+                      // 💡 DottedBorder-এর ভেতরের child প্রোপার্টিটি এই কোড দিয়ে রিপ্লেস করে নাও:
                       child: controller.pickedImage != null
+                          ? Image.file(
+                        controller.pickedImage!,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                          : (controller.isEditMode && controller.existingFileUrl != null)
                           ? Stack(
-                              children: [
-                                Image.file(
-                                  controller.pickedImage!,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                                Container(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.sync,
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    AppImages.linkIcon,
-                                    height: 30.h,
-                                    width: 30.w,
-                                  ),
-                                  Text(
-                                    "Upload ticket",
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.grey,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
+                        children: [
+                          Image.network(
+                            "${ApiEndPoint.imageUrl}${controller.existingFileUrl}",
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Center(
+                              child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                            ),
+                          ),
+                          // 🚀 তোমার সিঙ্ক আইকন ওভারলে কন্টেইনার (এটি বাদ দেওয়া হয়নি)
+                          Container(
+                            color: Colors.black.withValues(alpha: 0.4), // আইকন ফুটিয়ে তোলার জন্য আলফা একটু বাড়াতে পারো (প্রয়োজনে ০.১ রাখতে পারো)
+                            child: const Center(
+                              child: Icon(
+                                Icons.sync,
+                                color: Colors.white,
+                                size: 30,
                               ),
                             ),
+                          ),
+                        ],
+                      )
+                          : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(AppImages.linkIcon, height: 30.h, width: 30.w),
+                            SizedBox(height: 5.h),
+                            Text(
+                              "Upload ticket",
+                              style: GoogleFonts.montserrat(
+                                color: Colors.grey,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(height: 40.h),
-                CommonButton(
-                  title: "Upload",
-                  onTap:(){
-                    Get.toNamed(AppRoutes.myEventScreen);
-                  },
-                ),
+                Obx(() {
+                  return CommonButton(
+                    title: controller.isEditMode ? "Update" : "Upload",
+                    isLoading: controller.isLoading.value,
+                    onTap: () {
+                      if (controller.isEditMode) {
+                        controller.updateTicket();
+                      } else {
+                        controller.createTicket();
+                      }
+                    },
+                  );
+                }),
               ],
             ),
           );

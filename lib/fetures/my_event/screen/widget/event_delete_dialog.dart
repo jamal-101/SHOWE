@@ -69,6 +69,7 @@ class EventDeleteDialog extends StatelessWidget {
                 Expanded(
                   child: TextButton(
                     onPressed:  (){
+                      // controller.deleteEvent(index);
                       controller.deleteEvent(index);
                       Get.back();
                     },

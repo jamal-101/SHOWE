@@ -156,6 +156,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Get.toNamed(AppRoutes.forgotPasswordScreen);
+                // Get.toNamed(AppRoutes.setNewPass);
               },
               child: const Text(
                 AppString.forgotPass,

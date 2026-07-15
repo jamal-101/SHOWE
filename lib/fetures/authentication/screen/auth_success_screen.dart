@@ -62,7 +62,7 @@ class AuthSuccessScreen extends StatelessWidget {
             ),
             SizedBox(height: 32.h),
             CommonButton(title: AppString.conti, onTap: (){
-              Get.toNamed(AppRoutes.profileInformationScreen);
+              Get.toNamed(AppRoutes.singUpLoginScreen);
             })
           ],
         ),

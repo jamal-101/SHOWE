@@ -3,11 +3,13 @@ import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
+import '../../my_event/controller/my_event_controller.dart';
 import '../../scan/controller/scan_controller.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -233,6 +235,7 @@ class HomeScreen extends StatelessWidget {
 
 
   Widget _buildMyEventsCard() {
+    final MyEventController myEventController = Get.put(MyEventController());
     return GestureDetector(
       onTap: () {
         Get.toNamed(AppRoutes.myEventScreen);
@@ -269,27 +272,49 @@ class HomeScreen extends StatelessWidget {
               right: 15.w,
               top: 25.h,
               child:
-              ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return const LinearGradient(
-                    begin: Alignment.centerRight,
-                    end: Alignment.centerLeft,
-                    colors: [
-                      Color(0xFFF2A900),
-                      Color(0xFF0F4C5C),
-                    ],
-                  ).createShader(bounds);
-                },
-                blendMode: BlendMode.srcIn,
-                child: Text(
-                  "03",
-                  style: GoogleFonts.museoModerno(
-                    fontSize: 120.sp,
-                    fontWeight: FontWeight.w600,
-                    height: 1.33,
-                    color: Colors.white,
+              Obx(() {
+                if (myEventController.isLoading.value && myEventController.ticketList.isEmpty) {
+                  return ShaderMask(
+                    shaderCallback: (Rect bounds) => const LinearGradient(
+                      colors: [Color(0xFFF2A900), Color(0xFF0F4C5C)],
+                    ).createShader(bounds),
+                    blendMode: BlendMode.srcIn,
+                    child: Text(
+                      "00",
+                      style: GoogleFonts.museoModerno(
+                        fontSize: 120.sp,
+                        fontWeight: FontWeight.w600,
+                        height: 1.33,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                }
+                int count = myEventController.totalTickets.value;
+                String displayCount = count < 10 ? "0$count" : "$count";
+               return ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return const LinearGradient(
+                      begin: Alignment.centerRight,
+                      end: Alignment.centerLeft,
+                      colors: [
+                        Color(0xFFF2A900),
+                        Color(0xFF0F4C5C),
+                      ],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.srcIn,
+                  child: Text(
+                    displayCount,
+                    style: GoogleFonts.museoModerno(
+                      fontSize: 120.sp,
+                      fontWeight: FontWeight.w600,
+                      height: 1.33,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
+                );
+              }
               )
             ),
             Padding(

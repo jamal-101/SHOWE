@@ -1,3 +1,4 @@
+import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/fetures/home/controller/hom_controller.dart';
 import 'package:digital_event/fetures/home/screen/venue_details_screen.dart';
@@ -7,7 +8,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import '../../../core/utils/api_enpoint.dart';
 import 'event_details_screen.dart';
+import '../model/venue_model.dart' as VenueModel;
 
 class EventScreen extends StatelessWidget {
   const EventScreen({super.key});
@@ -17,6 +20,7 @@ class EventScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        surfaceTintColor: AppColors.appBackgroundColor,
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -53,8 +57,6 @@ class EventScreen extends StatelessWidget {
             currentData = controller.eventData;
           } else if (controller.selectedTabIndex == 1) {
             currentData = controller.artistData;
-          } else {
-            currentData = controller.venuesData;
           }
 
           return Padding(
@@ -77,6 +79,11 @@ class EventScreen extends StatelessWidget {
                             SizedBox(width: 10.w),
                             Expanded(
                               child: TextField(
+                                onChanged: (value) {
+                                  if (controller.selectedTabIndex == 2) {
+                                    controller.searchVenue(value);
+                                  }
+                                },
                                 decoration: InputDecoration(
                                   hintText: controller.selectedTabIndex == 2
                                       ? "Search venue"
@@ -101,7 +108,11 @@ class EventScreen extends StatelessWidget {
                                 onPressed: () {
                                   _showCalendarDialog(context);
                                 },
-                                icon: Image.asset( AppImages.searchCalender,height: 25.h,width: 25.w,),
+                                icon: Image.asset(
+                                  AppImages.searchCalender,
+                                  height: 25.h,
+                                  width: 25.w,
+                                ),
                               ),
                             ],
                           ],
@@ -141,18 +152,62 @@ class EventScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 15.h),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: currentData.length,
-                    itemBuilder: (context, index) {
-                      if (controller.selectedTabIndex == 0) {
-                        return _buildEventCard(currentData[index]);
-                      } else if (controller.selectedTabIndex == 1) {
-                        return _buildArtistCard(currentData[index], controller); // Artist কার্ড
-                      } else {
-                        return _buildVenueCard(currentData[index]); // Venue কার্ড
-                      }
-                    },
-                  ),
+                  child: Obx(() {
+                    if (controller.selectedTabIndex == 0 &&
+                        controller.isEventLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF0F4C5C),
+                        ),
+                      );
+                    }
+
+                    if (controller.selectedTabIndex == 2 &&
+                        controller.isVenueLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF0F4C5C),
+                        ),
+                      );
+                    }
+
+                    int itemCount = 0;
+                    if (controller.selectedTabIndex == 0) {
+                      itemCount =
+                          (controller.eventModel.data?.length ?? 0) +
+                          (controller.isLoadMore.value ? 1 : 0);
+                    } else if (controller.selectedTabIndex == 1) {
+                      itemCount = controller.artistData.length;
+                    } else if (controller.selectedTabIndex == 2) {
+                      itemCount = controller.venueList.length;
+                    }
+
+                    return ListView.builder(
+                      itemCount: itemCount,
+                      controller: controller.selectedTabIndex == 0
+                          ? controller.scrollController
+                          : null,
+                      itemBuilder: (context, index) {
+                        if (controller.selectedTabIndex == 0) {
+                          if (index <
+                              (controller.eventModel.data?.length ?? 0)) {
+                            return _buildEventCard(
+                              controller.eventModel.data![index],
+                            );
+                          } else {
+                            return _loadMoreIndicator();
+                          }
+                        } else if (controller.selectedTabIndex == 1) {
+                          return _buildArtistCard(
+                            currentData[index],
+                            controller,
+                          );
+                        } else {
+                          return _buildVenueCard(controller.venueList[index]);
+                        }
+                      },
+                    );
+                  }),
                 ),
               ],
             ),
@@ -197,149 +252,145 @@ class EventScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(Map<String, dynamic> data) {
-    return GetBuilder<HomController>(
-      init: HomController(),
-      builder: (controller) {
-        return GestureDetector(
-          onTap: () {
-            Get.to(EventDetailsScreen(), arguments: data);
-          },
-          child: Container(
-            margin: EdgeInsets.only(bottom: 20.h),
-            height: 180.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.r),
-              image: DecorationImage(
-                image: AssetImage(data['image']),
-                fit: BoxFit.cover,
+  Widget _buildEventCard(dynamic data) {
+    final String fullImageUrl =
+        "${ApiEndPoint.imageUrl}${data.coverImage ?? ""}";
+    final HomController controller = Get.put(HomController());
+
+    return GestureDetector(
+      onTap: () async {
+        if (data.sId != null) {
+          await controller.fetchEventDetails(data.sId!);
+          if (controller.eventDetailsModel?.data != null) {
+            Get.to(() => const EventDetailsScreen(), arguments: data);
+          }
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 20.h),
+        height: 180.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r),
+          image: DecorationImage(
+            image: NetworkImage(fullImageUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Stack(
+          children: [
+            // কন্টেইনার এবং গ্রাডিয়েন্ট
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                ),
               ),
             ),
-            child: Stack(
-              children: [
-                Container(
+            // ফেভারিট বাটন
+            Positioned(
+              top: 15.h,
+              right: 15.w,
+              child: GestureDetector(
+                onTap: () => controller.toggleFavorite(data),
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.r),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.8),
-                      ],
-                    ),
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.2),
                   ),
+                  child: (data.isFavorited ?? false)
+                      ? Image.asset(
+                          AppImages.selectFavoriteIcon,
+                          height: 25.h,
+                          width: 25.w,
+                        )
+                      : Image.asset(
+                          AppImages.unFavoriteIcon,
+                          height: 25.h,
+                          width: 25.w,
+                        ),
                 ),
-                Positioned(
-                  top: 15.h,
-                  right: 15.w,
-                  child: GestureDetector(
-                    onTap: () => controller.toggleFavorite(data),
-                    child: Container(
+              ),
+            ),
+            Positioned(
+              bottom: 15.h,
+              left: 15.w,
+              right: 15.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (data.category != null)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
                         color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: (data['isFavorite'] ?? false)
-                            ? Image.asset(
-                                AppImages.unFavoriteIcon,
-                                color: Colors.white,
-                                height: 25.h,
-                                width: 25.w,
-                              )
-                            : Image.asset(
-                                AppImages.selectFavoriteIcon,
-                                height: 25.h,
-                                width: 25.w,
-                        ),
+                      child: Text(
+                        data.category!,
+                        style: TextStyle(color: Colors.white, fontSize: 10.sp),
                       ),
                     ),
+                  SizedBox(height: 5.h),
+                  Text(
+                    data.title ?? "No Title",
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                Positioned(
-                  bottom: 15.h,
-                  left: 15.w,
-                  right: 15.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(height: 5.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Text(
-                          data['name'],
-                          style: TextStyle(color: Colors.white, fontSize: 10.sp),
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      Text(
-                        data['title'],
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
-                      Text(
-                        data['subtitle'],
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 5.h),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: Colors.white,
-                                size: 14.sp,
-                              ),
-                              SizedBox(width: 5.w),
-                              Text(
-                                "${data['date']} - ${data['time']}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
+                          Icon(
+                            Icons.calendar_today,
+                            color: Colors.white,
+                            size: 14.sp,
                           ),
+                          SizedBox(width: 5.w),
                           Text(
-                            "\$${data['price']}",
+                            data.eventDate != null
+                                ? DateFormat(
+                                    'MMM dd, yyyy',
+                                  ).format(DateTime.parse(data.eventDate!))
+                                : "",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ],
                       ),
+                      Text(
+                        "\$${data.price ?? 0}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
-
-
 
   Widget _buildArtistCard(Map<String, dynamic> data, HomController controller) {
     return Container(
@@ -357,7 +408,6 @@ class EventScreen extends StatelessWidget {
             ),
           ),
           SizedBox(width: 15.w),
-          // আর্টিস্ট ডিটেইলস
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,16 +441,16 @@ class EventScreen extends StatelessWidget {
               ),
               child: (data['isFavorite'] ?? false)
                   ? Image.asset(
-                AppImages.unFavoriteIcon,
-                color: Colors.white,
-                height: 25.h,
-                width: 25.w,
-              )
+                      AppImages.unFavoriteIcon,
+                      color: Colors.white,
+                      height: 25.h,
+                      width: 25.w,
+                    )
                   : Image.asset(
-                AppImages.selectFavoriteIcon,
-                height: 25.h,
-                width: 25.w,
-              ),
+                      AppImages.selectFavoriteIcon,
+                      height: 25.h,
+                      width: 25.w,
+                    ),
             ),
           ),
         ],
@@ -408,14 +458,20 @@ class EventScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVenueCard(Map<String, dynamic> data) {
+  Widget _buildVenueCard(VenueModel.Data data) {
+    final controller = Get.find<HomController>();
+
     return GestureDetector(
-      onTap: (){
-        Get.to(VenueDetailsScreen(),arguments: data);
+      onTap: () async {
+        if (data.sId != null) {
+          await controller.fetchVenueDetails(data.sId!);
+          if (controller.venueDetailsModel?.data != null) {
+            Get.to(() => const VenueDetailsScreen());
+          }
+        }
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),
-        padding: EdgeInsets.all(15.w),
         decoration: BoxDecoration(
           color: const Color(0xFFE9F0F2),
           borderRadius: BorderRadius.circular(15.r),
@@ -423,42 +479,57 @@ class EventScreen extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    data['name'] ?? "",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1D2125),
+              child: Padding(
+                padding: EdgeInsets.all(15.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data.name ?? "Unknown Venue",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1D2125),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5.h),
-                  Text(
-                    data['address'] ?? "",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14.sp,
-                      color: Colors.grey[600],
+                    SizedBox(height: 5.h),
+                    Text(
+                      "${data.city ?? ""}, ${data.country ?? ""}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.sp,
+                        color: Colors.grey[600],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 5.h),
-                  Text(
-                    data['date'] ?? "",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14.sp,
-                      color: Colors.grey[600],
+                    SizedBox(height: 5.h),
+                    Text(
+                      data.createdAt != null
+                          ? DateFormat(
+                              'MMMM dd, yyyy',
+                            ).format(DateTime.parse(data.createdAt!))
+                          : "Date TBA",
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12.sp,
+                        color: const Color(0xFF0F4C5C),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Image.asset(AppImages.location, height: 30.h, width: 30.w),
-                ],
+                    SizedBox(height: 5.h),
+                    Image.asset(AppImages.location, height: 40.h, width: 40.w),
+                  ],
+                ),
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Color(0xFF0F4C5C),
-              size: 18,
+            Padding(
+              padding: EdgeInsets.only(right: 15.w),
+              child: const Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFF0F4C5C),
+                size: 18,
+              ),
             ),
           ],
         ),
@@ -576,4 +647,11 @@ class EventScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _loadMoreIndicator() {
+  return const Padding(
+    padding: EdgeInsets.symmetric(vertical: 15),
+    child: Center(child: CircularProgressIndicator(color: Color(0xFF0F4C5C))),
+  );
 }

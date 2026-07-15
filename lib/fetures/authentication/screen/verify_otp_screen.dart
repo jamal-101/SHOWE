@@ -1,6 +1,4 @@
 
-
-
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
 import 'package:digital_event/fetures/authentication/controller/auth_controller.dart';

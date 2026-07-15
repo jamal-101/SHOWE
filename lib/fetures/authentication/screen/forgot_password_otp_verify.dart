@@ -1,6 +1,5 @@
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
-import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/authentication/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,10 +11,8 @@ import '../../../core/utils/app_utils.dart';
 
 class ForgotPasswordOtpVerify extends StatelessWidget {
   const ForgotPasswordOtpVerify({super.key});
-
   @override
   Widget build(BuildContext context) {
-    // ForgotPasswordScreen থেকে পাঠানো আসল ইমেইলটি রিসিভ করা হচ্ছে
     final String userEmail = Get.arguments ?? "";
 
     final defaultPinTheme = PinTheme(
@@ -117,11 +114,10 @@ class ForgotPasswordOtpVerify extends StatelessWidget {
 
                   SizedBox(height: 25.h),
 
-                  // >>> ১. ওটিপি টাইমার এবং বাটন সোয়াপিং লজিক (Obx দিয়ে লাইভ ১ সেকেন্ড করে কমবে) <<<
                   Obx(() {
                     return controller.remainingSeconds.value > 0
                         ? Text(
-                      "Resend code in ${controller.timerText}", // ঘড়ির কাটার মতো কাউন্টডাউন হবে
+                      "Resend code in ${controller.timerText}",
                       style: TextStyle(
                         color: const Color(0xFF0F4C5C),
                         fontSize: 14.sp,
@@ -130,7 +126,7 @@ class ForgotPasswordOtpVerify extends StatelessWidget {
                     )
                         : InkWell(
                       onTap: () {
-                        controller.resendOtp(email: userEmail); // টাইম শেষ হলে রিসেন্ড মেথড কল হবে
+                        controller.resendOtp(email: userEmail);
                       },
                       child: Text(
                         "Resend Code",
@@ -143,10 +139,7 @@ class ForgotPasswordOtpVerify extends StatelessWidget {
                       ),
                     );
                   }),
-
                   SizedBox(height: 40.h),
-
-                  // >>> ২. ভেরিফাই বাটন কানেক্ট এবং লোডিং স্টেট হ্যান্ডেল <<<
                   Obx(() {
                     return controller.isForgotOtpLoading.value
                         ? const Center(
@@ -160,7 +153,6 @@ class ForgotPasswordOtpVerify extends StatelessWidget {
                           ? const Color(0xFFF2A900).withValues(alpha: 0.5)
                           : const Color(0xFFF2A900),
                       onTap: () {
-                        // ভেরিফাই মেথড কল করা হলো
                         controller.verifyForgotPasswordOtp(email: userEmail);
                       },
                     );

@@ -7,6 +7,7 @@ class CommonButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color? backgroundColor;
   final double? fontSize;
+  final bool isLoading;
 
   const CommonButton({
     super.key,
@@ -14,6 +15,7 @@ class CommonButton extends StatelessWidget {
     required this.onTap,
     this.backgroundColor,
     this.fontSize,
+    this.isLoading = false,
   });
 
   @override
@@ -30,12 +32,21 @@ class CommonButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: CommonText(
+        child: isLoading
+            ? SizedBox(
+          height: 20.h,
+          width: 20.w,
+          child: const CircularProgressIndicator(
+            color: Colors.white, // লোডারের কালার সাদা
+            strokeWidth: 2.5,   // লোডারের লাইনের পুরুত্ব
+          ),
+        )
+            : CommonText(
           text: title,
           style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16.sp,
-            color: Color(0xFFFFFFFF),
+            fontWeight: FontWeight.w700,
+            fontSize: fontSize ?? 16.sp,
+            color: const Color(0xFFFFFFFF),
           ),
         ),
       ),

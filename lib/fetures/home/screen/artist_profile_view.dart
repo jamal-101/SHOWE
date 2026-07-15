@@ -206,7 +206,7 @@ class ArtistProfileView extends StatelessWidget {
   Widget _buildEventCard(Map<String, dynamic> data, HomController controller) {
     return GestureDetector(
       onTap: () {
-        Get.to(const EventDetailsScreen(), arguments: data);
+        // Get.to(const EventDetailsScreen(), arguments: data);
       },
       child: Container(
         height: 160.h,
