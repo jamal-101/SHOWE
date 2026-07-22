@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constans/app_images.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
 import '../../favorites/controller/favorite_controller.dart';
 import '../model/event_details_model.dart';
+import 'package:intl/intl.dart';
 import '../model/event_model.dart' hide Data;
 import '../model/venue_details_model.dart' hide Data;
 import '../model/venue_model.dart' as VenueModel;
+import '../model/artist_model.dart' hide Data;
 import '../model/event_model.dart' as EventModel;
 import '../model/venue_details_model.dart' as VenueDetails;
 import '../../favorites/model/favourite_event_model.dart' as ev;
 import '../../favorites/model/favourite_venue_model.dart' as vn;
+import 'dart:async';
 
-
-class HomController extends GetxController{
+class HomController extends GetxController {
   var selectedTabIndex = 0.obs;
-
   var isEventLoading = false.obs;
   var isLoadMore = false.obs;
   var isVenueLoadMore = false.obs;
@@ -25,53 +27,99 @@ class HomController extends GetxController{
   int currentVenuePage = 1;
   Event_model eventModel = Event_model(data: []);
   final ScrollController scrollController = ScrollController();
-
+  final TextEditingController searchController = TextEditingController();
+  DateTime? selectedVenueDate;
   List<VenueModel.Data> venueList = [];
   var isVenueLoading = false.obs;
   VenueModel.Pagination? venuePagination;
-
   var isDetailsLoading = false.obs;
   Event_details_model? eventDetailsModel;
-
-
+  var isArtistLoading = false.obs;
+  var isArtistLoadMore = false.obs;
+  int currentArtistPage = 1;
+  Artist_model artistModel = Artist_model(data: []);
 
   @override
   void onInit() {
     super.onInit();
     fetchEvents(isRefresh: true);
     scrollController.addListener(() {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
         if (selectedTabIndex.value == 0) {
-          // ইভেন্ট লোড মোর
           int totalPage = eventModel.pagination?.totalPage ?? 1;
           if (currentPage <= totalPage && !isLoadMore.value) {
             fetchEvents(isRefresh: false);
           }
-        } else if (selectedTabIndex.value == 2) {
-          // ভেন্যু লোড মোর
-          int totalPage = venuePagination?.totalPage ?? 1;
-          if (currentVenuePage <= totalPage && !isVenueLoadMore.value) {
-            fetchVenues(isRefresh: false);
+        } else if (selectedTabIndex.value == 1) { // Artist Pagination
+          int totalPage = artistModel.pagination?.totalPage ?? 1;
+          if (currentArtistPage <= totalPage && !isArtistLoadMore.value) {
+            fetchArtists(isRefresh: false);
+          }
+          else if (selectedTabIndex.value == 2) {
+            int totalPage = venuePagination?.totalPage ?? 1;
+            if (currentVenuePage <= totalPage && !isVenueLoadMore.value) {
+              fetchVenues(isRefresh: false);
+            }
           }
         }
       }
-    });
+    }
+      );
   }
 
   @override
   void onClose() {
     scrollController.dispose();
+    searchController.dispose();
     super.onClose();
   }
+
+  // void changeTab(int index) {
+  //   selectedTabIndex.value = index;
+  //   searchController.clear();
+  //   update();
+  //   if (index == 2 && venueList.isEmpty) {
+  //     fetchVenues();
+  //   }
+  // }
 
   void changeTab(int index) {
     selectedTabIndex.value = index;
     update();
-    if (index == 2 && venueList.isEmpty) {
-      fetchVenues();
-    }
+
+    if (index == 0 && eventModel.data!.isEmpty) fetchEvents();
+    if (index == 1 && artistModel.data!.isEmpty) fetchArtists(); // আর্টিস্ট ট্যাব
+    if (index == 2 && venueList.isEmpty) fetchVenues();
   }
 
+  Timer? _debounce;
+
+  void onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (selectedTabIndex.value == 0) {
+        fetchEvents(isRefresh: true);
+      } else if (selectedTabIndex.value == 1) {
+        fetchArtists(isRefresh: true) ;
+
+      } else if (selectedTabIndex.value == 2) {
+        fetchVenues(isRefresh: true);
+      }
+    });
+  }
+
+  Future<void> refreshCurrentTab() async {
+    if (selectedTabIndex.value == 0) {
+      await fetchEvents(isRefresh: true);
+    } else if (selectedTabIndex.value == 1) {
+      await fetchArtists(isRefresh: true);
+    }
+    else if (selectedTabIndex.value == 2) {
+      await fetchVenues(isRefresh: true);
+    }
+  }
 
   Future<void> fetchEvents({bool isRefresh = true}) async {
     if (isRefresh) {
@@ -83,7 +131,11 @@ class HomController extends GetxController{
     }
     update();
     try {
+      String searchText = searchController.text.trim();
       String url = "/event/search?page=$currentPage&limit=10";
+      if (searchText.isNotEmpty) {
+        url += "&searchTerm=$searchText";
+      }
       ApiResponseModel response = await ApiService.get(url);
       if (response.isSuccess) {
         Event_model incomingModel = Event_model.fromJson(Map<String, dynamic>.from(response.data));
@@ -106,7 +158,6 @@ class HomController extends GetxController{
       update();
     }
   }
-
 
   Future<void> fetchEventDetails(String eventId) async {
     try {
@@ -132,7 +183,6 @@ class HomController extends GetxController{
     }
   }
 
-
   Future<void> fetchVenues({bool isRefresh = true}) async {
     if (isRefresh) {
       currentVenuePage = 1;
@@ -144,14 +194,21 @@ class HomController extends GetxController{
     update();
 
     try {
+      String searchText = searchController.text.trim();
       String url = "${ApiEndPoint.getVenues}?page=$currentVenuePage&limit=10";
+      if (searchText.isNotEmpty) {
+        url += "&searchTerm=$searchText";
+      }
+      if (selectedVenueDate != null) {
+        String formattedDate = DateFormat('yyyy-MM-dd').format(selectedVenueDate!);
+        url += "&date=$formattedDate";
+      }
       ApiResponseModel response = await ApiService.get(url);
 
       if (response.isSuccess) {
         VenueModel.Venue_model incomingVenueModel = VenueModel.Venue_model.fromJson(
           Map<String, dynamic>.from(response.data),
         );
-
         if (incomingVenueModel.success == true && incomingVenueModel.data != null) {
           venueList.addAll(incomingVenueModel.data!);
           venuePagination = incomingVenueModel.pagination;
@@ -169,6 +226,51 @@ class HomController extends GetxController{
     }
   }
 
+  Future<void> fetchArtists({bool isRefresh = true}) async {
+    if (isRefresh) {
+      currentArtistPage = 1;
+      isArtistLoading.value = true;
+      artistModel.data = [];
+    } else {
+      isArtistLoadMore.value = true;
+    }
+    update();
+
+    try {
+      String url = "/artist?page=$currentArtistPage&limit=10";
+
+      if (searchController.text.isNotEmpty) {
+        url += "&searchTerm=${searchController.text.trim()}";
+      }
+
+      ApiResponseModel response = await ApiService.get(url);
+
+      if (response.isSuccess) {
+        Artist_model incomingModel = Artist_model.fromJson(
+          Map<String, dynamic>.from(response.data),
+        );
+
+        if (incomingModel.success == true && incomingModel.data != null) {
+          artistModel.success = incomingModel.success;
+          artistModel.pagination = incomingModel.pagination;
+          artistModel.data ??= [];
+          artistModel.data!.addAll(incomingModel.data!);
+          currentArtistPage++;
+        }
+      } else {
+        Get.snackbar("Error", response.message, backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      debugPrint("Error fetching artists: $e");
+    } finally {
+      isArtistLoading.value = false;
+      isArtistLoadMore.value = false;
+      update();
+    }
+  }
+
+
+
 
   var isVenueDetailsLoading = false.obs;
   venue_Details_Model? venueDetailsModel;
@@ -179,7 +281,7 @@ class HomController extends GetxController{
       venueDetailsModel = null;
       update();
 
-      String url = "/vanue/$venueId"; // তোমার স্ক্রিনশটের রুট অনুযায়ী
+      String url = "/vanue/$venueId";
       ApiResponseModel response = await ApiService.get(url);
       if (response.isSuccess) {
         venueDetailsModel = venue_Details_Model.fromJson(
@@ -196,73 +298,11 @@ class HomController extends GetxController{
       update();
     }
   }
-  ///>>>>>>>>>>>>>>>>> togoleFavorite <<<<<<<<<<<<<///
-
-  // Future<void> toggleFavorite(dynamic item) async {
-  //   String? itemId;
-  //   String? itemType;
-  //   if (item is EventModel.Data) {
-  //     item.isFavorited = !(item.isFavorited ?? false);
-  //     itemId = item.sId;
-  //     itemType = 'Event';
-  //   }
-  //   else if (item is VenueModel.Data) {
-  //     item.isFavorited = !(item.isFavorited ?? false);
-  //     itemId = item.sId;
-  //     itemType = 'Venue';
-  //   }
-  //   else if (item is VenueDetails.Data) {
-  //     item.isFavorited = !(item.isFavorited ?? false);
-  //     itemId = item.sId;
-  //     itemType = 'Venue';
-  //   }
-  //   else if (item is Data) {
-  //     item.isFavorited = !(item.isFavorited ?? false);
-  //     itemId = item.sId;
-  //     itemType = 'Event';
-  //   }
-  //   if (itemId == null || itemId.isEmpty || itemType == null) return;
-  //
-  //   update();
-  //
-  //   try {
-  //
-  //     String url = "/event/interest/$itemId";
-  //     Map<String, dynamic> body = {
-  //       "type": itemType
-  //     };
-  //
-  //     ApiResponseModel response = await ApiService.post(url,body: body);
-  //
-  //     if (response.isSuccess) {
-  //       debugPrint("Successfully toggled favorite for $itemType: $itemId");
-  //       if (Get.isRegistered<FavoriteController>()) {
-  //         final favController = Get.find<FavoriteController>();
-  //         favController.favoriteList.removeWhere((element) {
-  //           if (element is ev.Data) return element.sId == itemId;
-  //           if (element is vn.Data) return element.sId == itemId;
-  //           return false;
-  //         });
-  //         favController.update();
-  //       }
-  //     } else {
-  //       _rollbackStatus(item);
-  //       Get.snackbar("Error", "Could not update favorite status");
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Favorite Error: $e");
-  //     _rollbackStatus(item);
-  //   }
-  // }
-
-
-  // lib/fetures/home/controller/hom_controller.dart
 
   Future<void> toggleFavorite(dynamic item) async {
     String? itemId;
     String? itemType;
-
-    if (item is EventModel.Data) {
+     if (item is EventModel.Data) {
       item.isFavorited = !(item.isFavorited ?? false);
       itemId = item.sId;
       itemType = 'Event';
@@ -277,41 +317,37 @@ class HomController extends GetxController{
       itemId = item.sId;
       itemType = 'Venue';
     }
-    // >>> ফেভারিট স্ক্রিন থেকে আসা ইভেন্টের জন্য নিচের অংশটুকু যোগ করুন <<<
+    else if (item is Data) {
+      item.isFavorited = !(item.isFavorited ?? false);
+      itemId = item.sId;
+      itemType = 'Event';
+    }
     else if (item is ev.Data) {
       itemId = item.sId;
       itemType = 'Event';
-      // যেহেতু ফেভারিট লিস্টে আছে, তাই এটি ডিফল্ট ট্রু ধরে নেওয়া যায়
     }
-    // >>> ফেভারিট স্ক্রিন থেকে আসা ভেন্যুর জন্য নিচের অংশটুকু যোগ করুন <<<
     else if (item is vn.Data) {
       itemId = item.sId;
       itemType = 'Venue';
     }
-
-    // যদি আইডি না পায় তবে এখানেই থেমে যাবে (আপনার ক্ষেত্রে এটিই হচ্ছিল)
     if (itemId == null || itemId.isEmpty || itemType == null) {
       debugPrint("Error: Item ID or Type not found for ${item.runtimeType}");
       return;
     }
 
-    update(); // UI রিফ্রেশ
+    update();
 
     try {
       String url = "/event/interest/$itemId";
       Map<String, dynamic> body = {"type": itemType};
 
       ApiResponseModel response = await ApiService.post(url, body: body);
-
       if (response.isSuccess) {
         debugPrint("Successfully toggled favorite for $itemType: $itemId");
-
-        // ফেভারিট স্ক্রিন থেকে রিমুভ করার লজিক
         if (Get.isRegistered<FavoriteController>()) {
           final favController = Get.find<FavoriteController>();
           favController.favoriteList.removeWhere((element) {
             if (element is ev.Data) return element.sId == itemId;
-            // if (element is vn.Data) return element.sId == itemId;
             return false;
           });
           favController.update();
@@ -324,30 +360,7 @@ class HomController extends GetxController{
     }
   }
 
-
-  void _rollbackStatus(dynamic item) {
-    if (item is EventModel.Data || item is VenueModel.Data || item is VenueDetails.Data || item is Data) {
-      item.isFavorited = !(item.isFavorited ?? false);
-    }
-    update();
-  }
-
-  ///>>>>>>>>>>>>>>>> Event <<<<<<<<<///
-
-  final List<Map<String, dynamic>> eventData = [
-    {
-      'name': 'Music',
-      'title': 'The Rolling Stones Live in Concert',
-      'subtitle': 'Live Performance',
-      'time': '08:00 PM',
-      'price': '120.00',
-      'image': AppImages.eventImage,
-      'date': 'Dec 18',
-      'isFavorite': false,
-    },
-  ];
-
-  ///>>>>>>>>>>>>>>>>>>>>>>>>>>> Artist <<<<<<<<<<<<<<<<<<<///
+  final List<Map<String, dynamic>> eventData = [];
 
   final List<Map<String, dynamic>> artistData = [
     {
@@ -362,18 +375,145 @@ class HomController extends GetxController{
     },
   ];
 
-  ///>>>>>>>>>>>>>>>>>>>>>>> Venue Data <<<<<<<<<<<<<<<<<<<<<<///
+  var isPurchaseLoading = false.obs;
+  var ticketIsPurchaseLoading = false.obs;
+
+  Future<void> openTicketUrl(String? urlString) async {
+    if (urlString == null || urlString.isEmpty) {
+      Get.snackbar("Error", "Ticket URL is not available for this event",
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
+
+    try {
+      ticketIsPurchaseLoading.value = true;
+      update();
+      final Uri uri = Uri.parse(urlString);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(uri, mode: LaunchMode.platformDefault);
+      }
+    } catch (e) {
+      debugPrint("Error opening ticket URL: $e");
+      Get.snackbar("Error", "Could not open ticket link",
+          backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      ticketIsPurchaseLoading.value = false;
+      update();
+    }
+  }
 
 
+  var isSingleArtistLoading = false.obs;
+  var singleArtistData = {}.obs;
+
+  Future<void> fetchSingleArtist(String artistId) async {
+    try {
+      isSingleArtistLoading.value = true;
+
+      ApiResponseModel response = await ApiService.get("/artist/$artistId");
+
+      if (response.isSuccess) {
+        if (response.data['data'] != null) {
+          singleArtistData.value = response.data['data'];
+        }
+      } else {
+        Get.snackbar("Error", response.message, backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      debugPrint("Error fetching single artist: $e");
+    } finally {
+      isSingleArtistLoading.value = false;
+    }
+  }
+
+  Future<void> purchaseTicket(String eventId) async {
+    try {
+      isPurchaseLoading.value = true;
+      update();
+
+      String url = "/event/purchase/$eventId";
+      ApiResponseModel response = await ApiService.post(url, body: {});
+      if (response.isSuccess) {
+        String paymentUrl = response.data['data'] ?? "";
+        if (paymentUrl.isNotEmpty) {
+          final Uri uri = Uri.parse(paymentUrl);
+          try {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } catch (e) {
+            await launchUrl(uri, mode: LaunchMode.platformDefault);
+          }
+        } else {
+          Get.snackbar("Error", "Payment link not found in response",
+              backgroundColor: Colors.red, colorText: Colors.white);
+        }
+      } else {
+        Get.snackbar("Error", response.message,
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      debugPrint("Error purchasing ticket: $e");
+    } finally {
+      isPurchaseLoading.value = false;
+      update();
+    }
+  }
+
+
+
+  var artistEventsList = <dynamic>[].obs;
+  var isEventsLoading = false.obs;
+  var isMoreEventsLoading = false.obs;
+  int currentEventPage = 1;
+  int totalEventPages = 1;
+
+  Future<void> fetchArtistEvents(String artistId, {bool isLoadMore = false}) async {
+    if (isLoadMore) {
+      if (currentEventPage >= totalEventPages || isMoreEventsLoading.value) return;
+      isMoreEventsLoading.value = true;
+      currentEventPage++;
+    } else {
+      isEventsLoading.value = true;
+      currentEventPage = 1;
+      artistEventsList.clear();
+    }
+
+    try {
+      ApiResponseModel response = await ApiService.get(
+        "/artist/events/$artistId?page=$currentEventPage&limit=10",
+      );
+
+      if (response.isSuccess) {
+        var data = response.data;
+
+        // Update Pagination Meta
+        if (data['pagination'] != null) {
+          totalEventPages = data['pagination']['totalPage'] ?? 1;
+        }
+
+        List rawList = data['data'] ?? [];
+        // Map/JSON থেকে EventModel.Data অবজেক্টে রূপান্তর
+        List<EventModel.Data> parsedEvents = rawList
+            .map((e) => EventModel.Data.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+
+        if (isLoadMore) {
+          artistEventsList.addAll(parsedEvents);
+        } else {
+          artistEventsList.value = parsedEvents;
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching artist events: $e");
+    } finally {
+      isEventsLoading.value = false;
+      isMoreEventsLoading.value = false;
+      update();
+    }
+  }
 
   List<Map<String, dynamic>> venues = [];
-
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   venues = List.from(venues);
-  // }
-
 
   void searchVenue(String query) {
     if (query.isEmpty) {
@@ -397,5 +537,10 @@ class HomController extends GetxController{
     update();
   }
 
+  void resetFilters() {
+    searchController.clear();
+    selectedVenueDate = null;
+    if (selectedTabIndex.value == 0) fetchEvents();
+    if (selectedTabIndex.value == 2) fetchVenues();
+  }
 }
-

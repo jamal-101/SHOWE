@@ -308,7 +308,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../home/controller/hom_controller.dart';
@@ -372,20 +371,20 @@ class TripPlanScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Container(
-                        height: 20.h,
-                        width: 1,
-                        color: Colors.grey.withValues(alpha: 0.3),
-                      ),
-                      SizedBox(width: 10.w),
-                      GestureDetector(
-                        onTap: () => _showCalendarDialog(context),
-                        child: Image.asset(
-                          AppImages.searchCalender,
-                          height: 20.h,
-                          width: 20.w,
-                        ),
-                      ),
+                      // Container(
+                      //   height: 20.h,
+                      //   width: 1,
+                      //   color: Colors.grey.withValues(alpha: 0.3),
+                      // ),
+                      // SizedBox(width: 10.w),
+                      // GestureDetector(
+                      //   onTap: () => _showCalendarDialog(context),
+                      //   child: Image.asset(
+                      //     AppImages.searchCalender,
+                      //     height: 20.h,
+                      //     width: 20.w,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -505,114 +504,114 @@ class TripPlanScreen extends StatelessWidget {
     );
   }
 
-  void _showCalendarDialog(BuildContext context) {
-    Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: GetBuilder<TripPlanController>(
-          builder: (controller) {
-            return Container(
-              padding: EdgeInsets.all(20.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          controller.focusedDay = DateTime(
-                            controller.focusedDay.year,
-                            controller.focusedDay.month - 1,
-                          );
-                          controller.update();
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          size: 18,
-                          color: Color(0xFF0F4C5C),
-                        ),
-                      ),
-                      Text(
-                        DateFormat('MMMM, yyyy').format(controller.focusedDay),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF0F4C5C),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          controller.focusedDay = DateTime(
-                            controller.focusedDay.year,
-                            controller.focusedDay.month + 1,
-                          );
-                          controller.update();
-                        },
-                        icon: const Icon(
-                          Icons.arrow_forward_ios,
-                          size: 18,
-                          color: Color(0xFF0F4C5C),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  TableCalendar(
-                    firstDay: DateTime.utc(2020, 1, 1),
-                    lastDay: DateTime.utc(2030, 12, 31),
-                    focusedDay: controller.focusedDay,
-                    selectedDayPredicate: (day) =>
-                        isSameDay(controller.selectedDay, day),
-                    onDaySelected: controller.onDaySelected,
-                    headerVisible: false,
-                    calendarStyle: CalendarStyle(
-                      isTodayHighlighted: true,
-                      selectedDecoration: const BoxDecoration(
-                        color: Color(0xFF0F4C5C),
-                        shape: BoxShape.circle,
-                      ),
-                      todayDecoration: BoxDecoration(
-                        color: const Color(0xFF0F4C5C).withValues(alpha: 0.3),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48.h,
-                    child: ElevatedButton(
-                      onPressed: () => Get.back(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF2A900),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                      ),
-                      child: Text(
-                        "Search",
-                        style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
+  // void _showCalendarDialog(BuildContext context) {
+  //   Get.dialog(
+  //     Dialog(
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(20.r),
+  //       ),
+  //       child: GetBuilder<TripPlanController>(
+  //         builder: (controller) {
+  //           return Container(
+  //             padding: EdgeInsets.all(20.w),
+  //             decoration: BoxDecoration(
+  //               color: Colors.white,
+  //               borderRadius: BorderRadius.circular(20.r),
+  //             ),
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: [
+  //                     IconButton(
+  //                       onPressed: () {
+  //                         controller.focusedDay = DateTime(
+  //                           controller.focusedDay.year,
+  //                           controller.focusedDay.month - 1,
+  //                         );
+  //                         controller.update();
+  //                       },
+  //                       icon: const Icon(
+  //                         Icons.arrow_back_ios,
+  //                         size: 18,
+  //                         color: Color(0xFF0F4C5C),
+  //                       ),
+  //                     ),
+  //                     Text(
+  //                       DateFormat('MMMM, yyyy').format(controller.focusedDay),
+  //                       style: GoogleFonts.montserrat(
+  //                         fontSize: 18.sp,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: const Color(0xFF0F4C5C),
+  //                       ),
+  //                     ),
+  //                     IconButton(
+  //                       onPressed: () {
+  //                         controller.focusedDay = DateTime(
+  //                           controller.focusedDay.year,
+  //                           controller.focusedDay.month + 1,
+  //                         );
+  //                         controller.update();
+  //                       },
+  //                       icon: const Icon(
+  //                         Icons.arrow_forward_ios,
+  //                         size: 18,
+  //                         color: Color(0xFF0F4C5C),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 SizedBox(height: 10.h),
+  //                 TableCalendar(
+  //                   firstDay: DateTime.utc(2020, 1, 1),
+  //                   lastDay: DateTime.utc(2030, 12, 31),
+  //                   focusedDay: controller.focusedDay,
+  //                   selectedDayPredicate: (day) =>
+  //                       isSameDay(controller.selectedDay, day),
+  //                   onDaySelected: controller.onDaySelected,
+  //                   headerVisible: false,
+  //                   calendarStyle: CalendarStyle(
+  //                     isTodayHighlighted: true,
+  //                     selectedDecoration: const BoxDecoration(
+  //                       color: Color(0xFF0F4C5C),
+  //                       shape: BoxShape.circle,
+  //                     ),
+  //                     todayDecoration: BoxDecoration(
+  //                       color: const Color(0xFF0F4C5C).withValues(alpha: 0.3),
+  //                       shape: BoxShape.circle,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 SizedBox(height: 20.h),
+  //                 SizedBox(
+  //                   width: double.infinity,
+  //                   height: 48.h,
+  //                   child: ElevatedButton(
+  //                     onPressed: () => Get.back(),
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor: const Color(0xFFF2A900),
+  //                       shape: RoundedRectangleBorder(
+  //                         borderRadius: BorderRadius.circular(30.r),
+  //                       ),
+  //                     ),
+  //                     child: Text(
+  //                       "Search",
+  //                       style: GoogleFonts.montserrat(
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.white,
+  //                         fontSize: 16.sp,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 }

@@ -135,7 +135,7 @@ class AuthController extends GetxController {
             "Verification Required",
             responseData['message'] ??
                 "Please check your email for verification code.",
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.TOP,
             backgroundColor: const Color(0xFFF2A900),
             colorText: Colors.white,
             duration: const Duration(seconds: 4),
@@ -148,7 +148,7 @@ class AuthController extends GetxController {
           Get.snackbar(
             "Failed",
             errorMsg,
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );
@@ -158,7 +158,7 @@ class AuthController extends GetxController {
       Get.snackbar(
         "Error",
         e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -212,7 +212,8 @@ class AuthController extends GetxController {
         Get.snackbar(
           "Success",
           response.message,
-          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Color(0xFFF2A900),
+          snackPosition: SnackPosition.TOP,
         );
         Get.toNamed(AppRoutes.setFaceRecognition);
       } else {
@@ -263,7 +264,7 @@ class AuthController extends GetxController {
         Get.snackbar(
           "Login Failed",
           errorMsg,
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );

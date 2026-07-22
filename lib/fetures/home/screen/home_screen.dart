@@ -10,12 +10,14 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../my_event/controller/my_event_controller.dart';
+import '../../notification/controller/notification_controller.dart';
 import '../../scan/controller/scan_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
+    final NotificationController notificationController = Get.put(NotificationController());
     return Scaffold(
       bottomNavigationBar: BottomNavBar(selectedIndex: 0),
       body: SafeArea(
@@ -51,14 +53,56 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.notificationScreen),
-                    child: Container(
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset(AppImages.bellIcon),
+                    onTap: () {
+                      Get.toNamed(AppRoutes.notificationScreen)?.then((_) {
+                        notificationController.fetchNotifications();
+                      });
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Image.asset(
+                            AppImages.bellIcon,
+                            height: 24.h,
+                            width: 24.w,
+                          ),
+                        ),
+                        Obx(() {
+                          int count = notificationController.unreadCount.value;
+                          if (count <= 0) return const SizedBox.shrink();
+                          return Positioned(
+                            top: -2.h,
+                            right: -2.w,
+                            child: Container(
+                              padding: EdgeInsets.all(4.w),
+                              decoration: const BoxDecoration(
+                                color: Colors.redAccent,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 18.w,
+                                minHeight: 18.h,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  count > 99 ? '99+' : '$count',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
                 ],
@@ -69,8 +113,10 @@ class HomeScreen extends StatelessWidget {
                   Expanded(
                     child: _buildHomeCard(
                       height: 273.h,
-                      onTap: () =>
-                          Get.put(ScanController()).pickImageAndNavigate(),
+                      onTap: () {
+                        final scanCtrl = Get.put(ScanController());
+                        scanCtrl.startQRScan(context);
+                      },
                       title: "Scan\nQR",
                       imagePath: AppImages.scanQar,
                       bgColor: const Color(0xFFF2A900),
@@ -232,8 +278,6 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
-
   Widget _buildMyEventsCard() {
     final MyEventController myEventController = Get.put(MyEventController());
     return GestureDetector(

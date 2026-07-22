@@ -56,7 +56,7 @@ class FavoriteScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildTabItem("Events", controller.selectedFavouriteTabIndex.value == 0, 0, controller),
-                    _buildTabItem("Artists", controller.selectedFavouriteTabIndex.value == 1, 1, controller),
+                    // _buildTabItem("Artists", controller.selectedFavouriteTabIndex.value == 1, 1, controller),
                     _buildTabItem("Venues", controller.selectedFavouriteTabIndex.value == 2, 2, controller),
                   ],
                 ),
@@ -81,9 +81,11 @@ class FavoriteScreen extends StatelessWidget {
                             if (controller.selectedFavouriteTabIndex.value == 2) {
                               final vn.Data itemData = controller.favoriteList[index] as vn.Data;
                               return _buildVenueCard(itemData);
-                            } else if (controller.selectedFavouriteTabIndex.value == 1) {
-                              return _buildArtistCard(controller.artistData[index], controller);
-                            } else {
+                            }
+                            // else if (controller.selectedFavouriteTabIndex.value == 1) {
+                            //   return _buildArtistCard(controller.artistData[index], controller);
+                            // }
+                            else {
                               final ev.Data itemData = controller.favoriteList[index] as ev.Data;
                               return _buildFavouriteEventCard(itemData);
                             }

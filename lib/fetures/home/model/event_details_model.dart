@@ -52,7 +52,7 @@ class Data {
   String? address;
   int? iV;
   bool? isFavorited;
-  List<dynamic>? someInterestPeopsle; // 🛠️ Null থেকে dynamic করা হয়েছে
+  List<dynamic>? someInterestPeopsle;
 
   Data(
       {this.sId,
@@ -392,7 +392,7 @@ class NearbyRestaurants {
   }
 }
 
-// 🛠️ নতুন যুক্ত করা NearbyHotels ক্লাস
+
 class NearbyHotels {
   String? sId;
   String? name;
@@ -421,7 +421,6 @@ class NearbyHotels {
   }
 }
 
-// 🛠️ নতুন যুক্ত করা NearbyBars ক্লাস
 class NearbyBars {
   String? sId;
   String? name;

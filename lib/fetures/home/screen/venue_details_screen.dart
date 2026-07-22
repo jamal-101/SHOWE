@@ -768,7 +768,7 @@ class VenueDetailsScreen extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () => controller.toggleFavorite(venueData),
-                      child: GetBuilder<HomController>( // update() কল হলে এটি রিফ্রেশ হবে
+                      child: GetBuilder<HomController>(
                         builder: (controller) {
                           return Container(
                             padding: const EdgeInsets.all(8),
@@ -779,7 +779,7 @@ class VenueDetailsScreen extends StatelessWidget {
                             ),
                             child: (venueData.isFavorited ?? false)
                                 ? Image.asset(
-                              AppImages.selectFavoriteIcon, // ভরা হার্ট আইকন
+                              AppImages.selectFavoriteIcon,
                               height: 22.h,
                               width: 22.w,
                             )
@@ -819,7 +819,7 @@ class VenueDetailsScreen extends StatelessWidget {
             ),
             child: ClipOval(
               child: Image.network(
-                logoUrl, // ডাইনামিক লোগো
+                logoUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) =>
                     const Icon(Icons.business, color: Colors.grey),

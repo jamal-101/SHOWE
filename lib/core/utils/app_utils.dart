@@ -56,6 +56,21 @@ class Utils {
     return null;
   }
 
+  static String? phoneValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    final phoneRegex = RegExp(r'^\+?[0-9]+$');
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Only numbers are allowed';
+    }
+    if (value.length < 10 || value.length > 14) {
+      return 'Enter a valid phone number (10-14 digits)';
+    }
+
+    return null;
+  }
+
 }
 
 

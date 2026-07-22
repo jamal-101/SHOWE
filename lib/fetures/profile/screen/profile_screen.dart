@@ -8,7 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/utils/api_enpoint.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
+import '../../home/controller/hom_controller.dart';
 import '../widget/account_delet_dialog.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -44,76 +46,145 @@ class ProfileScreen extends StatelessWidget {
                 SizedBox(height: 20.h),
                 _buildSectionHeader("General"),
                 _buildSettingsGroup([
-                  _buildListTile(AppImages.personIcon, "Profile Information",0),
-                  _buildListTile(AppImages.changePassIcon, "Change Password",1),
-                  _buildListTile(AppImages.notificationIcon, "Notification",2),
-                  _buildListTile(AppImages.securityIcon, "Security",3),
+                  _buildListTile(
+                    AppImages.personIcon,
+                    "Profile Information",
+                    0,
+                  ),
+                  _buildListTile(
+                    AppImages.changePassIcon,
+                    "Change Password",
+                    1,
+                  ),
+                  _buildListTile(AppImages.notificationIcon, "Notification", 2),
+                  _buildListTile(AppImages.securityIcon, "Security", 3),
                 ]),
                 SizedBox(height: 20.h),
                 _buildSectionHeader("Others"),
                 _buildSettingsGroup([
-                  _buildListTile(AppImages.helpCenterIcon, "Help Centre",4),
-                  _buildListTile(AppImages.privacyPolicyIcon, "Privacy policy",5),
+                  _buildListTile(AppImages.helpCenterIcon, "Help Centre", 4),
                   _buildListTile(
-                      AppImages.termsConditionIcon, "Terms & Conditions",6),
+                    AppImages.privacyPolicyIcon,
+                    "Privacy policy",
+                    5,
+                  ),
+                  _buildListTile(
+                    AppImages.termsConditionIcon,
+                    "Terms & Conditions",
+                    6,
+                  ),
                 ]),
                 SizedBox(height: 20.h),
                 _buildSettingsGroup([
-                  _buildListTile(AppImages.deleteAccountIcon, "Delete Account",7),
                   _buildListTile(
-                      AppImages.logoutIcon, "Logout",8, isLogout: true),
+                    AppImages.deleteAccountIcon,
+                    "Delete Account",
+                    7,
+                  ),
+                  _buildListTile(
+                    AppImages.logoutIcon,
+                    "Logout",
+                    8,
+                    isLogout: true,
+                  ),
                 ]),
               ],
             ),
           );
-        }),
+        },
+      ),
     );
   }
 
   Widget _buildProfileHeader() {
-    return Container(
-      padding: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 35.r,
-            backgroundImage: AssetImage(AppImages.profileImage),
-          ),
-          SizedBox(width: 15.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Tanvir Chowdhury",
-                style: GoogleFonts.montserrat(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF333333),
-                ),
+    return GetBuilder<ProfileController>(
+      builder: (controller) {
+        final userData = controller.profileModel?.data;
+        final String profileName = userData?.name ?? "Guest User";
+        final String profileEmail = userData?.email ?? "guest@gmail.com";
+        final String? profileImage = userData?.image;
+
+        return Container(
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 0),
               ),
-              Text(
-                "tanvirchowdhury123@gmail.com",
-                style: GoogleFonts.montserrat(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF6B7280),
+            ],
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 35.r,
+                backgroundColor: Colors.grey[200],
+                backgroundImage:
+                    (profileImage != null && profileImage.isNotEmpty)
+                    ? NetworkImage(
+                            profileImage.startsWith('http')
+                                ? profileImage
+                                : "${ApiEndPoint.imageUrl}$profileImage",
+                          )
+                          as ImageProvider
+                    : AssetImage(AppImages.profileImage),
+              ),
+              SizedBox(width: 15.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          profileName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF333333),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black54.withValues(alpha: 0.5),
+
+                            borderRadius: BorderRadius.circular(12.r)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              AppImages.editeProfile_icon,
+                              height: 35.h,
+                              width: 35.w,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      profileEmail,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF6B7280),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -130,7 +201,6 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildSettingsGroup(List<Widget> children) {
     return Container(
@@ -149,8 +219,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-
-  Widget _buildListTile(String imagePath, String title,int index,{bool isLogout = false}) {
+  Widget _buildListTile(
+    String imagePath,
+    String title,
+    int index, {
+    bool isLogout = false,
+  }) {
     return ListTile(
       leading: Image.asset(
         imagePath,
@@ -167,9 +241,9 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
       trailing: const Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.grey
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Colors.grey,
       ),
       onTap: () {
         switch (index) {
@@ -195,21 +269,12 @@ class ProfileScreen extends StatelessWidget {
             Get.toNamed(AppRoutes.termsConditionScreen);
             break;
           case 7:
-            Get.dialog(
-              DeleteAccountDialog(
-                onDelete: () {
-                  Get.toNamed(AppRoutes.deleteVerificationScreen);
-                },
-              ),
-            );
+            Get.dialog(const DeleteAccountDialog());
             break;
           case 8:
-            Get.dialog(
-              AccountLogoutDialog(),
-            );
+            Get.dialog(AccountLogoutDialog());
             break;
           default:
-
         }
       },
     );

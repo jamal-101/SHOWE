@@ -1,5 +1,6 @@
 class AppImages {
   static const String baseurl = "assets/images";
+  static const String noPhoto = "$baseurl/no_photo.jpg";
   static const String baseurlIcon = "assets/icons";
   static const String splashVideo = "$baseurl/Opening GIF.gif";
   static const String onBoarding1 = "$baseurl/onboarding1.png";
@@ -74,4 +75,5 @@ class AppImages {
   static const String scanIcon = "$baseurlIcon/scan_icon.png";
   static const String toggleOn = "$baseurlIcon/toggole_on.png";
   static const String toggleoff = "$baseurlIcon/toggole_of.png";
+  static const String editeProfile_icon = "$baseurlIcon/edite_profile_icon.png";
 }

@@ -63,10 +63,9 @@ import 'package:get/get.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
-import '../../home/model/venue_model.dart' as VenueModel; // তোমার প্রজেক্টের সঠিক পাথ দাও
+import '../../home/model/venue_model.dart' as VenueModel;
 
 class TripPlanController extends GetxController {
-  // এপিআই থেকে আসা মূল ভেন্যু লিস্ট এবং স্টেট ট্র্যাকিং
   List<VenueModel.Data> allVenuesFromApi = [];
   List<VenueModel.Data> venues = [];
 
@@ -79,16 +78,13 @@ class TripPlanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchVenuesFromApi(); // স্ক্রিন ওপেন হওয়ার সাথে সাথে এপিআই কল হবে
+    fetchVenuesFromApi();
   }
 
-  // ১. সম্পূর্ণ আলাদাভাবে এই কন্ট্রোলারের নিজস্ব এপিআই মেথড
   Future<void> fetchVenuesFromApi() async {
     try {
       isLoading.value = true;
       update();
-
-      // তোমার প্রজেক্টের এপিআই এন্ডপয়েন্ট (যেমন: /vanue অথবা ApiEndPoint.getVenues)
       String url = "${ApiEndPoint.getVenues}?page=1&limit=20";
       ApiResponseModel response = await ApiService.get(url);
 
@@ -99,7 +95,7 @@ class TripPlanController extends GetxController {
 
         if (incomingVenueModel.success == true && incomingVenueModel.data != null) {
           allVenuesFromApi = incomingVenueModel.data!;
-          _applyFilters(); // ডেটা আসার পর ফিল্টার অ্যাপ্লাই হবে
+          _applyFilters();
         }
       } else {
         Get.snackbar("Error", response.message, backgroundColor: Colors.red, colorText: Colors.white);
@@ -112,11 +108,9 @@ class TripPlanController extends GetxController {
     }
   }
 
-  // ২. ফিল্টার এবং সার্চ লজিক হ্যান্ডেল করার কমন মেথড
   void _applyFilters() {
     List<VenueModel.Data> tempResult = List.from(allVenuesFromApi);
 
-    // সার্চ ফিল্টার
     if (searchQuery.isNotEmpty) {
       tempResult = tempResult.where((venue) {
         final name = venue.name?.toLowerCase() ?? "";
@@ -128,7 +122,6 @@ class TripPlanController extends GetxController {
       }).toList();
     }
 
-    // ক্যালেন্ডার ডেট ফিল্টার
     if (selectedDay != null) {
       tempResult = tempResult.where((venue) {
         if (venue.createdAt == null || venue.createdAt!.isEmpty) return false;
@@ -146,14 +139,10 @@ class TripPlanController extends GetxController {
     venues = tempResult;
     update();
   }
-
-  // সার্চ কুয়েরি হ্যান্ডলার
   void searchVenue(String query) {
     searchQuery = query;
     _applyFilters();
   }
-
-  // ক্যালেন্ডার ডেট সিলেক্ট হ্যান্ডলার
   void onDaySelected(DateTime selectDay, DateTime focusDay) {
     selectedDay = selectDay;
     focusedDay = focusDay;

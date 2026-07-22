@@ -302,6 +302,8 @@ class EventDetailsScreen extends StatelessWidget {
           }
 
           final Data eventData = controller.eventDetailsModel!.data!;
+          final detailData = controller.eventDetailsModel?.data;
+          if (detailData == null) return const SizedBox();
           final List<String> images =
               (eventData.gallery != null && eventData.gallery!.isNotEmpty)
               ? eventData.gallery!
@@ -383,7 +385,10 @@ class EventDetailsScreen extends StatelessWidget {
                           Icons.arrow_back_ios,
                           color: Colors.white,
                         ),
-                        onPressed: () => Get.back(),
+                        onPressed:() async {
+                          Get.find<HomController>().fetchEvents(isRefresh: true);
+                          Navigator.pop(context);
+                        },
                       ),
                     ),
                     Positioned(
@@ -391,7 +396,7 @@ class EventDetailsScreen extends StatelessWidget {
                       right: 20.w,
                       child: GestureDetector(
                         onTap: () {
-                          controller.toggleFavorite(eventData);
+                          controller.toggleFavorite(detailData);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -400,10 +405,9 @@ class EventDetailsScreen extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: (eventData.isFavorited ?? false)
+                            child: (detailData.isFavorited ?? false)
                                 ? Image.asset(
                                     AppImages.selectFavoriteIcon,
-                                    // color: Colors.white,
                                     height: 25.h,
                                     width: 25.w,
                                   )
@@ -504,6 +508,34 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20.h),
+                      _buildNearbySection(
+                        "Nearby Restaurants",
+                        eventData.nearbyRestaurants?.map((res) => _NearbyItem(
+                          name: res.name,
+                          image: res.image,
+                          rating: res.rating?.toString(),
+                          distance: res.distance,
+                        )).toList(),
+                      ),
+                      _buildNearbySection(
+                        "Nearby Hotels",
+                        eventData.nearbyHotels?.map((hotel) => _NearbyItem(
+                          name: hotel.name,
+                          image: hotel.image,
+                          rating: hotel.rating,
+                          distance: hotel.distance,
+                        )).toList(),
+                      ),
+                      _buildNearbySection(
+                        "Nearby Bars",
+                        eventData.nearbyBars?.map((bar) => _NearbyItem(
+                          name: bar.name,
+                          image: bar.image,
+                          rating: bar.rating,
+                          distance: bar.distance,
+                        )).toList(),
+                      ),
+                      SizedBox(height: 20.h),
                       _buildInfoTile(
                         imagePath:
                             (eventData.author?.image != null &&
@@ -529,15 +561,67 @@ class EventDetailsScreen extends StatelessWidget {
       ),
       bottomNavigationBar: GetBuilder<HomController>(
         builder: (controller) {
-          if (controller.eventDetailsModel?.data == null)
+          if (controller.eventDetailsModel?.data == null) {
             return const SizedBox.shrink();
-          final price = controller.eventDetailsModel!.data!.price;
+          }
+
+          final eventData = controller.eventDetailsModel!.data!;
+          final price = eventData.price;
+          final eventId = eventData.sId;
+          final ticketUrl = eventData.getTicketsUrl;
+
           return Padding(
             padding: EdgeInsets.all(20.w),
-            child: CommonButton(
-              title: "Get Ticket - \$${price ?? 0}",
-              onTap: () {},
-            ),
+            child: Obx(() {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CommonButton(
+                    title: controller.ticketIsPurchaseLoading.value
+                        ? "Processing..."
+                        : "Get Ticket - \$${price ?? 0}",
+                    onTap: () {
+                      if (controller.ticketIsPurchaseLoading.value) return;
+                      controller.openTicketUrl(ticketUrl);
+                    },
+                  ),
+                  SizedBox(height: 10.h,),
+                  GestureDetector(
+                    onTap: (){
+                      if (controller.isPurchaseLoading.value) return;
+                      if (eventId != null && eventId.isNotEmpty) {
+                        controller.purchaseTicket(eventId);
+                      } else {
+                        Get.snackbar(
+                          "Error",
+                          "Invalid Event ID",
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 50.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(500.r),
+                          border: Border.all(width: 1.w,color: Color(0xFF0F4C5C))
+                      ),child: Center(
+                      child: Text(
+                           controller.isPurchaseLoading.value
+                              ? "Purchase Programme..."
+                              : "Purchase Programme",
+                          style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.sp,
+                          color: Color(0xFF0F4C5C)
+                      )),
+                    ),
+                    ),
+                  ),
+                ],
+              );
+            }),
           );
         },
       ),
@@ -624,7 +708,7 @@ class EventDetailsScreen extends StatelessWidget {
     );
   }
 
-  // নিয়রবাই লিস্ট জেনারেট করার জন্য সেকশন বিল্ডার
+
   Widget _buildNearbySection(String title, List<_NearbyItem>? items) {
     if (items == null || items.isEmpty) return const SizedBox.shrink();
     return Column(
@@ -706,7 +790,7 @@ class EventDetailsScreen extends StatelessWidget {
   }
 }
 
-// নিয়রবাই অবজেক্টগুলোকে ম্যাপ করার জন্য সাহায্যকারী ইন্টারনাল ক্লাস
+
 class _NearbyItem {
   final String? name;
   final String? image;

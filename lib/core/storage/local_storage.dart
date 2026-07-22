@@ -24,7 +24,7 @@ class LocalStorage {
     return preferences!;
   }
 
-  /// Get All Data From SharedPreferences
+
   static Future<void> getAllPrefData() async {
     final localStorage = await _getStorage();
 

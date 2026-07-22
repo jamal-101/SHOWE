@@ -23,9 +23,7 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
   @override
   void initState() {
     super.initState();
-    if (widget.fileUrl.toLowerCase().endsWith('.pdf')) {
-      _downloadAndSavePdf();
-    }
+    _downloadAndSavePdf();
   }
 
   Future<void> _downloadAndSavePdf() async {
@@ -60,7 +58,6 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
 
   @override
   Widget build(BuildContext context) {
-    bool isPdf = widget.fileUrl.toLowerCase().endsWith('.pdf');
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       insetPadding: EdgeInsets.all(20.w),
@@ -75,7 +72,7 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
               children: [
                 const SizedBox(width: 32),
                 Text(
-                  isPdf ? "PDF" : "Image",
+                  "PDF Ticket",
                   style: GoogleFonts.montserrat(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.sp,
@@ -93,15 +90,14 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
               constraints: BoxConstraints(
                 maxHeight: 480.h,
               ),
-              child: isPdf
-                  ? _buildPdfWidget()
-                  : _buildImageWidget(),
+              child: _buildPdfWidget(),
             ),
           ],
         ),
       ),
     );
   }
+
   Widget _buildPdfWidget() {
     if (isPdfLoading) {
       return const Center(
@@ -127,37 +123,6 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
         onError: (error) {
           debugPrint("PDF View Error: $error");
         },
-      ),
-    );
-  }
-  Widget _buildImageWidget() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12.r),
-      child: InteractiveViewer(
-        maxScale: 4.0,
-        child: Image.network(
-          widget.fileUrl,
-          fit: BoxFit.contain,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF0F4C5C)),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                SizedBox(height: 8.h),
-                Text(
-                  "Failed to load image ticket",
-                  style: GoogleFonts.montserrat(fontSize: 12.sp, color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
