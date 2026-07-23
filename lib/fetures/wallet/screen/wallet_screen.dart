@@ -12,9 +12,9 @@ import '../../my_event/controller/my_event_controller.dart';
 import '../controller/wallet_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
 
+
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(WalletController());
@@ -158,7 +158,6 @@ class WalletScreen extends StatelessWidget {
                         dashPattern: [10, 5],
                         strokeWidth: 1,
                       ),
-                      // 💡 DottedBorder-এর ভেতরের child প্রোপার্টিটি এই কোড দিয়ে রিপ্লেস করে নাও:
                       child: controller.pickedImage != null
                           ? Image.file(
                         controller.pickedImage!,
@@ -178,9 +177,8 @@ class WalletScreen extends StatelessWidget {
                               child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
                             ),
                           ),
-                          // 🚀 তোমার সিঙ্ক আইকন ওভারলে কন্টেইনার (এটি বাদ দেওয়া হয়নি)
                           Container(
-                            color: Colors.black.withValues(alpha: 0.4), // আইকন ফুটিয়ে তোলার জন্য আলফা একটু বাড়াতে পারো (প্রয়োজনে ০.১ রাখতে পারো)
+                            color: Colors.black.withValues(alpha: 0.4),
                             child: const Center(
                               child: Icon(
                                 Icons.sync,

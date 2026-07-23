@@ -126,9 +126,15 @@ class ProfileController extends GetxController {
     }
   }
 
+  void clearSelectedImage() {
+    profileImage = null;
+    update();
+  }
+
   @override
   void onInit() {
     super.onInit();
+    profileImage = null;
     loadLocalProfile();
     getProfile();
   }
@@ -136,12 +142,13 @@ class ProfileController extends GetxController {
   void loadLocalProfile() {
     nameController.text = LocalStorage.myName;
     emailController.text = LocalStorage.myEmail;
-    phoneController.text = LocalStorage.deviceId; // আপনার মডেলে যেটা কন্টাক্ট হিসেবে আছে
+    phoneController.text = LocalStorage.deviceId;
     update();
   }
 
   Future<void> getProfile() async {
     try {
+      profileImage = null;
       update();
 
       String url = "/user/profile";
@@ -150,21 +157,14 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200) {
 
         profileModel = Profile_model.fromJson(Map<String, dynamic>.from(response.data));
-
         if (profileModel?.data != null) {
           var userData = profileModel!.data!;
-
-          // টেক্সট ফিল্ড আপডেট
           nameController.text = userData.name ?? "";
           emailController.text = userData.email ?? "";
           phoneController.text = userData.contact ?? "";
-
-          // 💾 লোকাল স্টোরেজে সেভ করা (যাতে নেক্সট টাইম অ্যাপ খুললে পায়)
           await LocalStorage.setString(LocalStorageKeys.myName, userData.name ?? "");
           await LocalStorage.setString(LocalStorageKeys.myEmail, userData.email ?? "");
           await LocalStorage.setString(LocalStorageKeys.profileImage, userData.image ?? "");
-
-          // স্ট্যাটিক ভেরিয়েবলগুলো রিফ্রেশ করা
           await LocalStorage.getAllPrefData();
         }
       }

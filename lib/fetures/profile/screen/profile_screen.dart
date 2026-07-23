@@ -150,18 +150,25 @@ class ProfileScreen extends StatelessWidget {
                             color: const Color(0xFF333333),
                           ),
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.black54.withValues(alpha: 0.5),
-
-                            borderRadius: BorderRadius.circular(12.r)
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              AppImages.editeProfile_icon,
-                              height: 35.h,
-                              width: 35.w,
+                        GestureDetector(
+                          onTap: () {
+                            final ProfileController controller = Get.put(ProfileController());
+                            controller.clearSelectedImage();
+                            controller.getProfile();
+                            Get.toNamed(AppRoutes.updateProfileInformationScreen,arguments: "Update Profile",);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black54.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                AppImages.editeProfile_icon,
+                                height: 30.h,
+                                width: 30.w,
+                              ),
                             ),
                           ),
                         ),
@@ -248,6 +255,9 @@ class ProfileScreen extends StatelessWidget {
       onTap: () {
         switch (index) {
           case 0:
+            final ProfileController controller = Get.put(ProfileController());
+            controller.clearSelectedImage(); 
+            controller.getProfile();
             Get.toNamed(AppRoutes.updateProfileInformationScreen);
             break;
           case 1:

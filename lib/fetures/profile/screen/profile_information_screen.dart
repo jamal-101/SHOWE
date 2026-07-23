@@ -218,6 +218,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../core/utils/api_enpoint.dart';
 import '../controller/profile_controller.dart';
 
 class UpdateProfileInformationScreen extends StatelessWidget {
@@ -226,6 +227,8 @@ class UpdateProfileInformationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String pageTitle = Get.arguments ?? "Profile Information";
+    final bool isEditeMode = pageTitle == "Update Profile";
     return Scaffold(
       backgroundColor: AppColors.appBackgroundColor,
       appBar: AppBar(
@@ -239,12 +242,12 @@ class UpdateProfileInformationScreen extends StatelessWidget {
             size: 20,
           ),
           onPressed: () {
-            Get.find<ProfileController>().getProfile();
+            Get.put(ProfileController()).getProfile();
             Get.back();
           },
         ),
         title: Text(
-          "Profile Information",
+          pageTitle,
           style: GoogleFonts.montserrat(
             fontSize: 20.sp,
             fontWeight: FontWeight.w700,
@@ -256,6 +259,20 @@ class UpdateProfileInformationScreen extends StatelessWidget {
       body: GetBuilder<ProfileController>(
         init: ProfileController(),
         builder: (controller) {
+          final String? networkImageUrl = controller.profileModel?.data?.image;
+          ImageProvider? getProfileImageProvider() {
+            if (controller.profileImage != null) {
+              return FileImage(controller.profileImage!);
+            } else if (networkImageUrl != null && networkImageUrl.isNotEmpty) {
+              return NetworkImage(
+                networkImageUrl.startsWith('http')
+                    ? networkImageUrl
+                    : "${ApiEndPoint.imageUrl}$networkImageUrl",
+              );
+            }
+            return null;
+          }
+
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Form(
@@ -264,91 +281,98 @@ class UpdateProfileInformationScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 20.h),
-                          Center(
-                            child: Stack(
-                              children: [
-                                CircleAvatar(
-                                  radius: 50.r,
-                                  backgroundColor: Colors.grey[200],
-                                  backgroundImage:
-                                      controller.profileImage != null
-                                      ? FileImage(controller.profileImage!)
-                                      : null,
-                                  child: controller.profileImage == null
-                                      ? Icon(
-                                          Icons.person,
-                                          size: 50.sp,
-                                          color: Colors.grey[400],
-                                        )
-                                      : null,
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _showImagePickerBottomSheet(
-                                        context,
-                                        controller,
-                                      );
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 16.r,
-                                      backgroundColor: const Color(0xFF0F4C5C),
-                                      child: Icon(
-                                        Icons.camera_alt,
-                                        color: Colors.white,
-                                        size: 16.sp,
+                    child: RefreshIndicator(
+                      color: const Color(0xFF0F4C5C),
+                      backgroundColor: Colors.white,
+                      onRefresh: () async {
+                        await Get.put(ProfileController()).getProfile();
+                      },
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 20.h),
+                            Center(
+                              child: Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 50.r,
+                                    backgroundColor: Colors.grey[200],
+                                    backgroundImage: getProfileImageProvider(),
+                                    child: (controller.profileImage == null &&
+                                        (networkImageUrl == null || networkImageUrl.isEmpty))
+                                        ? Icon(
+                                      Icons.person,
+                                      size: 50.sp,
+                                      color: Colors.grey[400],
+                                    )
+                                        : null,
+                                  ),
+                                  if (isEditeMode)
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        _showImagePickerBottomSheet(
+                                          context,
+                                          controller,
+                                        );
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 16.r,
+                                        backgroundColor: const Color(0xFF0F4C5C),
+                                        child: Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.white,
+                                          size: 16.sp,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 25.h),
-
-                          _buildLabel("Full Name"),
-                          TextFormField(
-                            // validator: Utils.fullNameValidator,
-                            controller: controller.nameController,
-                            decoration: _inputDecoration("Mohammad Shakil"),
-                          ),
-
-                          SizedBox(height: 20.h),
-
-                          _buildLabel("Email"),
-                          TextFormField(
-                            // validator: Utils.emailValidator,
-                            controller: controller.emailController,
-                            decoration: _inputDecoration(
-                              "example.email123@gmail.com",
+                            SizedBox(height: 25.h),
+                            _buildLabel("Full Name"),
+                            TextFormField(
+                              readOnly: !isEditeMode,
+                              // validator: Utils.fullNameValidator,
+                              controller: controller.nameController,
+                              decoration: _inputDecoration("Mohammad Shakil",isEditMode: isEditeMode),
                             ),
-                          ),
-
-                          SizedBox(height: 20.h),
-
-                          _buildLabel("Phone"),
-                          TextFormField(
-                            // validator: Utils.phoneValidator,
-                            controller: controller.phoneController,
-                            keyboardType: TextInputType.phone,
-                            decoration: _inputDecoration("+61 0000 000 00"),
-                          ),
-                        ],
+                            SizedBox(height: 20.h),
+                            _buildLabel("Email"),
+                            TextFormField(
+                              readOnly: !isEditeMode,
+                              // validator: Utils.emailValidator,
+                              controller: controller.emailController,
+                              decoration: _inputDecoration(
+                                "example.email123@gmail.com",
+                                isEditMode: isEditeMode
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            _buildLabel("Phone"),
+                            TextFormField(
+                              readOnly: !isEditeMode,
+                              // validator: Utils.phoneValidator,
+                              controller: controller.phoneController,
+                              keyboardType: TextInputType.phone,
+                              decoration: _inputDecoration("+61 0000 000 00",isEditMode: isEditeMode),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+                  if (pageTitle == "Update Profile")
                   Padding(
                     padding: EdgeInsets.only(bottom: 20.h),
                     child: CommonButton(
                       isLoading: controller.isLoading.value,
-                      title: "Save Changes",
+                      title: "Update Profile",
                       onTap: () {
                         // if (_formKey.currentState!.validate()) {
                         controller.updateProfile();
@@ -364,11 +388,11 @@ class UpdateProfileInformationScreen extends StatelessWidget {
       ),
     );
   }
-
   void _showImagePickerBottomSheet(
     BuildContext context,
     ProfileController controller,
-  ) {
+  )
+  {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -421,7 +445,7 @@ class UpdateProfileInformationScreen extends StatelessWidget {
     );
   }
 
-  InputDecoration _inputDecoration(String hint) {
+  InputDecoration _inputDecoration(String hint,{bool isEditMode = true}) {
     return InputDecoration(
       hintText: hint,
       hintStyle: GoogleFonts.montserrat(
@@ -442,7 +466,9 @@ class UpdateProfileInformationScreen extends StatelessWidget {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15.r),
-        borderSide: const BorderSide(color: Color(0xFF0F4C5C)),
+        borderSide: isEditMode
+            ? const BorderSide(color: Color(0xFF0F4C5C))
+            : BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15.r),
