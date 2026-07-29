@@ -209,7 +209,6 @@ class FaceRecognitionScreen extends StatelessWidget {
                   child: CommonButton(
                     title: "Continue",
                     onTap: () {
-                      // স্ক্যানিং অবস্থায় বাটন ক্লিক লক রাখার সেফটি চেকিং
                       if (!controller.isScanning) {
                         controller.startScanning();
                       }
@@ -235,7 +234,6 @@ class FaceRecognitionScreen extends StatelessWidget {
               ),
               SizedBox(height: 40.h),
               Center(
-                // বাটন প্রেস করার আগে স্থির ভেক্টর ছবি দেখাবে
                 child: !controller.isScanning
                     ? Image.asset(
                   AppImages.faceRecognition,
@@ -258,16 +256,23 @@ class FaceRecognitionScreen extends StatelessWidget {
                       alignment: Alignment.center,
                       fit: StackFit.expand,
                       children: [
-                        // ক্যামেরা রেডি হলে ইন-অ্যাপ প্রিভিউ সচল হবে, না হওয়া পর্যন্ত লোডার
-                        controller.isCameraInitialized && controller.cameraController != null
-                            ? CameraPreview(controller.cameraController!)
-                            : const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFFF7BD56),
+                        if (controller.isCameraInitialized &&
+                            controller.cameraController != null)
+                          Builder(
+                            builder: (context) {
+                              var camera = controller.cameraController!.value;
+                              var scale = controller.isScanning ? 1.3 : 1.0;
+                              return Transform.scale(
+                                scale: scale,
+                                child: Center(
+                                  child: AspectRatio(
+                                    aspectRatio: 1 / camera.aspectRatio,
+                                    child: CameraPreview(controller.cameraController!),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        ),
-
-                        // ক্যামেরার উপরে ভেরিফাইং টেক্সট লেয়ার
                         Positioned(
                           bottom: 20.h,
                           child: Column(

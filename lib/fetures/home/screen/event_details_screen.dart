@@ -273,6 +273,7 @@ import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/fetures/home/controller/hom_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
@@ -480,16 +481,16 @@ class EventDetailsScreen extends StatelessWidget {
                             "Address TBA",
                       ),
                       SizedBox(height: 15.h),
-                      _buildInfoTile(
-                        imagePath: "",
-                        title: "Chester Bennington",
-                        subTitle: "Artist",
-                        isFollow: true,
-                        isNetworkImage:
-                            eventData.author?.image != null &&
-                            eventData.author!.image!.isNotEmpty,
-                      ),
-                      SizedBox(height: 25.h),
+                      // _buildInfoTile(
+                      //   imagePath: "",
+                      //   title: "Chester Bennington",
+                      //   subTitle: "Artist",
+                      //   isFollow: true,
+                      //   isNetworkImage:
+                      //       eventData.author?.image != null &&
+                      //       eventData.author!.image!.isNotEmpty,
+                      // ),
+                      // SizedBox(height: 25.h),
                       Text(
                         "About event",
                         style: GoogleFonts.montserrat(
@@ -498,16 +499,16 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10.h),
-                      Text(
-                        eventData.descriptionHtml ??
-                            "No description available for this event.",
-                        style: TextStyle(
+                      HtmlWidget(
+                        (eventData.descriptionHtml != null && eventData.descriptionHtml!.isNotEmpty)
+                            ? eventData.descriptionHtml!
+                            : "No description available for this event.",
+                        textStyle: TextStyle(
                           color: Colors.grey[700],
                           fontSize: 14.sp,
                           height: 1.4,
                         ),
                       ),
-                      SizedBox(height: 20.h),
                       _buildNearbySection(
                         "Nearby Restaurants",
                         eventData.nearbyRestaurants?.map((res) => _NearbyItem(

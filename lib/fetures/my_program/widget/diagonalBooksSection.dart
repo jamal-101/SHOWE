@@ -125,7 +125,15 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                             //   AppRoutes.programDetailsScreen,
                             //   arguments: items[actualIndex],
                             // ),
-                            onTap: () => Get.toNamed(AppRoutes.programDetailsScreen, arguments: item),
+                            // onTap: () => Get.toNamed(AppRoutes.programDetailsScreen, arguments: item),
+                            onTap: () {
+                              // if (item.sId != null) {
+                              //   c.openReaderUrl(item.sId);
+                              // }
+                              if (item.sId != null) {
+                                c.openReaderUrl(context, item.sId, title: item.title);
+                              }
+                            },
                           ),
                         ),
 
@@ -176,5 +184,3 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
     });
   }
 }
-
-

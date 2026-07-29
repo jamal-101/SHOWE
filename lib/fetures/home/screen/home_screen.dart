@@ -4,9 +4,6 @@ import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../my_event/controller/my_event_controller.dart';
@@ -17,7 +14,9 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final NotificationController notificationController = Get.put(NotificationController());
+    final NotificationController notificationController = Get.put(
+      NotificationController(),
+    );
     return Scaffold(
       bottomNavigationBar: BottomNavBar(selectedIndex: 0),
       body: SafeArea(
@@ -172,50 +171,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Widget _buildHomeCard({
-  //   required VoidCallback onTap,
-  //   required String title,
-  //   required String imagePath,
-  //   required Color bgColor,
-  //   required Color textColor,
-  //   double? height,
-  // }) {
-  //   return GestureDetector(
-  //     onTap: onTap,
-  //     child: Container(
-  //       height: height,
-  //       padding: EdgeInsets.all(16.w),
-  //       decoration: BoxDecoration(
-  //         color: bgColor,
-  //         borderRadius: BorderRadius.circular(16.r),
-  //       ),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         mainAxisSize: MainAxisSize.min,
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(
-  //             title,
-  //             style: GoogleFonts.montserrat(
-  //               fontSize: 18.sp,
-  //               fontWeight: FontWeight.bold,
-  //               color: textColor,
-  //             ),
-  //           ),
-  //           SizedBox(height: 10.h),
-  //           Image.asset(
-  //             imagePath,
-  //             height: 35.h,
-  //             width: 35.w,
-  //             color: textColor,
-  //             fit: BoxFit.contain,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildHomeCard({
     required VoidCallback onTap,
     required String title,
@@ -226,60 +181,86 @@ class HomeScreen extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         height: height,
-        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.2.w),
+          borderRadius: BorderRadius.circular(22.r),
           boxShadow: [
-
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              offset: Offset(4, 8),
-              blurRadius: 12,
-              spreadRadius: -5,
-              // spreadRadius: 1,
-            ),
-            BoxShadow(
-              color: Colors.white.withValues(alpha: 0.5),
-              offset: Offset(-3, -3),
-              blurRadius: 8,
-              spreadRadius: -5,
+              color: Colors.black.withValues(alpha: 0.18),
+              blurRadius: 10.r,
+              spreadRadius: 1,
+              offset: Offset(0, 5.h),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: GoogleFonts.montserrat(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22.r),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.12),
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.20),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Image.asset(
-                imagePath,
-                height: 40.h,
-                width: 40.w,
-                color: textColor.withValues(alpha: 0.8),
-                fit: BoxFit.contain,
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22.r),
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      width: 5.w,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(18.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.museoModerno(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w700,
+                        color: textColor,
+                        height: 1.05,
+                      ),
+                    ),
+                    Image.asset(
+                      imagePath,
+                      height: 38.h,
+                      width: 38.w,
+                      color: textColor,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+
   Widget _buildMyEventsCard() {
     final MyEventController myEventController = Get.put(MyEventController());
+
     return GestureDetector(
       onTap: () {
         Get.toNamed(AppRoutes.myEventScreen);
@@ -287,105 +268,114 @@ class HomeScreen extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 180.h,
-        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              offset: Offset(7, 1),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-            BoxShadow(
-              color: Colors.white.withValues(alpha: 0.7),
-              offset: Offset(-3, -3),
-              blurRadius: 2,
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 12.r,
+              spreadRadius: 1,
+              offset: Offset(4.w, 6.h),
             ),
           ],
-          borderRadius: BorderRadius.circular(24.r),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.2.w),
-          gradient: const LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [Color(0xFFE5A11F), Color(0xFF0F4C5C)],
-          ),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: 15.w,
-              top: 25.h,
-              child:
-              Obx(() {
-                if (myEventController.isLoading.value && myEventController.ticketList.isEmpty) {
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24.r),
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFFE5A000),
+                      Color(0xFF0F4C5C),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      width: 6.w,
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.35),
+                        Colors.transparent,
+                        Colors.black.withValues(alpha: 0.30),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 15.w,
+                top: 43.h,
+                child: Obx(() {
+                  int count = myEventController.totalTickets.value;
+                  bool isInitialLoading = myEventController.isLoading.value &&
+                      myEventController.ticketList.isEmpty;
+                  String displayCount = isInitialLoading
+                      ? "00"
+                      : (count < 10 ? "0$count" : "$count");
                   return ShaderMask(
-                    shaderCallback: (Rect bounds) => const LinearGradient(
-                      colors: [Color(0xFFF2A900), Color(0xFF0F4C5C)],
-                    ).createShader(bounds),
+                    shaderCallback: (Rect bounds) {
+                      return const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color(0xFF0F4C5C),
+                          Color(0xFFE5A000),
+                        ],
+                      ).createShader(bounds);
+                    },
                     blendMode: BlendMode.srcIn,
                     child: Text(
-                      "00",
+                      displayCount,
                       style: GoogleFonts.museoModerno(
-                        fontSize: 120.sp,
-                        fontWeight: FontWeight.w600,
-                        height: 1.33,
+                        fontSize: 110.sp,
+                        fontWeight: FontWeight.bold,
+                        height: 1.0,
                         color: Colors.white,
                       ),
                     ),
                   );
-                }
-                int count = myEventController.totalTickets.value;
-                String displayCount = count < 10 ? "0$count" : "$count";
-               return ShaderMask(
-                  shaderCallback: (Rect bounds) {
-                    return const LinearGradient(
-                      begin: Alignment.centerRight,
-                      end: Alignment.centerLeft,
-                      colors: [
-                        Color(0xFFF2A900),
-                        Color(0xFF0F4C5C),
-                      ],
-                    ).createShader(bounds);
-                  },
-                  blendMode: BlendMode.srcIn,
-                  child: Text(
-                    displayCount,
-                    style: GoogleFonts.museoModerno(
-                      fontSize: 120.sp,
-                      fontWeight: FontWeight.w600,
-                      height: 1.33,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              }
-              )
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "My\nEvents",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF0F4C5C),
-                      height: 1.1,
-                    ),
-                  ),
-                  const Spacer(),
-                  Image.asset(
-                    AppImages.myEventImage,
-                    height: 40.h,
-                    width: 40.w,
-                    color: const Color(0xFF0F4C5C),
-                  ),
-                ],
+                }),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "My\nEvents",
+                      style: GoogleFonts.montserrat(
+                        fontSize: 26.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF0F4C5C),
+                        height: 1.1,
+                      ),
+                    ),
+                    Image.asset(
+                      AppImages.myEventImage,
+                      height: 38.h,
+                      width: 38.w,
+                      color: const Color(0xFF0F4C5C),
+                      fit: BoxFit.contain,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

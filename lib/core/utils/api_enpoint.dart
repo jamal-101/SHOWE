@@ -8,5 +8,4 @@ class ApiEndPoint {
   static const forgetPassword = "$baseUrl/auth/forget-password";
   static const getVenues = "$baseUrl/vanue";
   static String toggleFavorite(String id) => "/event/interest/$id";
-
 }

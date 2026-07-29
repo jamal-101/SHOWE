@@ -43,9 +43,27 @@ class LocalStorage {
   }
 
   /// Remove All Data From SharedPreferences
+  // static Future<void> removeAllPrefData() async {
+  //   final localStorage = await _getStorage();
+  //   await localStorage.clear();
+  //   _resetLocalStorageData();
+  //   await getAllPrefData();
+  // }
+
   static Future<void> removeAllPrefData() async {
     final localStorage = await _getStorage();
+
+    // শুধু deviceId টি সেভ করে রাখুন
+    String? currentDeviceId = localStorage.getString(LocalStorageKeys.deviceId);
+
+    // সব ডাটা মুছে ফেলুন
     await localStorage.clear();
+
+    // deviceId টি আবার পুনরায় সেট করুন
+    if (currentDeviceId != null) {
+      await localStorage.setString(LocalStorageKeys.deviceId, currentDeviceId);
+    }
+
     _resetLocalStorageData();
     await getAllPrefData();
   }
@@ -55,7 +73,7 @@ class LocalStorage {
     final localStorage = preferences!;
     localStorage.setString(LocalStorageKeys.token, "");
     localStorage.setString(LocalStorageKeys.refreshToken, "");
-    localStorage.setString(LocalStorageKeys.userId, "");
+    // localStorage.setString(LocalStorageKeys.userId, "");
     localStorage.setString(LocalStorageKeys.myImage, "");
     localStorage.setString(LocalStorageKeys.myName, "");
     localStorage.setString(LocalStorageKeys.myEmail, "");

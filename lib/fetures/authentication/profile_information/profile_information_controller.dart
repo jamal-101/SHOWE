@@ -242,6 +242,255 @@
 // }
 
 
+
+// import 'dart:io';
+// import 'package:camera/camera.dart';
+// import 'package:digital_event/core/constans/app_images.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:get/get.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:image_picker/image_picker.dart';
+// import '../../../core/storage/local_storage.dart';
+// import '../../../core/storage/storage_key.dart';
+// import '../../../core/utils/api_enpoint.dart';
+// import '../../../core/utils/api_response_model.dart';
+// import '../../../core/utils/api_service.dart';
+// import '../../home/screen/home_screen.dart';
+// import 'package:dio/dio.dart' as dio;
+//
+// enum Gender { male, female, other }
+//
+// class ProfileInformationController extends GetxController {
+//   RxString selectedGender = "Select".obs;
+//
+//   void updateSelectedGender(Gender genderItem) {
+//     switch (genderItem) {
+//       case Gender.male: selectedGender.value = "male"; break;
+//       case Gender.female: selectedGender.value = "female"; break;
+//       case Gender.other: selectedGender.value = "Prefer not to say"; break;
+//     }
+//   }
+//
+//   final TextEditingController nameController = TextEditingController();
+//   final TextEditingController emailController = TextEditingController();
+//   final TextEditingController phoneController = TextEditingController();
+//
+//   /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Live Camera Setup <<<<<<<<<<<<<<<<<<<<<<///
+//   CameraController? cameraController;
+//   List<CameraDescription>? cameras;
+//   bool isCameraInitialized = false;
+//   bool isScanningLogin = false;
+//   File? capturedImage;
+//   @override
+//   void onInit() {
+//     super.onInit();
+//   }
+//
+//   Future<void> initializeCamera() async {
+//     try {
+//       cameras = await availableCameras();
+//       if (cameras != null && cameras!.isNotEmpty) {
+//         final frontCamera = cameras!.firstWhere(
+//               (camera) => camera.lensDirection == CameraLensDirection.front,
+//           orElse: () => cameras!.first,
+//         );
+//
+//         cameraController = CameraController(
+//           frontCamera,
+//           ResolutionPreset.high,
+//           enableAudio: false,
+//         );
+//
+//         await cameraController!.initialize();
+//         isCameraInitialized = true;
+//         update();
+//       }
+//     } catch (e) {
+//       debugPrint("Camera Initialization Error: $e");
+//     }
+//   }
+//
+//   @override
+//   void onClose() {
+//     cameraController?.dispose();
+//     super.onClose();
+//   }
+//
+//   bool isScanning = false;
+//   final ImagePicker _picker = ImagePicker();
+//
+//   /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Face Registration (On Click Live Capture) <<<<<<<<<<<<<<<<<<<<<<///
+//   Future<void> startScanning() async {
+//     isScanning = true;
+//     update();
+//     await initializeCamera();
+//     if (cameraController == null || !cameraController!.value.isInitialized) {
+//       isScanning = false;
+//       update();
+//       Get.snackbar("Error", "Camera could not be started!", snackPosition: SnackPosition.BOTTOM);
+//       return;
+//     }
+//     try {
+//       await Future.delayed(const Duration(milliseconds: 1500));
+//       final XFile image = await cameraController!.takePicture();
+//       capturedImage = File(image.path);
+//
+//       dio.FormData formData = dio.FormData.fromMap({
+//         "device_id": LocalStorage.deviceId,
+//         "image": await dio.MultipartFile.fromFile(
+//           capturedImage!.path,
+//           filename: capturedImage!.path.split('/').last,
+//         ),
+//       });
+//
+//       String token = LocalStorage.token;
+//       String authHeader = token.startsWith("Bearer") ? token : "Bearer $token";
+//
+//       Map<String, String> headers = {
+//         "Authorization": authHeader,
+//       };
+//
+//       // ৪. ফেস সেভ করার এপিআই কল
+//       ApiResponseModel response = await ApiService.post(
+//         ApiEndPoint.saveFaceVerification,
+//         body: formData,
+//         header: headers,
+//       );
+//
+//       if (response.isSuccess) {
+//         showSuccessDialog();
+//       } else {
+//         isScanning = false;
+//         isCameraInitialized = false;
+//         cameraController?.dispose(); // ফেইল হলে ক্যামেরা রিলিজ করে আগের স্টেটে ব্যাক করবে
+//         update();
+//         Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
+//       }
+//     } catch (e) {
+//       isScanning = false;
+//       isCameraInitialized = false;
+//       cameraController?.dispose();
+//       update();
+//       Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
+//     }
+//   }
+//
+//   /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Face Login (On Click Live Capture) <<<<<<<<<<<<<<<<<<<<<<///
+//   Future<void> startFaceLogin() async {
+//     // ১. বাটনে ক্লিক করার সাথে সাথে স্ক্যানিং স্টেট অন হবে এবং ক্যামেরা লোড হওয়া শুরু করবে
+//     isScanningLogin = true;
+//     update();
+//
+//     await initializeCamera();
+//
+//     if (cameraController == null || !cameraController!.value.isInitialized) {
+//       isScanningLogin = false;
+//       update();
+//       Get.snackbar("Error", "Camera could not be started!", snackPosition: SnackPosition.BOTTOM);
+//       return;
+//     }
+//
+//     try {
+//       await Future.delayed(const Duration(milliseconds: 1500));
+//       final XFile image = await cameraController!.takePicture();
+//       capturedImage = File(image.path);
+//
+//       dio.FormData formData = dio.FormData.fromMap({
+//         "device_id": LocalStorage.deviceId,
+//         "image": await dio.MultipartFile.fromFile(
+//           capturedImage!.path,
+//           filename: capturedImage!.path.split('/').last,
+//         ),
+//       });
+//
+//       String token = LocalStorage.token;
+//       String authHeader = token.startsWith("Bearer") ? token : "Bearer $token";
+//       Map<String, String> headers = {
+//         "Authorization": authHeader,
+//       };
+//
+//       ApiResponseModel response = await ApiService.post(
+//         "/auth/face-login",
+//         body: formData,
+//         header: headers,
+//       );
+//
+//       if (response.isSuccess) {
+//         if (response.data['data'] != null && response.data['data']['accessToken'] != null) {
+//           String newAccessToken = response.data['data']['accessToken'];
+//           await LocalStorage.setString(LocalStorageKeys.token, newAccessToken);
+//           await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
+//           await LocalStorage.getAllPrefData();
+//         }
+//         showSuccessDialog();
+//       } else {
+//         isScanningLogin = false;
+//         isCameraInitialized = false;
+//         cameraController?.dispose();
+//         update();
+//         Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
+//       }
+//     } catch (e) {
+//       isScanningLogin = false;
+//       isCameraInitialized = false;
+//       cameraController?.dispose();
+//       update();
+//       Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
+//     }
+//   }
+//
+//   void showSuccessDialog() {
+//     Get.dialog(
+//       barrierDismissible: false,
+//       Dialog(
+//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+//         child: Padding(
+//           padding: EdgeInsets.all(24.w),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Container(
+//                 padding: EdgeInsets.all(20.w),
+//                 decoration: const BoxDecoration(
+//                   color: Color(0xFFF7BD56),
+//                   shape: BoxShape.circle,
+//                 ),
+//                 child: Image.asset(AppImages.faceSuccess, height: 100.h, width: 100.w),
+//               ),
+//               SizedBox(height: 20.h),
+//               Text(
+//                 "Congratulations",
+//                 style: GoogleFonts.montserrat(
+//                   fontSize: 18.sp,
+//                   fontWeight: FontWeight.bold,
+//                   color: const Color(0xFF0F4C5C),
+//                 ),
+//               ),
+//               SizedBox(height: 10.h),
+//               Text(
+//                 "Your account is ready to use, redirecting to homepage",
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+//               ),
+//               SizedBox(height: 20.h),
+//               const CircularProgressIndicator(color: Color(0xFFF7BD56)),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//     Future.delayed(const Duration(seconds: 3), () {
+//       isScanningLogin = false;
+//       isCameraInitialized = false;
+//       cameraController?.dispose();
+//       update();
+//       Get.offAll(() => HomeScreen());
+//     });
+//   }
+// }
+
+
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:digital_event/core/constans/app_images.dart';
@@ -249,7 +498,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/storage_key.dart';
 import '../../../core/utils/api_enpoint.dart';
@@ -258,6 +506,7 @@ import '../../../core/utils/api_service.dart';
 import '../../home/screen/home_screen.dart';
 import 'package:dio/dio.dart' as dio;
 
+
 enum Gender { male, female, other }
 
 class ProfileInformationController extends GetxController {
@@ -265,9 +514,15 @@ class ProfileInformationController extends GetxController {
 
   void updateSelectedGender(Gender genderItem) {
     switch (genderItem) {
-      case Gender.male: selectedGender.value = "male"; break;
-      case Gender.female: selectedGender.value = "female"; break;
-      case Gender.other: selectedGender.value = "Prefer not to say"; break;
+      case Gender.male:
+        selectedGender.value = "male";
+        break;
+      case Gender.female:
+        selectedGender.value = "female";
+        break;
+      case Gender.other:
+        selectedGender.value = "Prefer not to say";
+        break;
     }
   }
 
@@ -275,18 +530,13 @@ class ProfileInformationController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Live Camera Setup <<<<<<<<<<<<<<<<<<<<<<///
+  /// >>>>>>>>>>>>>>>>>>>>>>>>>>> Live Camera Setup <<<<<<<<<<<<<<<<<<<<<<///
   CameraController? cameraController;
   List<CameraDescription>? cameras;
   bool isCameraInitialized = false;
   bool isScanningLogin = false;
+  bool isScanning = false;
   File? capturedImage;
-
-  // স্ক্রিনে ঢোকার সাথে সাথে ক্যামেরা অন হওয়া বন্ধ করতে অন-ইনিট থেকে মেথড বাদ দেওয়া হলো
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   Future<void> initializeCamera() async {
     try {
@@ -299,11 +549,20 @@ class ProfileInformationController extends GetxController {
 
         cameraController = CameraController(
           frontCamera,
-          ResolutionPreset.high,
+          // 🔹 1. উচ্চমানের ও স্পষ্ট ফেস স্ক্যানের জন্য UltraHigh / Max Res
+          ResolutionPreset.ultraHigh,
           enableAudio: false,
+          imageFormatGroup: ImageFormatGroup.jpeg, // 🔹 স্পষ্ট ফরম্যাট
         );
 
         await cameraController!.initialize();
+
+        // 🔹 2. অটো-ফোকাস এবং এক্সপোজার সেটআপ (ফেস স্পষ্ট হওয়ার জন্য)
+        try {
+          await cameraController!.setFocusMode(FocusMode.auto);
+          await cameraController!.setExposureMode(ExposureMode.auto);
+        } catch (_) {}
+
         isCameraInitialized = true;
         update();
       }
@@ -318,15 +577,25 @@ class ProfileInformationController extends GetxController {
     super.onClose();
   }
 
-  bool isScanning = false;
-  final ImagePicker _picker = ImagePicker();
+  /// 🔹 ছবি যাতে বাঁকা বা ঝাপসা না হয় সেভাবে Capturing Helper
+  Future<XFile?> _captureClearAndStraightPhoto() async {
+    if (cameraController == null || !cameraController!.value.isInitialized) {
+      return null;
+    }
 
-  /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Face Registration (On Click Live Capture) <<<<<<<<<<<<<<<<<<<<<<///
+    // ছবি নেওয়ার ঠিক আগে ফোকাস লক করা যাতে ঝাপসা না হয়
+    try {
+      await cameraController!.setFocusMode(FocusMode.locked);
+    } catch (_) {}
+
+    final XFile image = await cameraController!.takePicture();
+    return image;
+  }
+
+  /// >>>>>>>>>>>>>>>>>>>>>>>>>>> Face Registration <<<<<<<<<<<<<<<<<<<<<<///
   Future<void> startScanning() async {
-    // ১. বাটনে ক্লিক করার সাথে সাথে স্ক্যানিং স্টেট অন হবে এবং ক্যামেরা লোড হবে
     isScanning = true;
     update();
-
     await initializeCamera();
 
     if (cameraController == null || !cameraController!.value.isInitialized) {
@@ -337,11 +606,10 @@ class ProfileInformationController extends GetxController {
     }
 
     try {
-      // ২. ক্যামেরা ওপেন হওয়ার পর ইউজারকে পজিশন ঠিক করার জন্য ১.৫ সেকেন্ড সময় দেওয়া
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await Future.delayed(const Duration(milliseconds: 1200));
+      final XFile? image = await _captureClearAndStraightPhoto();
 
-      // ৩. লাইভ প্রিভিউ থেকে সরাসরি ছবি স্ন্যাপ করা
-      final XFile image = await cameraController!.takePicture();
+      if (image == null) throw Exception("Failed to capture image");
       capturedImage = File(image.path);
 
       dio.FormData formData = dio.FormData.fromMap({
@@ -359,7 +627,6 @@ class ProfileInformationController extends GetxController {
         "Authorization": authHeader,
       };
 
-      // ৪. ফেস সেভ করার এপিআই কল
       ApiResponseModel response = await ApiService.post(
         ApiEndPoint.saveFaceVerification,
         body: formData,
@@ -369,24 +636,17 @@ class ProfileInformationController extends GetxController {
       if (response.isSuccess) {
         showSuccessDialog();
       } else {
-        isScanning = false;
-        isCameraInitialized = false;
-        cameraController?.dispose(); // ফেইল হলে ক্যামেরা রিলিজ করে আগের স্টেটে ব্যাক করবে
-        update();
+        _resetCameraState();
         Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
-      isScanning = false;
-      isCameraInitialized = false;
-      cameraController?.dispose();
-      update();
+      _resetCameraState();
       Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
     }
   }
 
-  /// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Face Login (On Click Live Capture) <<<<<<<<<<<<<<<<<<<<<<///
+  /// >>>>>>>>>>>>>>>>>>>>>>>>>>> Face Login <<<<<<<<<<<<<<<<<<<<<<///
   Future<void> startFaceLogin() async {
-    // ১. বাটনে ক্লিক করার সাথে সাথে স্ক্যানিং স্টেট অন হবে এবং ক্যামেরা লোড হওয়া শুরু করবে
     isScanningLogin = true;
     update();
 
@@ -400,8 +660,10 @@ class ProfileInformationController extends GetxController {
     }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1500));
-      final XFile image = await cameraController!.takePicture();
+      await Future.delayed(const Duration(milliseconds: 1200));
+      final XFile? image = await _captureClearAndStraightPhoto();
+
+      if (image == null) throw Exception("Failed to capture image");
       capturedImage = File(image.path);
 
       dio.FormData formData = dio.FormData.fromMap({
@@ -433,19 +695,21 @@ class ProfileInformationController extends GetxController {
         }
         showSuccessDialog();
       } else {
-        isScanningLogin = false;
-        isCameraInitialized = false;
-        cameraController?.dispose();
-        update();
+        _resetCameraState();
         Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
-      isScanningLogin = false;
-      isCameraInitialized = false;
-      cameraController?.dispose();
-      update();
+      _resetCameraState();
       Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
     }
+  }
+
+  void _resetCameraState() {
+    isScanning = false;
+    isScanningLogin = false;
+    isCameraInitialized = false;
+    cameraController?.dispose();
+    update();
   }
 
   void showSuccessDialog() {
@@ -489,11 +753,8 @@ class ProfileInformationController extends GetxController {
       ),
     );
     Future.delayed(const Duration(seconds: 3), () {
-      isScanningLogin = false;
-      isCameraInitialized = false;
-      cameraController?.dispose();
-      update();
-      Get.offAll(() => HomeScreen());
+      _resetCameraState();
+      Get.offAll(() => const HomeScreen());
     });
   }
 }
