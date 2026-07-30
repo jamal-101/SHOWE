@@ -36,9 +36,9 @@ class CommonButton extends StatelessWidget {
             ? SizedBox(
           height: 20.h,
           width: 20.w,
-          child: const CircularProgressIndicator(
-            color: Colors.white, // লোডারের কালার সাদা
-            strokeWidth: 2.5,   // লোডারের লাইনের পুরুত্ব
+          child:  CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2.5,
           ),
         )
             : CommonText(

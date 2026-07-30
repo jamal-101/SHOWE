@@ -81,8 +81,6 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.myRole, "");
     localStorage.setString(LocalStorageKeys.profileImage, "");
   }
-
-  // Save Data To SharedPreferences
   static Future<void> setString(String key, String value) async {
     final localStorage = await _getStorage();
     await localStorage.setString(key, value);

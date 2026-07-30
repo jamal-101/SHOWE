@@ -1,7 +1,9 @@
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constans/app_images.dart';
+import '../../../core/route/app_routes.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
@@ -17,6 +19,9 @@ import '../model/venue_details_model.dart' as VenueDetails;
 import '../../favorites/model/favourite_event_model.dart' as ev;
 import '../../favorites/model/favourite_venue_model.dart' as vn;
 import 'dart:async';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+import '../screen/payment_web_view.dart';
 
 class HomController extends GetxController {
   var selectedTabIndex = 0.obs;
@@ -43,29 +48,7 @@ class HomController extends GetxController {
   void onInit() {
     super.onInit();
     fetchEvents(isRefresh: true);
-    scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        if (selectedTabIndex.value == 0) {
-          int totalPage = eventModel.pagination?.totalPage ?? 1;
-          if (currentPage <= totalPage && !isLoadMore.value) {
-            fetchEvents(isRefresh: false);
-          }
-        } else if (selectedTabIndex.value == 1) { // Artist Pagination
-          int totalPage = artistModel.pagination?.totalPage ?? 1;
-          if (currentArtistPage <= totalPage && !isArtistLoadMore.value) {
-            fetchArtists(isRefresh: false);
-          }
-          else if (selectedTabIndex.value == 2) {
-            int totalPage = venuePagination?.totalPage ?? 1;
-            if (currentVenuePage <= totalPage && !isVenueLoadMore.value) {
-              fetchVenues(isRefresh: false);
-            }
-          }
-        }
-      }
-    }
-      );
+    initDeepLinks();
   }
 
   @override
@@ -75,21 +58,13 @@ class HomController extends GetxController {
     super.onClose();
   }
 
-  // void changeTab(int index) {
-  //   selectedTabIndex.value = index;
-  //   searchController.clear();
-  //   update();
-  //   if (index == 2 && venueList.isEmpty) {
-  //     fetchVenues();
-  //   }
-  // }
 
   void changeTab(int index) {
     selectedTabIndex.value = index;
     update();
 
     if (index == 0 && eventModel.data!.isEmpty) fetchEvents();
-    if (index == 1 && artistModel.data!.isEmpty) fetchArtists(); // আর্টিস্ট ট্যাব
+    if (index == 1 && artistModel.data!.isEmpty) fetchArtists();
     if (index == 2 && venueList.isEmpty) fetchVenues();
   }
 
@@ -428,6 +403,34 @@ class HomController extends GetxController {
     }
   }
 
+  final AppLinks _appLinks = AppLinks();
+  void initDeepLinks() {
+    _appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        debugPrint(">>>> Stream Deep Link Received: $uri");
+        handlePaymentNavigation(uri);
+      }
+    }, onError: (err) {
+      debugPrint(">>>> Deep Link Stream Error: $err");
+    });
+    _appLinks.getInitialLink().then((uri) {
+      if (uri != null) {
+        debugPrint(">>>> Initial Deep Link Received: $uri");
+        handlePaymentNavigation(uri);
+      }
+    });
+  }
+
+  void handlePaymentNavigation(Uri uri) {
+    String urlString = uri.toString();
+    if (urlString.contains("purchase-success")) {
+      debugPrint(">>>> Payment Success Detected! Redirecting to My Program...");
+      Future.delayed(const Duration(milliseconds: 200), () {
+        Get.toNamed(AppRoutes.myProgramScreen);
+      });
+    }
+  }
+
   Future<void> purchaseTicket(String eventId) async {
     try {
       isPurchaseLoading.value = true;
@@ -438,12 +441,9 @@ class HomController extends GetxController {
       if (response.isSuccess) {
         String paymentUrl = response.data['data'] ?? "";
         if (paymentUrl.isNotEmpty) {
-          final Uri uri = Uri.parse(paymentUrl);
-          try {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          } catch (e) {
-            await launchUrl(uri, mode: LaunchMode.platformDefault);
-          }
+
+          Get.to(() => PaymentWebViewScreen(paymentUrl: paymentUrl));
+
         } else {
           Get.snackbar("Error", "Payment link not found in response",
               backgroundColor: Colors.red, colorText: Colors.white);
@@ -486,14 +486,11 @@ class HomController extends GetxController {
 
       if (response.isSuccess) {
         var data = response.data;
-
-        // Update Pagination Meta
         if (data['pagination'] != null) {
           totalEventPages = data['pagination']['totalPage'] ?? 1;
         }
 
         List rawList = data['data'] ?? [];
-        // Map/JSON থেকে EventModel.Data অবজেক্টে রূপান্তর
         List<EventModel.Data> parsedEvents = rawList
             .map((e) => EventModel.Data.fromJson(Map<String, dynamic>.from(e)))
             .toList();

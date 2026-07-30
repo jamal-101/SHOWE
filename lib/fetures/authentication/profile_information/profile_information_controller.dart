@@ -241,8 +241,6 @@
 //   }
 // }
 
-
-
 // import 'dart:io';
 // import 'package:camera/camera.dart';
 // import 'package:digital_event/core/constans/app_images.dart';
@@ -490,7 +488,6 @@
 //   }
 // }
 
-
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:digital_event/core/constans/app_images.dart';
@@ -505,7 +502,6 @@ import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
 import '../../home/screen/home_screen.dart';
 import 'package:dio/dio.dart' as dio;
-
 
 enum Gender { male, female, other }
 
@@ -543,21 +539,18 @@ class ProfileInformationController extends GetxController {
       cameras = await availableCameras();
       if (cameras != null && cameras!.isNotEmpty) {
         final frontCamera = cameras!.firstWhere(
-              (camera) => camera.lensDirection == CameraLensDirection.front,
+          (camera) => camera.lensDirection == CameraLensDirection.front,
           orElse: () => cameras!.first,
         );
 
         cameraController = CameraController(
           frontCamera,
-          // 🔹 1. উচ্চমানের ও স্পষ্ট ফেস স্ক্যানের জন্য UltraHigh / Max Res
           ResolutionPreset.ultraHigh,
           enableAudio: false,
-          imageFormatGroup: ImageFormatGroup.jpeg, // 🔹 স্পষ্ট ফরম্যাট
+          imageFormatGroup: ImageFormatGroup.jpeg,
         );
 
         await cameraController!.initialize();
-
-        // 🔹 2. অটো-ফোকাস এবং এক্সপোজার সেটআপ (ফেস স্পষ্ট হওয়ার জন্য)
         try {
           await cameraController!.setFocusMode(FocusMode.auto);
           await cameraController!.setExposureMode(ExposureMode.auto);
@@ -577,13 +570,10 @@ class ProfileInformationController extends GetxController {
     super.onClose();
   }
 
-  /// 🔹 ছবি যাতে বাঁকা বা ঝাপসা না হয় সেভাবে Capturing Helper
   Future<XFile?> _captureClearAndStraightPhoto() async {
     if (cameraController == null || !cameraController!.value.isInitialized) {
       return null;
     }
-
-    // ছবি নেওয়ার ঠিক আগে ফোকাস লক করা যাতে ঝাপসা না হয়
     try {
       await cameraController!.setFocusMode(FocusMode.locked);
     } catch (_) {}
@@ -601,12 +591,16 @@ class ProfileInformationController extends GetxController {
     if (cameraController == null || !cameraController!.value.isInitialized) {
       isScanning = false;
       update();
-      Get.snackbar("Error", "Camera could not be started!", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Camera could not be started!",
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1200));
+      await Future.delayed(const Duration(milliseconds: 10));
       final XFile? image = await _captureClearAndStraightPhoto();
 
       if (image == null) throw Exception("Failed to capture image");
@@ -623,9 +617,7 @@ class ProfileInformationController extends GetxController {
       String token = LocalStorage.token;
       String authHeader = token.startsWith("Bearer") ? token : "Bearer $token";
 
-      Map<String, String> headers = {
-        "Authorization": authHeader,
-      };
+      Map<String, String> headers = {"Authorization": authHeader};
 
       ApiResponseModel response = await ApiService.post(
         ApiEndPoint.saveFaceVerification,
@@ -637,11 +629,20 @@ class ProfileInformationController extends GetxController {
         showSuccessDialog();
       } else {
         _resetCameraState();
-        Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar(
+          "Failed",
+          response.message,
+          snackPosition: SnackPosition.TOP,
+        );
       }
     } catch (e) {
       _resetCameraState();
-      Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Something went wrong: $e",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.white.withValues(alpha: 0.9),
+      );
     }
   }
 
@@ -655,12 +656,16 @@ class ProfileInformationController extends GetxController {
     if (cameraController == null || !cameraController!.value.isInitialized) {
       isScanningLogin = false;
       update();
-      Get.snackbar("Error", "Camera could not be started!", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Camera could not be started!",
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 1200));
+      await Future.delayed(const Duration(milliseconds: 10));
       final XFile? image = await _captureClearAndStraightPhoto();
 
       if (image == null) throw Exception("Failed to capture image");
@@ -676,9 +681,7 @@ class ProfileInformationController extends GetxController {
 
       String token = LocalStorage.token;
       String authHeader = token.startsWith("Bearer") ? token : "Bearer $token";
-      Map<String, String> headers = {
-        "Authorization": authHeader,
-      };
+      Map<String, String> headers = {"Authorization": authHeader};
 
       ApiResponseModel response = await ApiService.post(
         "/auth/face-login",
@@ -687,7 +690,8 @@ class ProfileInformationController extends GetxController {
       );
 
       if (response.isSuccess) {
-        if (response.data['data'] != null && response.data['data']['accessToken'] != null) {
+        if (response.data['data'] != null &&
+            response.data['data']['accessToken'] != null) {
           String newAccessToken = response.data['data']['accessToken'];
           await LocalStorage.setString(LocalStorageKeys.token, newAccessToken);
           await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
@@ -696,11 +700,19 @@ class ProfileInformationController extends GetxController {
         showSuccessDialog();
       } else {
         _resetCameraState();
-        Get.snackbar("Failed", response.message, snackPosition: SnackPosition.BOTTOM);
+        Get.snackbar(
+          "Failed",
+          response.message,
+          snackPosition: SnackPosition.TOP,
+        );
       }
     } catch (e) {
       _resetCameraState();
-      Get.snackbar("Error", "Something went wrong: $e", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        "Error",
+        "Something went wrong: $e",
+        snackPosition: SnackPosition.TOP,
+      );
     }
   }
 
@@ -716,7 +728,9 @@ class ProfileInformationController extends GetxController {
     Get.dialog(
       barrierDismissible: false,
       Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         child: Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
@@ -728,7 +742,11 @@ class ProfileInformationController extends GetxController {
                   color: Color(0xFFF7BD56),
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(AppImages.faceSuccess, height: 100.h, width: 100.w),
+                child: Image.asset(
+                  AppImages.faceSuccess,
+                  height: 100.h,
+                  width: 100.w,
+                ),
               ),
               SizedBox(height: 20.h),
               Text(
@@ -743,7 +761,7 @@ class ProfileInformationController extends GetxController {
               Text(
                 "Your account is ready to use, redirecting to homepage",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                style: TextStyle(fontSize: 16.sp, color: Colors.grey[900]),
               ),
               SizedBox(height: 20.h),
               const CircularProgressIndicator(color: Color(0xFFF7BD56)),

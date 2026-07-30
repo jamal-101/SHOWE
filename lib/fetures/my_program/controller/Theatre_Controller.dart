@@ -85,45 +85,13 @@ class TheatreController extends GetxController {
   }
 
 
-  // Future<void> openReaderUrl(String? id) async {
-  //   if (id == null || id.isEmpty) return;
-  //
-  //   final String urlString = "https://yead3001.binarybards.online/reader/$id";
-  //   final Uri url = Uri.parse(urlString);
-  //
-  //   if (await canLaunchUrl(url)) {
-  //     await launchUrl(url, mode: LaunchMode.externalApplication);
-  //   } else {
-  //     debugPrint("Could not launch $url");
-  //   }
-  // }
-
-  // Future<void> openReaderUrl(String? id) async {
-  //   if (id == null || id.isEmpty) return;
-  //
-  //   final String token = LocalStorage.token;
-  //   final String urlString = "https://yead3001.binarybards.online/reader/$id?token=$token";
-  //
-  //   final Uri url = Uri.parse(urlString);
-  //
-  //   if (await canLaunchUrl(url)) {
-  //     await launchUrl(
-  //       url,
-  //       mode: LaunchMode.externalApplication,
-  //     );
-  //   } else {
-  //     debugPrint("Could not launch $url");
-  //   }
-  // }
-
   void openReaderUrl(BuildContext context, String? id, {String? title}) {
     if (id == null || id.isEmpty) return;
 
     final String token = LocalStorage.token;
-    // 🔹 টোকেনসহ লিঙ্ক
+
     final String urlString = "https://yead3001.binarybards.online/reader/$id?token=${Uri.encodeComponent(token)}";
 
-    // 🔹 অ্যাপের ভেতরেই WebView স্ক্রিনে নিয়ে যাওয়া
     Get.to(() => ReaderWebScreen(
       readerUrl: urlString,
       title: title ?? "Reader",
