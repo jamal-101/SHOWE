@@ -1,4 +1,10 @@
 class AppString {
+
+  static const String startServer = "Please, start the Server";
+  static const String someThingWrong = "Something Went Wrong";
+  static const String requestTimeOut = "Request Time Out";
+  static const String noInternetConnection = "No internet connection";
+
   static const String onb1title = 'Exploring Upcoming And Nearby Events';
   static const String onb1Description = 'Your digital companion for events, performances and experiences.';
   static const String onb2title = 'Scan For Instant Access at Any Event';

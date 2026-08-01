@@ -9,8 +9,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/utils/app_utils.dart';
+
 class SingUpOrLoginScreen extends StatelessWidget {
-  const SingUpOrLoginScreen({super.key});
+  SingUpOrLoginScreen({super.key});
+
+  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
+
+  final TextEditingController _loginEmailController = TextEditingController();
+  final TextEditingController _loginPasswordController =
+      TextEditingController();
+
+  final TextEditingController _signUpNameController = TextEditingController();
+  final TextEditingController _signUpEmailController = TextEditingController();
+  final TextEditingController _signUpPasswordController =
+      TextEditingController();
+  final TextEditingController _signUpConfirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +69,24 @@ class SingUpOrLoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Obx(
-                    () => controller.isLoginSelected.value
-                        ? _buildLoginForm(controller)
-                        : _buildSignUpForm(controller),
-                  ),
+                  // Obx(
+                  //   () => controller.isLoginSelected.value
+                  //       ? _buildLoginForm(controller)
+                  //       : _buildSignUpForm(controller),
+                  // ),
+                  Obx(() {
+                    if (controller.isLoginSelected.value) {
+                      return Form(
+                        key: _loginFormKey,
+                        child: _buildLoginForm(controller),
+                      );
+                    } else {
+                      return Form(
+                        key: _signUpFormKey,
+                        child: _buildSignUpForm(controller),
+                      );
+                    }
+                  }),
                 ],
               ),
             ),
@@ -94,14 +123,21 @@ class SingUpOrLoginScreen extends StatelessWidget {
   Widget _buildLoginForm(AuthController controller) {
     return Column(
       children: [
-        _buildTextField(label: "Email", hint: "Loisbecket@gmail.com"),
+        _buildTextField(
+          label: "Email",
+          hint: "Loisbecket@gmail.com",
+          controller: _loginEmailController,
+          validator: Utils.emailValidator,
+        ),
         SizedBox(height: 20.h),
         _buildTextField(
           label: "Password",
+          controller: _loginPasswordController,
           hint: "********",
           isPassword: true,
           visibilityVariable: controller.isPasswordVisible,
           onIconTap: () => controller.togglePasswordVisibility(),
+          validator: Utils.passwordValidator,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,6 +156,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Get.toNamed(AppRoutes.forgotPasswordScreen);
+                // Get.toNamed(AppRoutes.setNewPass);
               },
               child: const Text(
                 AppString.forgotPass,
@@ -132,22 +169,35 @@ class SingUpOrLoginScreen extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: CommonButton(
-                title: AppString.login,
-                onTap: () {
-                  Get.toNamed(AppRoutes.homeScreen);
-                },
+              child: Obx(
+                    () => controller.isLoginLoading.value
+                    ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF0F4C5C),
+                  ),
+                )
+                    : CommonButton(
+                  title: AppString.login,
+                  onTap: () {
+                    if (_loginFormKey.currentState!.validate()) {
+                      controller.loginUser(
+                        email: _loginEmailController.text.trim(),
+                        password: _loginPasswordController.text.trim(),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
             SizedBox(width: 5.w),
             GestureDetector(
               onTap: () {
-                Get.toNamed(AppRoutes.setFaceRecognition);
+                Get.toNamed(AppRoutes.faceRecognitionLoginScreen);
               },
               child: Container(
                 height: 48.h,
                 width: 48.w,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFFF2A900),
                   shape: BoxShape.circle,
                 ),
@@ -173,31 +223,61 @@ class SingUpOrLoginScreen extends StatelessWidget {
   Widget _buildSignUpForm(AuthController controller) {
     return Column(
       children: [
-        _buildTextField(label: AppString.name, hint: "Lois becket"),
+        _buildTextField(
+          label: AppString.name,
+          hint: "Lois becket",
+          validator: Utils.fullNameValidator,
+          controller: _signUpNameController
+        ),
         SizedBox(height: 15.h),
-        _buildTextField(label: AppString.email, hint: "Loisbecket@gmail.com"),
+        _buildTextField(
+          controller: _signUpEmailController,
+          label: AppString.email,
+          hint: "Loisbecket@gmail.com",
+          validator: Utils.emailValidator,
+        ),
         SizedBox(height: 15.h),
         _buildTextField(
           label: AppString.password,
+          controller: _signUpPasswordController,
           hint: "********",
           isPassword: true,
+          validator: Utils.passwordValidator,
           visibilityVariable: controller.singUpIsPasswordVisible,
           onIconTap: () => controller.sinUpTogglePasswordVisibility(),
         ),
         SizedBox(height: 15.h),
         _buildTextField(
+          controller: _signUpConfirmPasswordController,
           label: AppString.confirmPass,
+          validator: (value) => Utils.confirmPasswordValidator(value, _signUpPasswordController.text),
           hint: "********",
           isPassword: true,
           visibilityVariable: controller.isConfirmPasswordVisible,
           onIconTap: () => controller.toggleConfirmPasswordVisibility(),
         ),
         SizedBox(height: 30.h),
-        CommonButton(
-          title: AppString.singUp,
-          onTap: () {
-            controller.isLoginSelected.value = true;
-          },
+        // CommonButton(
+        //   title: AppString.singUp,
+        //   onTap: () {
+        //     controller.isLoginSelected.value = true;
+        //   },
+        // ),
+        Obx(
+              () => controller.isSignUpLoading.value
+              ? const Center(child: CircularProgressIndicator(color: Color(0xFF0F4C5C)))
+              : CommonButton(
+            title: AppString.singUp,
+            onTap: () {
+              if (_signUpFormKey.currentState!.validate()) {
+                controller.registerUser(
+                  name: _signUpNameController.text.trim(),
+                  email: _signUpEmailController.text.trim(),
+                  password: _signUpPasswordController.text.trim(),
+                );
+              }
+            },
+          ),
         ),
         SizedBox(height: 20.h),
         Row(
@@ -285,6 +365,8 @@ class SingUpOrLoginScreen extends StatelessWidget {
   Widget _buildTextField({
     required String label,
     required String hint,
+    required TextEditingController controller,
+    required String? Function(String?)? validator,
     bool isPassword = false,
     RxBool? visibilityVariable,
     VoidCallback? onIconTap,
@@ -302,7 +384,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
         SizedBox(height: 8.h),
         isPassword && visibilityVariable != null
             ? Obx(
-                () => TextField(
+                () => TextFormField(
+                  validator: validator,
+                  controller: controller,
                   obscureText: !visibilityVariable.value,
                   decoration: InputDecoration(
                     hintText: hint,
@@ -328,7 +412,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
                   ),
                 ),
               )
-            : TextField(
+            : TextFormField(
+          controller: controller,
+          validator: validator,
                 decoration: InputDecoration(
                   hintText: hint,
                   filled: true,
@@ -439,10 +525,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(
-                      color: Color(0xFF060606),
-                      width: 1,
-                    ),
+                    bottom: BorderSide(color: Color(0xFF060606), width: 1),
                   ),
                 ),
                 child: Text(

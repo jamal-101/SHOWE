@@ -1,17 +1,18 @@
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
-import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controller/auth_controller.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final AuthController controller = Get.put(AuthController());
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -31,7 +32,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(0.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Image.asset(
                     AppImages.appLogo,
                     height: 40.h,
@@ -71,6 +72,8 @@ class ForgotPasswordScreen extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             TextField(
+              controller: controller.forgetPasswordEmailController, // কন্ট্রোলার অ্যাসাইন করা হলো
+              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: "Loisbecket@gmail.com",
                 filled: true,
@@ -86,12 +89,20 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 40.h),
-            CommonButton(
-              title: 'Get OTP',
-              onTap: () {
-                Get.toNamed(AppRoutes.verifyOtpScreen);
-              },
-            ),
+            Obx(() {
+              return controller.isForgetPasswordLoading.value
+                  ? const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF0F4C5C),
+                ),
+              )
+                  : CommonButton(
+                title: 'Get OTP',
+                onTap: () {
+                  controller.forgotPassword();
+                },
+              );
+            }),
           ],
         ),
       ),

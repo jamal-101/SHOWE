@@ -3,13 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AccountLogoutDialog extends StatelessWidget {
-  final VoidCallback onDelete;
+import '../controller/profile_controller.dart';
 
-  const AccountLogoutDialog({super.key, required this.onDelete});
+class AccountLogoutDialog extends StatelessWidget {
+
+
+  const AccountLogoutDialog({super.key, });
 
   @override
   Widget build(BuildContext context) {
+    final ProfileController controller = Get.find<ProfileController>();
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.r),
@@ -65,7 +68,9 @@ class AccountLogoutDialog extends StatelessWidget {
                 Container(width: 1, height: 50, color: const Color(0xFFF1F1F1)),
                 Expanded(
                   child: TextButton(
-                    onPressed: onDelete,
+                    onPressed: (){
+                      controller.logout();
+                    },
                     style: TextButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 15.h)),
                     child: Text(

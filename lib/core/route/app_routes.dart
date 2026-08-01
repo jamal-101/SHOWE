@@ -1,3 +1,4 @@
+import 'package:digital_event/fetures/authentication/profile_information/face_recognition_login_screen.dart';
 import 'package:digital_event/fetures/authentication/profile_information/profile_information_screen.dart';
 import 'package:digital_event/fetures/authentication/screen/auth_success_screen.dart';
 import 'package:digital_event/fetures/authentication/screen/forgot_password_screen.dart';
@@ -33,6 +34,7 @@ import 'package:get/get_instance/src/bindings_interface.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import '../../fetures/authentication/profile_information/face_recognition_screen.dart';
+import '../../fetures/authentication/screen/forgot_password_otp_verify.dart';
 import '../../fetures/my_event/screen/my_event_screen.dart';
 import '../../fetures/trip_plan/controller/trip_plan_controller.dart';
 
@@ -42,10 +44,12 @@ class AppRoutes {
   static const String singUpLoginScreen = '/singUpLoginScreen';
   static const String forgotPasswordScreen = '/forgotPasswordScreen';
   static const String verifyOtpScreen = '/verifyOtpScreen';
+  static const String forgotPasswordOtpVerify = '/forgotPasswordOtpVerify';
   static const String setNewPass = '/SetNewPassword';
   static const String authSuccessScreen = '/AuthSuccessScreen';
   static const String profileInformationScreen = '/profileInformationScreen';
   static const String setFaceRecognition = '/setFaceRecognition';
+  static const String faceRecognitionLoginScreen = '/faceRecognitionLoginScreen';
   static const String homeScreen = '/homeScreen';
   static const String eventScreen = '/EventScreen';
   static const String favoriteScreen = '/favoriteScreen';
@@ -99,6 +103,13 @@ class AppRoutes {
     GetPage(
       name: AppRoutes.verifyOtpScreen,
       page: () => VerifyOtpScreen(),
+      binding: BindingsBuilder(() {
+        // Get.lazyPut<SplashController>(() => SplashController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPasswordOtpVerify,
+      page: () => ForgotPasswordOtpVerify(),
       binding: BindingsBuilder(() {
         // Get.lazyPut<SplashController>(() => SplashController());
       }),
@@ -267,6 +278,13 @@ class AppRoutes {
     GetPage(
       name: AppRoutes.artistProfileView,
       page: () => ArtistProfileView(),
+      binding: BindingsBuilder(() {
+        Get.put<ScanController>(ScanController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.faceRecognitionLoginScreen,
+      page: () => FaceRecognitionLoginScreen(),
       binding: BindingsBuilder(() {
         Get.put<ScanController>(ScanController());
       }),

@@ -37,7 +37,7 @@ class ProgramDetailsScreen extends StatelessWidget {
                       width: double.infinity,
                       height: 1.sh,
                       child: PageFlipWidget(
-                        key: controller.pageFlipKey,
+                        // key: controller.pageFlipKey,
                         backgroundColor: Colors.black,
                         lastPage: Container(
                           color: const Color(0xFF0F4C5C),
@@ -49,13 +49,13 @@ class ProgramDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         children: [
-                          for (var imagePath in controller.bookImages)
-                            Image.asset(
-                              imagePath,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
+                          // for (var imagePath in controller.bookImages)
+                          //   Image.asset(
+                          //     imagePath,
+                          //     fit: BoxFit.cover,
+                          //     width: double.infinity,
+                          //     height: double.infinity,
+                          //   ),
                         ],
                       ),
                     ),

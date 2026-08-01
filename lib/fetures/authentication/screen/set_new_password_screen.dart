@@ -1,6 +1,5 @@
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/global_widget/common_button.dart';
-import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/authentication/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +11,8 @@ class SetNewPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String resetToken = Get.arguments ?? "";
+
     return Scaffold(
       body: GetBuilder<AuthController>(
         builder: (controller) {
@@ -63,6 +64,7 @@ class SetNewPasswordScreen extends StatelessWidget {
                     label: "New Password",
                     hint: "*******",
                     isPassword: true,
+                    textController: controller.newPasswordController,
                     visibilityVariable: controller.newPasswordVisible,
                     onIconTap: () => controller.toggleNewPasswordVisibility(),
                   ),
@@ -71,14 +73,24 @@ class SetNewPasswordScreen extends StatelessWidget {
                     label: "Confirm New Password",
                     hint: "*******",
                     isPassword: true,
+                    textController: controller.confirmPasswordController,
                     visibilityVariable: controller.confirmNewPasswordVisible,
-                    onIconTap: () =>
-                        controller.toggleConfirmNewPasswordVisibility(),
+                    onIconTap: () => controller.toggleConfirmNewPasswordVisibility(),
                   ),
-
                   SizedBox(height: 40.h),
-                  CommonButton(title: "Change Password", onTap: () {
-                    Get.toNamed(AppRoutes.authSuccessScreen);
+                  Obx(() {
+                    return controller.isResetPasswordLoading.value
+                        ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF0F4C5C),
+                      ),
+                    )
+                        : CommonButton(
+                      title: "Change Password",
+                      onTap: () {
+                        controller.resetPassword(resetToken: resetToken);
+                      },
+                    );
                   }),
                 ],
               ),
@@ -92,6 +104,7 @@ class SetNewPasswordScreen extends StatelessWidget {
   Widget _buildTextField({
     required String label,
     required String hint,
+    required TextEditingController textController,
     bool isPassword = false,
     RxBool? visibilityVariable,
     VoidCallback? onIconTap,
@@ -108,7 +121,8 @@ class SetNewPasswordScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Obx(
-          () => TextField(
+              () => TextField(
+            controller: textController,
             obscureText: isPassword && visibilityVariable != null
                 ? !visibilityVariable.value
                 : false,
@@ -122,19 +136,18 @@ class SetNewPasswordScreen extends StatelessWidget {
               ),
               suffixIcon: isPassword
                   ? GestureDetector(
-                      onTap: onIconTap,
-                      child: Padding(
-                        padding: EdgeInsets.all(14.w),
-                        child: Image.asset(
-                          visibilityVariable?.value == true
-                              ? AppImages.toggleOn
-                              : AppImages.toggleoff,
-                          height: 10.h,
-                          fit: BoxFit.cover,
-                          // color: Color(0xFFACB5BB),
-                        ),
-                      ),
-                    )
+                onTap: onIconTap,
+                child: Padding(
+                  padding: EdgeInsets.all(14.w),
+                  child: Image.asset(
+                    visibilityVariable?.value == true
+                        ? AppImages.toggleOn
+                        : AppImages.toggleoff,
+                    height: 10.h,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
                   : null,
             ),
           ),

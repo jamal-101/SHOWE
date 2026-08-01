@@ -35,22 +35,18 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
   @override
   void initState() {
     super.initState();
-    // শুরুর পেজটি এমনভাবে নিন যেন items.length এর সাথে মেলে
     final int initialPage = (_loopCount ~/ 2);
 
     _pageController = PageController(
       viewportFraction: 0.32,
       initialPage: initialPage,
     )..addListener(() {
-      // শুধু মান পরিবর্তন হলেই স্টেট আপডেট করুন
       if (_pageController.page != null) {
         setState(() {
           _currentPage = _pageController.page!;
         });
       }
     });
-
-    // শুরুতে currentPage সেট করে দিন যেন প্রথম ফ্রেমেই ডাটা পায়
     _currentPage = initialPage.toDouble();
   }
 
@@ -69,8 +65,10 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
     final double h = w * 2.15;
 
     return Obx(() {
-      final items = c.currentItems;
+
+      final items = c.programmeList;
       if (items.isEmpty) return const SizedBox.shrink();
+
 
       return SizedBox(
         height: 600.h,
@@ -80,6 +78,7 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
           clipBehavior: Clip.none,
           itemBuilder: (context, index) {
             final int actualIndex = index % items.length;
+            final item = items[actualIndex];
             double relativePosition = index - _currentPage;
             if (relativePosition.abs() > 2) return const SizedBox.shrink();
             double bookTop;
@@ -115,18 +114,26 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        // ১. বইয়ের কার্ড (BookCard)
                         Positioned(
-                          top: bookTop, // বাম/মাঝ/ডান অনুযায়ী ডাইনামিক
+                          top: bookTop,
                           left: 0,
                           child: BookCard(
                             item: items[actualIndex],
                             width: w,
                             height: h,
-                            onTap: () => Get.toNamed(
-                              AppRoutes.programDetailsScreen,
-                              arguments: items[actualIndex],
-                            ),
+                            // onTap: () => Get.toNamed(
+                            //   AppRoutes.programDetailsScreen,
+                            //   arguments: items[actualIndex],
+                            // ),
+                            // onTap: () => Get.toNamed(AppRoutes.programDetailsScreen, arguments: item),
+                            onTap: () {
+                              // if (item.sId != null) {
+                              //   c.openReaderUrl(item.sId);
+                              // }
+                              if (item.sId != null) {
+                                c.openReaderUrl(context, item.sId, title: item.title);
+                              }
+                            },
                           ),
                         ),
 
@@ -139,7 +146,8 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                items[actualIndex].title,
+                                // items[actualIndex].title,
+                                item.title ?? "No Title",
                                 style: TextStyle(
                                   color: const Color(0xFFE5A000),
                                   fontSize: 13.sp,
@@ -151,7 +159,8 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                               ),
                               SizedBox(height: 10.h),
                               Text(
-                                items[actualIndex].description,
+                                // items[actualIndex].description,
+                                item.description ?? "",
                                 style: TextStyle(
                                   color: const Color(0xFFCCCCCC),
                                   fontSize: 10.sp,
@@ -175,5 +184,3 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
     });
   }
 }
-
-
