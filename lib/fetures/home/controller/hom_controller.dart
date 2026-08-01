@@ -19,8 +19,6 @@ import '../model/venue_details_model.dart' as VenueDetails;
 import '../../favorites/model/favourite_event_model.dart' as ev;
 import '../../favorites/model/favourite_venue_model.dart' as vn;
 import 'dart:async';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-
 import '../screen/payment_web_view.dart';
 
 class HomController extends GetxController {

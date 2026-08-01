@@ -90,7 +90,7 @@ class TheatreController extends GetxController {
 
     final String token = LocalStorage.token;
 
-    final String urlString = "https://yead3001.binarybards.online/reader/$id?token=${Uri.encodeComponent(token)}";
+    final String urlString = "https://year3000.binarybards.online/reader/$id?token=${Uri.encodeComponent(token)}";
 
     Get.to(() => ReaderWebScreen(
       readerUrl: urlString,

@@ -48,19 +48,19 @@ class _ReaderWebScreenState extends State<ReaderWebScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon:  Icon(Icons.arrow_back_ios, color: Colors.white,size: 20),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        ),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.black,
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon:  Icon(Icons.arrow_back_ios, color: Colors.white,size: 20),
+      //     onPressed: () => Navigator.of(context).pop(),
+      //   ),
+      //   title: Text(
+      //     widget.title,
+      //     style: TextStyle(color: Colors.white, fontSize: 14),
+      //   ),
+      //   centerTitle: true,
+      // ),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
