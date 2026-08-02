@@ -83,14 +83,12 @@ class TheatreController extends GetxController {
     if (programmeList.isEmpty) return null;
     return programmeList[index % programmeList.length];
   }
-
-
   void openReaderUrl(BuildContext context, String? id, {String? title}) {
     if (id == null || id.isEmpty) return;
 
     final String token = LocalStorage.token;
 
-    final String urlString = "https://year3000.binarybards.online/reader/$id?token=${Uri.encodeComponent(token)}";
+    final String urlString = "http://168.144.106.179:3009/reader/$id?token=${Uri.encodeComponent(token)}";
 
     Get.to(() => ReaderWebScreen(
       readerUrl: urlString,
