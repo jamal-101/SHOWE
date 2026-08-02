@@ -27,7 +27,7 @@
             android:value="AIzaSyAlGs5PC02hgwTYhq0ZUcUK4Y3af-wcbRY" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.theshowegroup.digitalevent.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
