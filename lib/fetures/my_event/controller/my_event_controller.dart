@@ -97,8 +97,6 @@ class MyEventController extends GetxController {
       ApiResponseModel response = await ApiService.delete(url);
       if (response.isSuccess) {
         ticketList.removeAt(index);
-
-        // 💡 ২. ফিক্সড: টিকিট সফলভাবে ডিলিট হলে টোটাল কাউন্ট ১ কমিয়ে দেওয়া হচ্ছে
         if (totalTickets.value > 0) {
           totalTickets.value--;
         }

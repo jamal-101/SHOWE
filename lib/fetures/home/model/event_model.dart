@@ -96,7 +96,9 @@ class Data {
     if (json['someInterestPeopsle'] != null) {
       someInterestPeopsle = <SomeInterestPeopsle>[];
       json['someInterestPeopsle'].forEach((v) {
-        someInterestPeopsle!.add(new SomeInterestPeopsle.fromJson(v));
+        if (v != null && v is Map<String, dynamic>) {
+          someInterestPeopsle!.add(SomeInterestPeopsle.fromJson(v));
+        }
       });
     }
   }
@@ -112,9 +114,9 @@ class Data {
     data['interest_count'] = this.interestCount;
     data['address'] = this.address;
     data['isFavorited'] = this.isFavorited;
-    if (this.someInterestPeopsle != null) {
+    if (someInterestPeopsle != null) {
       data['someInterestPeopsle'] =
-          this.someInterestPeopsle!.map((v) => v.toJson()).toList();
+          someInterestPeopsle!.map((v) => v.toJson()).toList();
     }
     return data;
   }

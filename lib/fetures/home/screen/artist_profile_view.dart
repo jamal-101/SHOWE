@@ -601,21 +601,19 @@ class ArtistProfileView extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(left: 15.w, top: 10.h),
                     child: GestureDetector(
-                      onTap: () => Get.back(),
+                      onTap: (){
+                        Get.back();
+                      },
                       child: Container(
-                        height: 35.h,
-                        width: 35.w,
-                        decoration: const BoxDecoration(
-                          color: Colors.black26,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Colors.white,
-                            size: 16.sp,
-                          ),
-                        ),
+                        height: 30.h,
+                        width: 30.w,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.5)
+                        ),child: Padding(
+                        padding: EdgeInsets.only(left: 7),
+                        child: Icon(Icons.arrow_back_ios,size: 20.sp,color: Colors.black87),
+                      ),
                       ),
                     ),
                   ),

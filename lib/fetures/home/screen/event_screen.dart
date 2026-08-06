@@ -25,7 +25,7 @@ class EventScreen extends StatelessWidget {
           icon: const Icon(
             Icons.arrow_back_ios,
             color: Color(0xFF0F4C5C),
-            size: 20,
+            size: 24,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -52,11 +52,8 @@ class EventScreen extends StatelessWidget {
       body: GetBuilder<HomController>(
         init: HomController(),
         builder: (controller) {
-          List<Map<String, dynamic>> currentData = [];
           if (controller.selectedTabIndex.value == 0) {
-            currentData = controller.eventData;
           } else if (controller.selectedTabIndex.value == 1) {
-            currentData = controller.artistData;
           }
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -190,7 +187,6 @@ class EventScreen extends StatelessWidget {
                           (controller.eventModel.data?.length ?? 0) +
                               (controller.isLoadMore.value ? 1 : 0);
                     } else if (controller.selectedTabIndex == 1) {
-                      // আর্টিস্ট লিস্ট কাউন্ট
                       itemCount = (controller.artistModel.data?.length ?? 0) + (controller.isArtistLoadMore.value ? 1 : 0);
                     } else if (controller.selectedTabIndex.value == 2) {
                       itemCount = controller.venueList.length +
@@ -416,15 +412,111 @@ class EventScreen extends StatelessWidget {
     );
   }
 
+  // Widget _buildArtistCard(dynamic data, HomController controller) {
+  //   final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.image ?? ""}";
+  //   return GestureDetector(
+  //     behavior: HitTestBehavior.opaque,
+  //     onTap: (){
+  //       Get.toNamed(
+  //       AppRoutes.artistProfileView,
+  //       arguments: data.sId ?? data.id,
+  //     );
+  //     },
+  //     child: Container(
+  //       margin: EdgeInsets.only(bottom: 15.h),
+  //       padding: EdgeInsets.symmetric(vertical: 10.h),
+  //       child: Row(
+  //         children: [
+  //           ClipRRect(
+  //             borderRadius: BorderRadius.circular(15.r),
+  //             child: Image.network(
+  //               fullImageUrl,
+  //               height: 80.h,
+  //               width: 80.h,
+  //               fit: BoxFit.cover,
+  //               errorBuilder: (context, error, stackTrace) {
+  //                 return Container(
+  //                   height: 80.h,
+  //                   width: 80.h,
+  //                   color: Colors.grey.shade300,
+  //                   child: Icon(
+  //                     Icons.person,
+  //                     size: 40.sp,
+  //                     color: Colors.grey.shade600,
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //           SizedBox(width: 15.w),
+  //           Expanded(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Text(
+  //                   data.name ?? "Unknown Artist",
+  //                   style: GoogleFonts.montserrat(
+  //                     fontSize: 16.sp,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: const Color(0xFF1D2125),
+  //                   ),
+  //                   maxLines: 1,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //                 SizedBox(height: 5.h),
+  //                 Text(
+  //                   data.category ?? "Artist",
+  //                   style: GoogleFonts.montserrat(
+  //                     fontSize: 14.sp,
+  //                     color: Colors.grey,
+  //                   ),
+  //                   maxLines: 1,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //
+  //           GestureDetector(
+  //             // onTap: () => controller.toggleFavorite(data),
+  //             onTap: () => controller.toggleFavorite(data),
+  //             child: Container(
+  //               padding: EdgeInsets.all(8.r),
+  //               decoration: const BoxDecoration(
+  //                 color: Color(0xFFE0E0E0),
+  //                 shape: BoxShape.circle,
+  //               ),
+  //               child: (data.isFavorited ?? false)
+  //                   ? Image.asset(
+  //                 AppImages.unFavoriteIcon,
+  //                 color: Colors.red,
+  //                 height: 25.h,
+  //                 width: 25.w,
+  //               )
+  //                   : Image.asset(
+  //                 AppImages.selectFavoriteIcon,
+  //                 height: 25.h,
+  //                 width: 25.w,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+
+
   Widget _buildArtistCard(dynamic data, HomController controller) {
     final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.image ?? ""}";
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: (){
+      onTap: () {
         Get.toNamed(
-        AppRoutes.artistProfileView,
-        arguments: data.sId ?? data.id,
-      );
+          AppRoutes.artistProfileView,
+          arguments: data.sId ?? data.id,
+        );
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),
@@ -443,11 +535,7 @@ class EventScreen extends StatelessWidget {
                     height: 80.h,
                     width: 80.h,
                     color: Colors.grey.shade300,
-                    child: Icon(
-                      Icons.person,
-                      size: 40.sp,
-                      color: Colors.grey.shade600,
-                    ),
+                    child: Icon(Icons.person, size: 40.sp, color: Colors.grey.shade600),
                   );
                 },
               ),
@@ -480,30 +568,27 @@ class EventScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // ফেভরিট বাটন (যদি প্রয়োজন হয়)
-            // GestureDetector(
-            //   onTap: () => controller.toggleFavorite(data),
-            //   child: Container(
-            //     padding: EdgeInsets.all(8.r),
-            //     decoration: const BoxDecoration(
-            //       color: Color(0xFFE0E0E0),
-            //       shape: BoxShape.circle,
-            //     ),
-            //     child: (data.isFavorited ?? false)
-            //         ? Image.asset(
-            //       AppImages.unFavoriteIcon,
-            //       color: Colors.red,
-            //       height: 25.h,
-            //       width: 25.w,
-            //     )
-            //         : Image.asset(
-            //       AppImages.selectFavoriteIcon,
-            //       height: 25.h,
-            //       width: 25.w,
-            //     ),
-            //   ),
-            // ),
+            GestureDetector(
+              onTap: () => controller.toggleFavorite(data),
+              child: Container(
+                padding: EdgeInsets.all(8.r),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE0E0E0),
+                  shape: BoxShape.circle,
+                ),
+                child: (data.isFavorited ?? false)
+                    ? Image.asset(
+                  AppImages.selectFavoriteIcon,
+                  height: 25.h,
+                  width: 25.w,
+                )
+                    : Image.asset(
+                  AppImages.unFavoriteIcon,
+                  height: 25.h,
+                  width: 25.w,
+                ),
+              ),
+            ),
           ],
         ),
       ),

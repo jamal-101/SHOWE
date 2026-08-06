@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/storage/local_storage.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../my_event/controller/my_event_controller.dart';
 import '../../notification/controller/notification_controller.dart';
@@ -34,11 +35,17 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // CommonText(
+                        //   text: 'Hi, Robert👋',
+                        //   fontSize: 16,
+                        //   fontWeight: FontWeight.w500,
+                        //   color: Color(0xFF676363),
+                        // ),
                         CommonText(
-                          text: 'Hi, Robert👋',
+                          text: 'Hi, ${LocalStorage.myName.isNotEmpty ? LocalStorage.myName : 'User'}👋',
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF676363),
+                          color: const Color(0xFF676363),
                         ),
                         Text(
                           "Your events, brought\nto life",
@@ -109,19 +116,19 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 10.h),
               Row(
                 children: [
-                  Expanded(
-                    child: _buildHomeCard(
-                      height: 273.h,
-                      onTap: () {
-                        final scanCtrl = Get.put(ScanController());
-                        scanCtrl.startQRScan(context);
-                      },
-                      title: "Scan\nQR",
-                      imagePath: AppImages.scanQar,
-                      bgColor: const Color(0xFFF2A900),
-                      textColor: const Color(0xFF0F4C5C),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: _buildHomeCard(
+                  //     height: 273.h,
+                  //     onTap: () {
+                  //       final scanCtrl = Get.put(ScanController());
+                  //       scanCtrl.startQRScan(context);
+                  //     },
+                  //     title: "Scan\nQR",
+                  //     imagePath: AppImages.scanQar,
+                  //     bgColor: const Color(0xFFF2A900),
+                  //     textColor: const Color(0xFF0F4C5C),
+                  //   ),
+                  // ),
                   SizedBox(width: 10.w),
                   Expanded(
                     child: _buildHomeCard(

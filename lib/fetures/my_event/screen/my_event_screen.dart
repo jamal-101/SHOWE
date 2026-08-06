@@ -161,6 +161,7 @@ class MyEventScreen extends StatelessWidget {
                                   }
                                 }
                                     : null,
+
                                 child: Container(
                                   width: double.infinity,
                                   height: 175.h,

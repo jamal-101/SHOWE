@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../../../core/constans/app_colors.dart';
 import '../../../core/constans/app_images.dart';
 import '../../../core/utils/api_enpoint.dart';
@@ -10,9 +11,9 @@ import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../home/screen/event_details_screen.dart';
 import '../../home/screen/venue_details_screen.dart';
 import '../controller/favorite_controller.dart';
-import '../model/favourite_venue_model.dart' as vn;
-import 'package:intl/intl.dart';
+import '../model/artist_favourite_model.dart' as af;
 import '../model/favourite_event_model.dart' as ev;
+import '../model/favourite_venue_model.dart' as vn;
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -40,14 +41,11 @@ class FavoriteScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavBar(selectedIndex: 1),
       body: GetBuilder<FavoriteController>(
-        init: FavoriteController(),
-        initState: (state) {
-          final FavoriteController controller = Get.put(FavoriteController());
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            controller.changeTab(0);
-          });
-        },
+        init: Get.put(FavoriteController()),
         builder: (controller) {
+          // ✅ সব ট্যাবের ডাটা এখন controller.favoriteList থেকেই নেওয়া হচ্ছে
+          final List<dynamic> currentList = controller.favoriteList;
+
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -56,7 +54,7 @@ class FavoriteScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildTabItem("Events", controller.selectedFavouriteTabIndex.value == 0, 0, controller),
-                    // _buildTabItem("Artists", controller.selectedFavouriteTabIndex.value == 1, 1, controller),
+                    _buildTabItem("Artists", controller.selectedFavouriteTabIndex.value == 1, 1, controller),
                     _buildTabItem("Venues", controller.selectedFavouriteTabIndex.value == 2, 2, controller),
                   ],
                 ),
@@ -65,30 +63,38 @@ class FavoriteScreen extends StatelessWidget {
                 Expanded(
                   child: controller.isLoading.value
                       ? const Center(child: CircularProgressIndicator(color: Color(0xFFF2A900)))
-                      : (controller.selectedFavouriteTabIndex.value == 0 && controller.favoriteList.isEmpty)
-                      ? const Center(child: Text("No favorite events found"))
-                      : (controller.selectedFavouriteTabIndex.value == 2 && controller.favoriteList.isEmpty)
-                      ? const Center(child: Text("No favorite venues found"))
+                      : currentList.isEmpty
+                      ? Center(
+                    child: Text(
+                      controller.selectedFavouriteTabIndex.value == 0
+                          ? "No favorite events found"
+                          : controller.selectedFavouriteTabIndex.value == 1
+                          ? "No favorite artists found"
+                          : "No favorite venues found",
+                      style: GoogleFonts.montserrat(fontSize: 14.sp, color: Colors.grey),
+                    ),
+                  )
                       : Column(
                     children: [
                       Expanded(
                         child: ListView.builder(
                           controller: controller.scrollController,
-                          itemCount: controller.selectedFavouriteTabIndex.value == 1
-                              ? controller.artistData.length
-                              : controller.favoriteList.length,
+                          itemCount: currentList.length,
                           itemBuilder: (context, index) {
+                            final rawData = currentList[index];
+
                             if (controller.selectedFavouriteTabIndex.value == 2) {
-                              final vn.Data itemData = controller.favoriteList[index] as vn.Data;
-                              return _buildVenueCard(itemData);
+                              if (rawData is vn.Data) return _buildVenueCard(rawData);
                             }
-                            // else if (controller.selectedFavouriteTabIndex.value == 1) {
-                            //   return _buildArtistCard(controller.artistData[index], controller);
-                            // }
+                            else if (controller.selectedFavouriteTabIndex.value == 1) {
+                              if (rawData is af.Data) {
+                                return _buildFavoriteArtistCard(rawData);
+                              }
+                            }
                             else {
-                              final ev.Data itemData = controller.favoriteList[index] as ev.Data;
-                              return _buildFavouriteEventCard(itemData);
+                              if (rawData is ev.Data) return _buildFavouriteEventCard(rawData);
                             }
+                            return const SizedBox.shrink();
                           },
                         ),
                       ),
@@ -110,7 +116,9 @@ class FavoriteScreen extends StatelessWidget {
 
   Widget _buildFavouriteEventCard(ev.Data data) {
     final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.coverImage ?? ""}";
-    final HomController homController = Get.put(HomController());
+    final HomController homController = Get.isRegistered<HomController>()
+        ? Get.find<HomController>()
+        : Get.put(HomController());
 
     return GestureDetector(
       onTap: () async {
@@ -129,6 +137,7 @@ class FavoriteScreen extends StatelessWidget {
           image: DecorationImage(
             image: NetworkImage(fullImageUrl),
             fit: BoxFit.cover,
+            onError: (exception, stackTrace) {},
           ),
         ),
         child: Stack(
@@ -146,16 +155,14 @@ class FavoriteScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // favorite_screen.dart এর ভেতর
-
             Positioned(
               top: 15.h,
               right: 15.w,
               child: GetBuilder<HomController>(
+                init: Get.isRegistered<HomController>() ? null : Get.put(HomController()),
                 builder: (homeController) {
                   return GestureDetector(
                     onTap: () async {
-                      debugPrint("Click detected on favorite icon!");
                       await homeController.toggleFavorite(data);
                     },
                     child: Container(
@@ -181,7 +188,7 @@ class FavoriteScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (data.category != null)
+                  if (data.category != null && data.category!.isNotEmpty)
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                       decoration: BoxDecoration(
@@ -269,7 +276,10 @@ class FavoriteScreen extends StatelessWidget {
   }
 
   Widget _buildVenueCard(vn.Data data) {
-    final HomController homController = Get.put(HomController());
+    final HomController homController = Get.isRegistered<HomController>()
+        ? Get.find<HomController>()
+        : Get.put(HomController());
+
     return GestureDetector(
       onTap: () async {
         if (data.sId != null) {
@@ -346,59 +356,46 @@ class FavoriteScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildArtistCard(Map<String, dynamic> data, FavoriteController controller) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        margin: EdgeInsets.only(bottom: 15.h),
-        padding: EdgeInsets.symmetric(vertical: 10.h),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15.r),
-              child: Image.asset(
-                data['image'],
-                height: 80.h,
-                width: 80.h,
-                fit: BoxFit.cover,
-              ),
+  Widget _buildFavoriteArtistCard(af.Data data) {
+    final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.image ?? ""}";
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 15.h),
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8F8F8),
+        borderRadius: BorderRadius.circular(15.r),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 30.r,
+            backgroundImage: NetworkImage(fullImageUrl),
+          ),
+          SizedBox(width: 15.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(data.name ?? "Unknown Artist", style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(data.category ?? "No Category", style: const TextStyle(color: Colors.grey)),
+              ],
             ),
-            SizedBox(width: 15.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    data['title'],
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1D2125),
-                    ),
-                  ),
-                  SizedBox(height: 5.h),
-                  Text(
-                    data['name'],
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14.sp,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Color(0xFFE0E0E0),
-                shape: BoxShape.circle,
-              ),
-              child: (data['isFavorite'] ?? false)
-                  ? Image.asset(AppImages.unFavoriteIcon, color: Colors.white, height: 22.h, width: 22.w)
-                  : Image.asset(AppImages.selectFavoriteIcon, height: 22.h, width: 22.w),
-            ),
-          ],
-        ),
+          ),
+          GetBuilder<HomController>(
+            init: Get.isRegistered<HomController>() ? null : Get.put(HomController()),
+            builder: (hc) {
+              return IconButton(
+                onPressed: () => hc.toggleFavorite(data),
+                icon: Image.asset(
+                    AppImages.selectFavoriteIcon,
+                    height: 22.h,
+                    width: 22.w
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

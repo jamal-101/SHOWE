@@ -720,11 +720,19 @@ class VenueDetailsScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.only(left: 15.w, top: 10.h),
                       child: GestureDetector(
-                        onTap: () => Get.back(),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: 20.sp,
+                        onTap: (){
+                         Get.back();
+                        },
+                        child: Container(
+                          height: 30.h,
+                          width: 30.w,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.5)
+                          ),child: Padding(
+                          padding: EdgeInsets.only(left: 7),
+                          child: Icon(Icons.arrow_back_ios,size: 20.sp,color: Colors.black87),
+                        ),
                         ),
                       ),
                     ),
