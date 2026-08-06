@@ -152,15 +152,17 @@ class MyEventScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 10.h),
                               GestureDetector(
-                                onTap: isPdf
-                                    ? () {
+                                onTap:
+                                // isPdf
+                                //     ?
+                                    () {
                                   if (ticket.file != null && ticket.file!.isNotEmpty) {
                                     Get.dialog(TicketFilePopup(fileUrl: fullFileUrl));
                                   } else {
                                     Get.snackbar("Info", "No ticket file attached.");
                                   }
-                                }
-                                    : null,
+                                },
+                                    // : null,
 
                                 child: Container(
                                   width: double.infinity,

@@ -19,10 +19,12 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
   String? localPdfPath;
   bool isPdfLoading = false;
   bool isPdfHasError = false;
+  late bool isPdf;
 
   @override
   void initState() {
     super.initState();
+    isPdf = widget.fileUrl.toLowerCase().endsWith('.pdf');
     _downloadAndSavePdf();
   }
 
@@ -70,15 +72,15 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(width: 32),
-                Text(
-                  "PDF Ticket",
-                  style: GoogleFonts.montserrat(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
-                    color: const Color(0xFF0F4C5C),
-                  ),
-                ),
+                // const SizedBox(width: 32),
+                // Text(
+                //   "PDF Ticket",
+                //   style: GoogleFonts.montserrat(
+                //     fontWeight: FontWeight.bold,
+                //     fontSize: 16.sp,
+                //     color: const Color(0xFF0F4C5C),
+                //   ),
+                // ),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.grey),
                   onPressed: () => Get.back(),
@@ -90,7 +92,8 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
               constraints: BoxConstraints(
                 maxHeight: 480.h,
               ),
-              child: _buildPdfWidget(),
+              // child: _buildPdfWidget(),
+              child: isPdf ? _buildPdfWidget() : _buildImageWidget(),
             ),
           ],
         ),
@@ -123,6 +126,34 @@ class _TicketFilePopupState extends State<TicketFilePopup> {
         onError: (error) {
           debugPrint("PDF View Error: $error");
         },
+      ),
+    );
+  }
+
+  Widget _buildImageWidget() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: InteractiveViewer(
+        panEnabled: true, // সরানোর জন্য
+        boundaryMargin: const EdgeInsets.all(20),
+        minScale: 0.5,
+        maxScale: 4.0,
+        child: Image.network(
+          widget.fileUrl,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF0F4C5C)),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) => Center(
+            child: Text(
+              "Failed to load image ticket",
+              style: GoogleFonts.montserrat(color: Colors.red, fontSize: 14.sp),
+            ),
+          ),
+        ),
       ),
     );
   }
