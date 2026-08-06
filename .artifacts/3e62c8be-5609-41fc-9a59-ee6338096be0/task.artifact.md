@@ -1,0 +1,4 @@
+- [x] Add missing usage descriptions to `ios/Runner/Info.plist`
+    - [x] Identify missing keys (`NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`)
+    - [x] Update `Info.plist`
+- [x] Verify changes
