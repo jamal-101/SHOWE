@@ -381,15 +381,22 @@ class EventDetailsScreen extends StatelessWidget {
                     Positioned(
                       top: 50.h,
                       left: 20.w,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                        ),
-                        onPressed:() async {
+                      child: GestureDetector(
+                        onTap: (){
                           Get.find<HomController>().fetchEvents(isRefresh: true);
-                          Navigator.pop(context);
+                                Navigator.pop(context);
                         },
+                        child: Container(
+                          height: 30.h,
+                          width: 30.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.5)
+                          ),child: Padding(
+                            padding: EdgeInsets.only(left: 7),
+                            child: Icon(Icons.arrow_back_ios,size: 20.sp,color: Colors.black87),
+                          ),
+                        ),
                       ),
                     ),
                     Positioned(
@@ -580,7 +587,7 @@ class EventDetailsScreen extends StatelessWidget {
                   CommonButton(
                     title: controller.ticketIsPurchaseLoading.value
                         ? "Processing..."
-                        : "Get Ticket - \$${price ?? 0}",
+                        : "Get Ticket - £${price ?? 0}",
                     onTap: () {
                       if (controller.ticketIsPurchaseLoading.value) return;
                       controller.openTicketUrl(ticketUrl);

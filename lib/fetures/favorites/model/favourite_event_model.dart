@@ -71,6 +71,7 @@ class Data {
   String? title;
   String? category;
   bool? isFeatured;
+  bool? isFavorited;
   List<String>? tags;
   String? author;
   String? coverImage;
@@ -108,6 +109,7 @@ class Data {
         this.author,
         this.coverImage,
         this.gallery,
+        this.isFavorited = true,
         this.descriptionHtml,
         this.highlights,
         this.getTicketsUrl,
@@ -146,6 +148,7 @@ class Data {
     descriptionHtml = json['description_html'];
     highlights = json['highlights'] != null ? List<String>.from(json['highlights'].map((x) => x.toString())) : [];
     getTicketsUrl = json['get_tickets_url'];
+    isFavorited = json['isFavorited'] ?? true;
 
     if (json['performances'] != null) {
       performances = <Performances>[];
@@ -196,6 +199,7 @@ class Data {
     data['gallery'] = this.gallery;
     data['description_html'] = this.descriptionHtml;
     data['highlights'] = this.highlights;
+    data['isFavorited'] = this.isFavorited;
     data['get_tickets_url'] = this.getTicketsUrl;
     if (this.performances != null) {
       data['performances'] = this.performances!.map((v) => v.toJson()).toList();

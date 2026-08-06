@@ -20,6 +20,14 @@ import '../../favorites/model/favourite_event_model.dart' as ev;
 import '../../favorites/model/favourite_venue_model.dart' as vn;
 import 'dart:async';
 import '../screen/payment_web_view.dart';
+import '../model/artist_model.dart' as artist;
+import '../../favorites/model/artist_favourite_model.dart' as af;
+import '../model/event_model.dart' hide Data;
+import '../model/event_model.dart' as EventModel;
+
+
+
+
 
 class HomController extends GetxController {
   var selectedTabIndex = 0.obs;
@@ -272,37 +280,43 @@ class HomController extends GetxController {
     }
   }
 
+
+
   Future<void> toggleFavorite(dynamic item) async {
     String? itemId;
     String? itemType;
-     if (item is EventModel.Data) {
+
+    if (item is EventModel.Data) {
       item.isFavorited = !(item.isFavorited ?? false);
       itemId = item.sId;
       itemType = 'Event';
-    }
-    else if (item is VenueModel.Data) {
+    } else if (item is VenueModel.Data) {
       item.isFavorited = !(item.isFavorited ?? false);
       itemId = item.sId;
       itemType = 'Venue';
-    }
-    else if (item is VenueDetails.Data) {
+    } else if (item is VenueDetails.Data) {
       item.isFavorited = !(item.isFavorited ?? false);
       itemId = item.sId;
       itemType = 'Venue';
-    }
-    else if (item is Data) {
+    } else if (item is Data) {
       item.isFavorited = !(item.isFavorited ?? false);
       itemId = item.sId;
       itemType = 'Event';
+    } else if (item is artist.Data) {
+      item.isFavorited = !(item.isFavorited ?? false);
+      itemId = item.sId;
+      itemType = 'Artist';
+    } else if (item is af.Data) {
+      item.isFavorited = !(item.isFavorited ?? false);
+      itemId = item.sId;
+      itemType = 'Artist';
     }
     else if (item is ev.Data) {
+      item.isFavorited = !(item.isFavorited ?? false);
       itemId = item.sId;
       itemType = 'Event';
     }
-    else if (item is vn.Data) {
-      itemId = item.sId;
-      itemType = 'Venue';
-    }
+
     if (itemId == null || itemId.isEmpty || itemType == null) {
       debugPrint("Error: Item ID or Type not found for ${item.runtimeType}");
       return;
@@ -320,17 +334,33 @@ class HomController extends GetxController {
         if (Get.isRegistered<FavoriteController>()) {
           final favController = Get.find<FavoriteController>();
           favController.favoriteList.removeWhere((element) {
+            if (element is af.Data) return element.sId == itemId;
             if (element is ev.Data) return element.sId == itemId;
+            if (element is vn.Data) return element.sId == itemId;
             return false;
           });
           favController.update();
         }
       } else {
-        Get.snackbar("Error", "Could not update favorite status");
+        _rollbackFavoriteState(item);
+        update();
+        Get.snackbar("Error", response.message, backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {
+      _rollbackFavoriteState(item);
+      update();
       debugPrint("Favorite Error: $e");
     }
+  }
+
+  void _rollbackFavoriteState(dynamic item) {
+    if (item is EventModel.Data) item.isFavorited = !(item.isFavorited ?? false);
+    if (item is VenueModel.Data) item.isFavorited = !(item.isFavorited ?? false);
+    if (item is VenueDetails.Data) item.isFavorited = !(item.isFavorited ?? false);
+    if (item is artist.Data) item.isFavorited = !(item.isFavorited ?? false);
+    if (item is af.Data) item.isFavorited = !(item.isFavorited ?? false);
+    // if (item is ev.Data) item.isFavorited = !(item.isFavorited ?? false);
+    // if (item is vn.Data) item.isFavorited = !(item.isFavorited ?? false);
   }
 
   final List<Map<String, dynamic>> eventData = [];

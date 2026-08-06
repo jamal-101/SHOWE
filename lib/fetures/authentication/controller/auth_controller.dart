@@ -312,7 +312,7 @@ class AuthController extends GetxController {
           "Success",
           response.message,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
+          backgroundColor: const Color(0xFFF2A900),
           colorText: Colors.white,
         );
         startTimer();

@@ -76,6 +76,7 @@ class Data {
   String? createdAt;
   String? updatedAt;
   int? iV;
+  bool? isFavorited;
 
   Data(
       {this.sId,
@@ -93,7 +94,9 @@ class Data {
         this.origin,
         this.createdAt,
         this.updatedAt,
-        this.iV});
+        this.iV,
+        this.isFavorited = false,
+      });
 
   Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -112,6 +115,7 @@ class Data {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
+    isFavorited = json['isFavorited'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
