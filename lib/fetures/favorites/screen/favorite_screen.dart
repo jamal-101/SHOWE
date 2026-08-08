@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constans/app_colors.dart';
 import '../../../core/constans/app_images.dart';
+import '../../../core/route/app_routes.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../home/screen/event_details_screen.dart';
@@ -27,7 +28,7 @@ class FavoriteScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF0F4C5C), size: 20),
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Favorites",
@@ -43,7 +44,6 @@ class FavoriteScreen extends StatelessWidget {
       body: GetBuilder<FavoriteController>(
         init: Get.put(FavoriteController()),
         builder: (controller) {
-          // ✅ সব ট্যাবের ডাটা এখন controller.favoriteList থেকেই নেওয়া হচ্ছে
           final List<dynamic> currentList = controller.favoriteList;
 
           return Padding(
@@ -359,43 +359,48 @@ class FavoriteScreen extends StatelessWidget {
   Widget _buildFavoriteArtistCard(af.Data data) {
     final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.image ?? ""}";
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F8F8),
-        borderRadius: BorderRadius.circular(15.r),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 30.r,
-            backgroundImage: NetworkImage(fullImageUrl),
-          ),
-          SizedBox(width: 15.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(data.name ?? "Unknown Artist", style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(data.category ?? "No Category", style: const TextStyle(color: Colors.grey)),
-              ],
+    return GestureDetector(
+      onTap: (){
+       Get.toNamed(AppRoutes.artistProfileView,arguments: data.sId);
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 15.h),
+        padding: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8F8F8),
+          borderRadius: BorderRadius.circular(15.r),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 30.r,
+              backgroundImage: NetworkImage(fullImageUrl),
             ),
-          ),
-          GetBuilder<HomController>(
-            init: Get.isRegistered<HomController>() ? null : Get.put(HomController()),
-            builder: (hc) {
-              return IconButton(
-                onPressed: () => hc.toggleFavorite(data),
-                icon: Image.asset(
-                    AppImages.selectFavoriteIcon,
-                    height: 22.h,
-                    width: 22.w
-                ),
-              );
-            },
-          ),
-        ],
+            SizedBox(width: 15.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(data.name ?? "Unknown Artist", style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(data.category ?? "No Category", style: const TextStyle(color: Colors.grey)),
+                ],
+              ),
+            ),
+            GetBuilder<HomController>(
+              init: Get.isRegistered<HomController>() ? null : Get.put(HomController()),
+              builder: (hc) {
+                return IconButton(
+                  onPressed: () => hc.toggleFavorite(data),
+                  icon: Image.asset(
+                      AppImages.selectFavoriteIcon,
+                      height: 22.h,
+                      width: 22.w
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

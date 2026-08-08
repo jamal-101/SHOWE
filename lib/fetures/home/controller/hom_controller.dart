@@ -451,7 +451,7 @@ class HomController extends GetxController {
 
   void handlePaymentNavigation(Uri uri) {
     String urlString = uri.toString();
-    if (urlString.contains("purchase-success")) {
+    if (urlString.contains("payment/success")) {
       debugPrint(">>>> Payment Success Detected! Redirecting to My Program...");
       Future.delayed(const Duration(milliseconds: 200), () {
         Get.toNamed(AppRoutes.myProgramScreen);
@@ -488,7 +488,23 @@ class HomController extends GetxController {
     }
   }
 
+  Future<void> openWebsite(String? urlString) async {
+    if (urlString == null || urlString.isEmpty) {
+      Get.snackbar("Error", "No website link available", backgroundColor: Colors.red, colorText: Colors.white);
+      return;
+    }
 
+    final Uri url = Uri.parse(urlString);
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        Get.snackbar("Error", "Could not launch website", backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      debugPrint("URL Launch Error: $e");
+    }
+  }
 
   var artistEventsList = <dynamic>[].obs;
   var isEventsLoading = false.obs;

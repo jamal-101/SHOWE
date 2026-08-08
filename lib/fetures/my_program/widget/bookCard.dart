@@ -57,6 +57,8 @@
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/utils/api_enpoint.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import '../model/theatre_model.dart';
 
 class BookCard extends StatelessWidget {
@@ -78,8 +80,25 @@ class BookCard extends StatelessWidget {
     final bool hasImage = item.coverImage != null && item.coverImage!.trim().isNotEmpty;
     String fullImageUrl = "${ApiEndPoint.imageUrl}${item.coverImage ?? ""}";
 
+
     return GestureDetector(
-      onTap: onTap,
+      // onTap: hasImage ? onTap : null,
+      onTap: () {
+        if (hasImage) {
+          onTap();
+        } else {
+          Get.snackbar(
+            "Notice",
+            "No programme available",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Color(0xFFF5A623),
+            colorText: Color(0xFFFFFFFF),
+            margin: EdgeInsets.all(12),
+            borderRadius: 12.r,
+            duration: Duration(seconds: 2),
+          );
+        }
+      },
       child: Hero(
         tag: item.sId ?? item.title ?? UniqueKey().toString(),
         child: Container(
@@ -133,4 +152,3 @@ class BookCard extends StatelessWidget {
     );
   }
 }
-// }

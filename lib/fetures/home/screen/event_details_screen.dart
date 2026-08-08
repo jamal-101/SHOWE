@@ -270,6 +270,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:digital_event/core/common_text/common_text.dart';
 import 'package:digital_event/core/constans/app_images.dart';
+import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/home/controller/hom_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -488,16 +489,20 @@ class EventDetailsScreen extends StatelessWidget {
                             "Address TBA",
                       ),
                       SizedBox(height: 15.h),
-                      // _buildInfoTile(
-                      //   imagePath: "",
-                      //   title: "Chester Bennington",
-                      //   subTitle: "Artist",
-                      //   isFollow: true,
-                      //   isNetworkImage:
-                      //       eventData.author?.image != null &&
-                      //       eventData.author!.image!.isNotEmpty,
-                      // ),
-                      // SizedBox(height: 25.h),
+                      if (eventData.artist != null)
+                        _buildInfoTile(
+                          imagePath: eventData.artist?.image != null
+                              ? "${ApiEndPoint.imageUrl}${eventData.artist!.image}"
+                              : AppImages.artistImage,
+                          title: eventData.artist?.name ?? "Unknown Artist",
+                          subTitle: eventData.artist?.type ?? "Artist",
+                          isFollow: false,
+                          isNetworkImage: eventData.artist?.image != null,
+                          // onFollowTap: () {
+                          //   // Follow button logic
+                          // },
+                        ),
+                      SizedBox(height: 25.h),
                       Text(
                         "About event",
                         style: GoogleFonts.montserrat(
@@ -523,17 +528,21 @@ class EventDetailsScreen extends StatelessWidget {
                           image: res.image,
                           rating: res.rating?.toString(),
                           distance: res.distance,
+                          website: res.website,
                         )).toList(),
+                        controller,
                       ),
-                      _buildNearbySection(
-                        "Nearby Hotels",
-                        eventData.nearbyHotels?.map((hotel) => _NearbyItem(
-                          name: hotel.name,
-                          image: hotel.image,
-                          rating: hotel.rating,
-                          distance: hotel.distance,
-                        )).toList(),
-                      ),
+                       _buildNearbySection(
+                          "Nearby Hotels",
+                          eventData.nearbyHotels?.map((hotel) => _NearbyItem(
+                            name: hotel.name,
+                            image: hotel.image,
+                            rating: hotel.rating,
+                            distance: hotel.distance,
+                            website: hotel.website,
+                          )).toList(),controller,
+                        ),
+
                       _buildNearbySection(
                         "Nearby Bars",
                         eventData.nearbyBars?.map((bar) => _NearbyItem(
@@ -541,7 +550,7 @@ class EventDetailsScreen extends StatelessWidget {
                           image: bar.image,
                           rating: bar.rating,
                           distance: bar.distance,
-                        )).toList(),
+                        )).toList(),controller,
                       ),
                       SizedBox(height: 20.h),
                       _buildInfoTile(
@@ -577,6 +586,7 @@ class EventDetailsScreen extends StatelessWidget {
           final price = eventData.price;
           final eventId = eventData.sId;
           final ticketUrl = eventData.getTicketsUrl;
+          final isPurchased = eventData.isAlreadyProgrammePurchased ?? false;
 
           return Padding(
             padding: EdgeInsets.all(20.w),
@@ -594,39 +604,124 @@ class EventDetailsScreen extends StatelessWidget {
                     },
                   ),
                   SizedBox(height: 10.h,),
-                  GestureDetector(
-                    onTap: (){
-                      if (controller.isPurchaseLoading.value) return;
-                      if (eventId != null && eventId.isNotEmpty) {
-                        controller.purchaseTicket(eventId);
-                      } else {
-                        Get.snackbar(
-                          "Error",
-                          "Invalid Event ID",
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                      }
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 50.h,
-                      decoration: BoxDecoration(
+                  // GestureDetector(
+                  //   onTap: (){
+                  //     if (controller.isPurchaseLoading.value) return;
+                  //     if (eventId != null && eventId.isNotEmpty) {
+                  //       controller.purchaseTicket(eventId);
+                  //     } else {
+                  //       Get.snackbar(
+                  //         "Error",
+                  //         "Invalid Event ID",
+                  //         backgroundColor: Colors.red,
+                  //         colorText: Colors.white,
+                  //       );
+                  //     }
+                  //   },
+                  //   child: Container(
+                  //     width: double.infinity,
+                  //     height: 50.h,
+                  //     decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(500.r),
+                  //         border: Border.all(width: 1.w,color: Color(0xFF0F4C5C))
+                  //     ),child: Center(
+                  //     child: Text(
+                  //          controller.isPurchaseLoading.value
+                  //             ? "Purchase Programme..."
+                  //              : "Purchase Programme - £${controller.eventDetailsModel?.data?.revingeCount ?? 0}",
+                  //         style: GoogleFonts.montserrat(
+                  //         fontWeight: FontWeight.w700,
+                  //         fontSize: 16.sp,
+                  //         color: Color(0xFF0F4C5C)
+                  //     )),
+                  //   ),
+                  //   ),
+                  // ),
+                  if (isPurchased)
+                    GestureDetector(
+                      onTap: () {
+                       Get.toNamed(AppRoutes.myProgramScreen);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF009661),
                           borderRadius: BorderRadius.circular(500.r),
-                          border: Border.all(width: 1.w,color: Color(0xFF0F4C5C))
-                      ),child: Center(
-                      child: Text(
-                           controller.isPurchaseLoading.value
-                              ? "Purchase Programme..."
-                              : "Purchase Programme",
-                          style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16.sp,
-                          color: Color(0xFF0F4C5C)
-                      )),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(2.r),
+                              decoration: const BoxDecoration(
+                                color: Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.check_circle_outline,
+                                color: Colors.white,
+                                size: 20.sp,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              "Purchased • View Programmes",
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                              size: 16.sp,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: () {
+                        if (controller.isPurchaseLoading.value) return;
+                        if (eventId != null && eventId.isNotEmpty) {
+                          controller.purchaseTicket(eventId);
+                        } else {
+                          Get.snackbar(
+                            "Error",
+                            "Invalid Event ID",
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 50.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(500.r),
+                          border: Border.all(
+                            width: 1.w,
+                            color: const Color(0xFF0F4C5C),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            controller.isPurchaseLoading.value
+                                ? "Purchase Programme..."
+                                : "Purchase Programme - £${eventData.revingeCount ?? 0}",
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16.sp,
+                              color: const Color(0xFF0F4C5C),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    ),
-                  ),
                 ],
               );
             }),
@@ -635,6 +730,14 @@ class EventDetailsScreen extends StatelessWidget {
       ),
     );
   }
+  //               ],
+  //             );
+  //           }),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _buildInfoTile({
     required String imagePath,
@@ -717,7 +820,7 @@ class EventDetailsScreen extends StatelessWidget {
   }
 
 
-  Widget _buildNearbySection(String title, List<_NearbyItem>? items) {
+  Widget _buildNearbySection(String title, List<_NearbyItem>? items,HomController controller) {
     if (items == null || items.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -738,56 +841,59 @@ class EventDetailsScreen extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
-              return Container(
-                width: 200.w,
-                margin: EdgeInsets.only(right: 12.w),
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10.r),
-                  border: Border.all(color: Colors.grey.shade200),
-                ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6.r),
-                      child: item.image != null
-                          ? Image.network(
-                              "${ApiEndPoint.imageUrl}${item.image}",
-                              width: 50.w,
-                              height: 50.h,
-                              fit: BoxFit.cover,
-                              errorBuilder: (c, e, s) =>
-                                  const Icon(Icons.store),
-                            )
-                          : const Icon(Icons.store),
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            item.name ?? "N/A",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                          Text(
-                            "${item.distance ?? 'N/A'} • ⭐ ${item.rating ?? '0'}",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 11.sp,
-                            ),
-                          ),
-                        ],
+              return GestureDetector(
+                onTap: ()=>controller.openWebsite(item.website),
+                child: Container(
+                  width: 200.w,
+                  margin: EdgeInsets.only(right: 12.w),
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6.r),
+                        child: item.image != null
+                            ? Image.network(
+                                "${ApiEndPoint.imageUrl}${item.image}",
+                                width: 50.w,
+                                height: 50.h,
+                                fit: BoxFit.cover,
+                                errorBuilder: (c, e, s) =>
+                                    const Icon(Icons.store),
+                              )
+                            : const Icon(Icons.store),
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              item.name ?? "N/A",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                            Text(
+                              "${item.distance ?? 'N/A'} • ⭐ ${item.rating ?? '0'}",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 11.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -804,5 +910,6 @@ class _NearbyItem {
   final String? image;
   final String? rating;
   final String? distance;
-  _NearbyItem({this.name, this.image, this.rating, this.distance});
+  final String? website;
+  _NearbyItem({this.name, this.image, this.rating, this.distance, this.website,});
 }

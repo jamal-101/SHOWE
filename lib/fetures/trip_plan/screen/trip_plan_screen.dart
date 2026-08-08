@@ -326,6 +326,7 @@ class TripPlanScreen extends StatelessWidget {
       appBar: AppBar(
         surfaceTintColor: AppColors.appBackgroundColor,
         backgroundColor: AppColors.appBackgroundColor,
+        automaticallyImplyLeading: false,
         elevation: 0,
         title: Text(
           "Trip Planner",

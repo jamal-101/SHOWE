@@ -9,7 +9,7 @@ import '../../../core/storage/local_storage.dart';
 import '../../bottom_navigation_bar/screen/bottom_navigation_screen.dart';
 import '../../my_event/controller/my_event_controller.dart';
 import '../../notification/controller/notification_controller.dart';
-import '../../scan/controller/scan_controller.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -35,12 +35,6 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // CommonText(
-                        //   text: 'Hi, Robert👋',
-                        //   fontSize: 16,
-                        //   fontWeight: FontWeight.w500,
-                        //   color: Color(0xFF676363),
-                        // ),
                         CommonText(
                           text: 'Hi, ${LocalStorage.myName.isNotEmpty ? LocalStorage.myName : 'User'}👋',
                           fontSize: 16,
