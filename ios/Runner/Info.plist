@@ -45,12 +45,8 @@
     <true/>
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
-
-    <!-- 🔹 In-App WebView সাপোর্ট -->
     <key>io.flutter.embedded_views_preview</key>
     <true/>
-
-    <!-- 🔹 HTTP এবং অনিরাপদ লিঙ্ক/লোকাল হোস্টের সাপোর্ট -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
@@ -81,6 +77,10 @@
     <string>This app needs camera access to take photos for event registration and profile updates.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs photo library access to upload photos for event registration and profile updates.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app requires access to your location to display nearby events and services.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>This app requires access to your location to display nearby events and services.</string>
 
 </dict>
 </plist>
