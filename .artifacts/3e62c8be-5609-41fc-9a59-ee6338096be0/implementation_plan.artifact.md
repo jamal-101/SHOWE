@@ -1,23 +1,16 @@
-# Missing Usage Descriptions in Info.plist
+# Update iOS Minimum Deployment Target
 
-The app upload to App Store Connect failed because the `Info.plist` file is missing the required purpose strings for camera and photo library access. This is mandatory when the app or its dependencies (like `image_picker`, `camera`, etc.) reference these APIs.
-
-## User Review Required
-
-> [!IMPORTANT]
-> I will add generic but clear purpose strings for camera and photo library access. Please review if these descriptions accurately reflect how your app uses these features.
+The app was uploaded with a warning because the minimum iOS version (13.0) is becoming obsolete. We need to update it to at least 15.0 to comply with future App Store requirements.
 
 ## Proposed Changes
 
-### iOS Runner
+### iOS Runner Project
 
-#### [MODIFY] [Info.plist](file:///Users/binarybirds/StudioProjects/digital-Event/ios/Runner/Info.plist)
-
-- Add `NSCameraUsageDescription`: "This app needs camera access to take photos for event registration and profile updates."
-- Add `NSPhotoLibraryUsageDescription`: "This app needs photo library access to upload photos for event registration and profile updates."
+#### [MODIFY] [project.pbxproj](file:///Users/binarybirds/StudioProjects/digital-Event/ios/Runner.xcodeproj/project.pbxproj)
+- Update `IPHONEOS_DEPLOYMENT_TARGET` from `13.0` to `15.0` across all build configurations (Debug, Release, Profile).
 
 ## Verification Plan
 
 ### Manual Verification
-- Verify that the `Info.plist` file contains the new keys and strings.
-- The user will need to rebuild and re-upload the app to App Store Connect to confirm the fix.
+- Verify that `IPHONEOS_DEPLOYMENT_TARGET` is set to `15.0` in the `project.pbxproj` file.
+- The user should build the archive again and verify that the warning no longer appears in the App Store Connect upload log.
