@@ -87,6 +87,63 @@ class NotificationData {
   }
 }
 
+// class NotificationItem {
+//   String? sId;
+//   String? title;
+//   List<String>? receiver;
+//   String? message;
+//   String? filePath;
+//   bool? isRead;
+//   List<dynamic>? readers;
+//   String? createdAt;
+//   String? updatedAt;
+//   int? iV;
+//
+//   NotificationItem({
+//     this.sId,
+//     this.title,
+//     this.receiver,
+//     this.message,
+//     this.filePath,
+//     this.isRead,
+//     this.readers,
+//     this.createdAt,
+//     this.updatedAt,
+//     this.iV,
+//   });
+//
+//   NotificationItem.fromJson(Map<String, dynamic> json) {
+//     sId = json['_id'];
+//     title = json['title'];
+//     if (json['receiver'] != null) {
+//       receiver = List<String>.from(json['receiver']);
+//     }
+//     message = json['message'];
+//     filePath = json['filePath'];
+//     isRead = json['isRead'];
+//     readers = json['readers'];
+//     createdAt = json['createdAt'];
+//     updatedAt = json['updatedAt'];
+//     iV = json['__v'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> map = {};
+//     map['_id'] = sId;
+//     map['title'] = title;
+//     map['receiver'] = receiver;
+//     map['message'] = message;
+//     map['filePath'] = filePath;
+//     map['isRead'] = isRead;
+//     map['readers'] = readers;
+//     map['createdAt'] = createdAt;
+//     map['updatedAt'] = updatedAt;
+//     map['__v'] = iV;
+//     return map;
+//   }
+// }
+
+
 class NotificationItem {
   String? sId;
   String? title;
@@ -95,6 +152,7 @@ class NotificationItem {
   String? filePath;
   bool? isRead;
   List<dynamic>? readers;
+  String? extraPath; // ✅ নতুন extraPath ফিল্ড যুক্ত করা হলো
   String? createdAt;
   String? updatedAt;
   int? iV;
@@ -107,6 +165,7 @@ class NotificationItem {
     this.filePath,
     this.isRead,
     this.readers,
+    this.extraPath,
     this.createdAt,
     this.updatedAt,
     this.iV,
@@ -122,6 +181,7 @@ class NotificationItem {
     filePath = json['filePath'];
     isRead = json['isRead'];
     readers = json['readers'];
+    extraPath = json['extraPath'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     iV = json['__v'];
@@ -136,6 +196,7 @@ class NotificationItem {
     map['filePath'] = filePath;
     map['isRead'] = isRead;
     map['readers'] = readers;
+    map['extraPath'] = extraPath;
     map['createdAt'] = createdAt;
     map['updatedAt'] = updatedAt;
     map['__v'] = iV;
