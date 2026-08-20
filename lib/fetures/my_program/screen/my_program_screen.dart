@@ -12,7 +12,8 @@ class MyProgramScreen extends StatelessWidget {
     Get.put(TheatreController());
     return Scaffold(
       backgroundColor: Color(0xFF082A33),
-      body: GetBuilder<TheatreController>(
+      body:
+      GetBuilder<TheatreController>(
          builder: (controller) {
            return Stack(
              fit: StackFit.expand,

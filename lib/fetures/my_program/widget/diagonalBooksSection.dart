@@ -121,6 +121,7 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                             item: items[actualIndex],
                             width: w,
                             height: h,
+                            // index: index,
                             // onTap: () => Get.toNamed(
                             //   AppRoutes.programDetailsScreen,
                             //   arguments: items[actualIndex],
@@ -133,7 +134,11 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                               if (item.sId != null) {
                                 c.openReaderUrl(context, item.sId, title: item.title);
                               }
+                              // if (item.sId != null) {
+                              //   c.openReaderUrl(context, item.sId, title: item.title);
+                              // }
                             },
+
                           ),
                         ),
 

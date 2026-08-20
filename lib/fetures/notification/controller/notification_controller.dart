@@ -138,10 +138,10 @@ class NotificationController extends GetxController {
     log("GENERATED WEBVIEW URL: $finalUrl");
     log("==========================================");
 
-    Get.to(() => ReaderWebScreen(
-      readerUrl: finalUrl,
-      title: title ?? "Reader",
-    ));
+    // Get.to(() => ReaderWebScreen(
+    //   readerUrl: finalUrl,
+    //   title: title ?? "Reader",
+    // ));
   }
 
 }
