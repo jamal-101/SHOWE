@@ -53,10 +53,19 @@ class MyProgramScreen extends StatelessWidget {
 }
 
 class _AppBarWidget extends StatelessWidget {
+  final TheatreController controller = Get.find<TheatreController>();
+
+  _AppBarWidget();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 10,
+        bottom: 10,
+        left: 14,
+        right: 14,
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -67,22 +76,30 @@ class _AppBarWidget extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back_ios_new,
                 color: Colors.white,
-                size: 17,
+                size: 20,
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Center(
-              child: Text(
-                'Theatre',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Obx(
+                    () {
+                  final String currentTitle = controller.categories.isNotEmpty
+                      ? controller.categories[controller.selectedCategoryIndex.value].name
+                      : 'Theatre';
+
+                  return Text(
+                    currentTitle,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
               ),
             ),
           ),

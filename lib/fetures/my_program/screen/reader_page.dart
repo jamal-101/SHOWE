@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../model/single_proram_model.dart';
+import '../utils/dwell_time_tracker.dart';
+import '../utils/programme_colors.dart';
 import '../widget/program_name_error_varient.dart';
 import '../widget/reader_block_widget.dart';
 
+/// Mobile-first programme reader — mirrors React `ReaderPage`.
+/// Page shell colour comes from dashboard block layouts (dynamic per page).
 class ReaderPage extends StatefulWidget {
   final single_programm_model programme;
   final String heroTag;
 
-  const ReaderPage({
-    super.key,
-    required this.programme,
-    required this.heroTag,
-  });
+  const ReaderPage({super.key, required this.programme, required this.heroTag});
 
   @override
   State<ReaderPage> createState() => _ReaderPageState();
@@ -22,6 +22,17 @@ class ReaderPage extends StatefulWidget {
 class _ReaderPageState extends State<ReaderPage> {
   late PageController _pageController;
   int _currentPageIndex = 0;
+  DwellTimeTracker? _dwell;
+
+  Data? get _doc => widget.programme.data;
+  List<Pages> get _pages => _doc?.pages ?? [];
+
+  Color get _pageSurface {
+    if (_pages.isEmpty) return const Color(0xFFFBFAF7);
+    return resolvePageSurface(
+      _pages[_currentPageIndex.clamp(0, _pages.length - 1)],
+    );
+  }
 
   @override
   void initState() {
@@ -34,161 +45,234 @@ class _ReaderPageState extends State<ReaderPage> {
         statusBarBrightness: Brightness.light,
       ),
     );
+
+    final id = _doc?.id;
+    if (id != null && id.isNotEmpty && _pages.isNotEmpty) {
+      _dwell = DwellTimeTracker(id, type: 'Programmes')..start();
+    }
   }
-
-
 
   @override
   void dispose() {
+    _dwell?.dispose();
     _pageController.dispose();
     super.dispose();
   }
 
   void _goToPage(int index) {
-    final pages = widget.programme.data?.pages ?? [];
-    if (pages.isEmpty) return;
-    final target = index.clamp(0, pages.length - 1);
+    if (_pages.isEmpty) return;
+    final target = index.clamp(0, _pages.length - 1);
     _pageController.animateToPage(
       target,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final pages = widget.programme.data?.pages ?? [];
+    final pages = _pages;
     final totalPages = pages.length;
+    final surface = _pageSurface;
 
     if (pages.isEmpty) {
-      return const ProgrammeNotFoundPage(variant: ProgrammeErrorVariant.notFound);
+      final msg = (widget.programme.message ?? '').toLowerCase();
+      final unauthorized =
+          msg.contains('jwt') ||
+          msg.contains('unauthorized') ||
+          msg.contains('token') ||
+          msg.contains('locked');
+      return ProgrammeNotFoundPage(
+        variant: unauthorized
+            ? ProgrammeErrorVariant.unauthorized
+            : ProgrammeErrorVariant.notFound,
+      );
     }
 
-    final double topPadding = MediaQuery.of(context).padding.top;
     return Scaffold(
-      appBar: null,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: totalPages,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentPageIndex = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    final page = pages[index];
-                    final blocks = page.blocks ?? [];
+      backgroundColor: surface,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: totalPages,
+                onPageChanged: (i) => setState(() => _currentPageIndex = i),
+                itemBuilder: (context, index) {
+                  final page = pages[index];
+                  final blocks = page.blocks ?? [];
+                  final pageBg = resolvePageSurface(page);
 
-                    if (blocks.isEmpty) {
-                      return const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.menu_book, size: 32, color: Colors.white38),
-                            SizedBox(height: 8),
-                            Text("This page is empty.", style: TextStyle(color: Colors.white54)),
-                          ],
-                        ),
-                      );
-                    }
+                  if (blocks.isEmpty) {
+                    return ColoredBox(color: pageBg, child: const _EmptyPage());
+                  }
 
-                    return ListView.builder(
-                      padding: EdgeInsets.zero,
+                  return ColoredBox(
+                    color: pageBg,
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(
+                        bottom: totalPages > 1 ? 72 : 24,
+                      ),
                       itemCount: blocks.length,
                       itemBuilder: (context, bIndex) {
-                        final block = blocks[bIndex];
-                        final String? currentHeroTag = (index == 0 && bIndex == 0)
-                            ? widget.heroTag
-                            : null;
                         return ReaderBlockWidget(
-                          block: block,
-                          heroTag: (index == 0 && bIndex == 0) ? widget.heroTag : null,
+                          block: blocks[bIndex],
+                          heroTag: (index == 0 && bIndex == 0)
+                              ? widget.heroTag
+                              : null,
+                          programme: _doc,
+                          page: page,
                         );
                       },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: topPadding + 1.h,
-            left: 12.w,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                width: 40.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF232B36),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.white,
-                    size: 20.sp,
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
             ),
-          ),
-
-          if (totalPages > 1)
             Positioned(
-              bottom: 20.h,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30.r),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left, color: Colors.black),
-                        onPressed: _currentPageIndex > 0 ? () => _goToPage(_currentPageIndex - 1) : null,
-                      ),
-                      Text(
-                        "${_currentPageIndex + 1} / $totalPages",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13.sp,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right, color: Colors.black),
-                        onPressed: _currentPageIndex < totalPages - 1 ? () => _goToPage(_currentPageIndex + 1) : null,
-                      ),
-                    ],
+              top: -12,
+              left: 10,
+              child: _BackChip(onTap: () => Navigator.maybePop(context)),
+            ),
+            if (totalPages > 1)
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: _PageNav(
+                    current: _currentPageIndex + 1,
+                    total: totalPages,
+                    onPrev: _currentPageIndex > 0
+                        ? () => _goToPage(_currentPageIndex - 1)
+                        : null,
+                    onNext: _currentPageIndex < totalPages - 1
+                        ? () => _goToPage(_currentPageIndex + 1)
+                        : null,
                   ),
                 ),
               ),
-            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyPage extends StatelessWidget {
+  const _EmptyPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.menu_book_outlined, size: 28, color: Color(0xFF9A948C)),
+          SizedBox(height: 12),
+          Text(
+            'This page is empty.',
+            style: TextStyle(color: Color(0xFF6B6560), fontSize: 14),
+          ),
         ],
       ),
     );
   }
 }
 
+class _BackChip extends StatelessWidget {
+  final VoidCallback onTap;
+  const _BackChip({required this.onTap});
 
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.black.withValues(alpha: 0.45),
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: const SizedBox(
+          width: 40,
+          height: 40,
+          child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 19),
+        ),
+      ),
+    );
+  }
+}
 
+class _PageNav extends StatelessWidget {
+  final int current;
+  final int total;
+  final VoidCallback? onPrev;
+  final VoidCallback? onNext;
+
+  const _PageNav({
+    required this.current,
+    required this.total,
+    this.onPrev,
+    this.onNext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _NavIcon(icon: Icons.chevron_left, onTap: onPrev),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              '$current / $total',
+              style: const TextStyle(
+                color: Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+          ),
+          _NavIcon(icon: Icons.chevron_right, onTap: onNext),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavIcon extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onTap;
+  const _NavIcon({required this.icon, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onTap != null;
+    return GestureDetector(
+      onTap: onTap,
+      child: Opacity(
+        opacity: enabled ? 1 : 0.3,
+        child: SizedBox(
+          width: 28,
+          height: 28,
+          child: Icon(icon, size: 18, color: const Color(0xFF1A1A1A)),
+        ),
+      ),
+    );
+  }
+}

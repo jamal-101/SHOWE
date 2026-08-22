@@ -2,15 +2,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../core/storage/local_storage.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
+
 import '../model/single_proram_model.dart';
 import '../model/theatre_model.dart';
+import '../utils/programme_map.dart';
+import '../utils/programme_video_cache.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import '../screen/reader_page.dart';
-import '../screen/red_web_screen.dart';
+import '../widget/program_name_error_varient.dart';
 
 
 class TheatreController extends GetxController {
@@ -134,24 +136,52 @@ class TheatreController extends GetxController {
       single_programm_model programmeDoc;
 
       if (response.isSuccess) {
-        programmeDoc = single_programm_model.fromJson(Map<String, dynamic>.from(response.data));
-        _saveReaderDocToCache(id, response.data);
+        final raw = Map<String, dynamic>.from(response.data);
+        programmeDoc = single_programm_model.fromJson(raw);
+        _saveReaderDocToCache(id, raw);
+        ProgrammeVideoCache.prefetchProgramme(programmeDoc);
+        ProgrammeMapCache.prefetchProgramme(programmeDoc);
       } else {
+        final msg = (response.message).toLowerCase();
+        final unauthorized = msg.contains('jwt') ||
+            msg.contains('unauthorized') ||
+            msg.contains('malformed') ||
+            msg.contains('token');
+
+        if (unauthorized) {
+          Get.to(() => const ProgrammeNotFoundPage(
+                variant: ProgrammeErrorVariant.unauthorized,
+              ));
+          return;
+        }
+
         programmeDoc = await _loadReaderDocFromCache(id);
+        if (programmeDoc.data?.pages == null ||
+            programmeDoc.data!.pages!.isEmpty) {
+          Get.to(() => const ProgrammeNotFoundPage(
+                variant: ProgrammeErrorVariant.notFound,
+              ));
+          return;
+        }
       }
 
       Get.to(() => ReaderPage(
-        programme: programmeDoc,
-        heroTag: heroTag ?? 'reader_cover_$id',
-      ));
-
+            programme: programmeDoc,
+            heroTag: heroTag ?? 'reader_cover_$id',
+          ));
     } catch (e) {
       debugPrint("Error opening reader: $e");
       single_programm_model cachedDoc = await _loadReaderDocFromCache(id);
+      if (cachedDoc.data?.pages == null || cachedDoc.data!.pages!.isEmpty) {
+        Get.to(() => const ProgrammeNotFoundPage(
+              variant: ProgrammeErrorVariant.notFound,
+            ));
+        return;
+      }
       Get.to(() => ReaderPage(
-        programme: cachedDoc,
-        heroTag: heroTag ?? 'reader_cover_$id',
-      ));
+            programme: cachedDoc,
+            heroTag: heroTag ?? 'reader_cover_$id',
+          ));
     } finally {
       isLoading.value = false;
       update();
