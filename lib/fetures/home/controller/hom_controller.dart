@@ -421,7 +421,8 @@ class HomController extends GetxController {
         if (response.data['data'] != null) {
           singleArtistData.value = response.data['data'];
         }
-      } else {
+      }
+      else {
         Get.snackbar("Error", response.message, backgroundColor: Colors.red, colorText: Colors.white);
       }
     } catch (e) {

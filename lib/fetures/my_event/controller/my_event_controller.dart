@@ -50,7 +50,6 @@ class MyEventController extends GetxController {
       update();
       String url = "/ticket?page=$currentPage&limit=$limit";
       ApiResponseModel response = await ApiService.get(url);
-
       if (response.isSuccess) {
         Tickets_Model ticketsModel = Tickets_Model.fromJson(
           Map<String, dynamic>.from(response.data),
@@ -63,12 +62,13 @@ class MyEventController extends GetxController {
           ticketList.addAll(newItems);
           totalTickets.value = ticketsModel.pagination?.total ?? ticketsModel.data!.length;
         }
-      } else {
+      }else{
         Get.snackbar(
           "Error",
           response.message,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
         );
       }
     } catch (e) {

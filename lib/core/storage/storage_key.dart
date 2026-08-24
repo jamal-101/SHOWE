@@ -9,4 +9,6 @@ class LocalStorageKeys {
   static const String myRole = "myRole";
   static const String profileImage = "profileImage";
   static const String deviceId = "deviceId";
+  static const String offlineFilePrefix = "offline_file_";
+  String _getDownloadKey(String programId) => "downloaded_path_$programId";
 }

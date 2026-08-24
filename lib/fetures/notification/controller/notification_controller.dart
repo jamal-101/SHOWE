@@ -39,9 +39,10 @@ class NotificationController extends GetxController {
           unreadCount.value = notificationModel.data?.unreadCount ?? 0;
           notifications = notificationModel.data?.notifications ?? [];
         }
-      } else {
-        Get.snackbar("Error", response.message);
       }
+      // else {
+      //   Get.snackbar("Error", response.message);
+      // }
     } catch (e) {
       debugPrint("Error fetching notifications: $e");
     } finally {
@@ -138,10 +139,10 @@ class NotificationController extends GetxController {
     log("GENERATED WEBVIEW URL: $finalUrl");
     log("==========================================");
 
-    Get.to(() => ReaderWebScreen(
-      readerUrl: finalUrl,
-      title: title ?? "Reader",
-    ));
+    // Get.to(() => ReaderWebScreen(
+    //   readerUrl: finalUrl,
+    //   title: title ?? "Reader",
+    // ));
   }
 
 }
