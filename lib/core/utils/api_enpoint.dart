@@ -12,5 +12,7 @@ class ApiEndPoint {
   static const getVenues = "$baseUrl/vanue";
   static String toggleFavorite(String id) => "/event/interest/$id";
   static String getReaderDoc(String id) => "$websiteUrl/reader/$id";
+  static const answerPoll = "/programmes/answer-poll";
+  static const submitUserThought = "/programmes/user-thoughts";
   static String getProgramme(String id) => "/programmes/$id";
 }

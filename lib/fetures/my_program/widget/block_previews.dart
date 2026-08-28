@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:digital_event/core/utils/api_enpoint.dart';
 import 'package:digital_event/core/utils/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -53,7 +54,7 @@ Widget renderBlockPreview({
     case 'poll':
       return PollPreview(data: data);
     case 'review':
-      return ReviewPreview(data: data);
+      return ReviewPreview(data: data, programme: programme);
     case 'merchandise':
       return MerchandisePreview(data: data);
     case 'future_shows':
@@ -131,25 +132,25 @@ class HeroPreview extends StatelessWidget {
 
     Widget media = hasCover
         ? ProgrammeMedia(
-            src: data.coverImage,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: h,
-            autoPlay: true,
-            showMuteChip: true,
-            allowFullscreen: true,
-          )
+      src: data.coverImage,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: h,
+      autoPlay: true,
+      showMuteChip: true,
+      allowFullscreen: true,
+    )
         : Container(
-            width: double.infinity,
-            height: h,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF014B52), Color(0xFF01363C)],
-              ),
-            ),
-          );
+      width: double.infinity,
+      height: h,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF014B52), Color(0xFF01363C)],
+        ),
+      ),
+    );
 
     if (heroTag != null && heroTag!.isNotEmpty && hasCover) {
       media = Hero(tag: heroTag!, child: media);
@@ -424,10 +425,10 @@ class SchedulePreview extends StatelessWidget {
                   child: Text(
                     item.time ?? '',
                     style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14,
-                      color: timeColor,
-                      fontFeatures: const [FontFeature.tabularFigures()]
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                        color: timeColor,
+                        fontFeatures: const [FontFeature.tabularFigures()]
                     ),
                   ),
                 ),
@@ -1144,12 +1145,12 @@ class ImageStoryPreview extends StatelessWidget {
     final pos = data.imagePosition ?? 'top';
     final image = data.image != null
         ? ProgrammeMedia(
-            src: data.image,
-            fit: BoxFit.cover,
-            borderRadius: BorderRadius.circular(8.r),
-            width: pos == 'top' ? double.infinity : 96.w,
-            height: pos == 'top' ? null : 96.w,
-          )
+      src: data.image,
+      fit: BoxFit.cover,
+      borderRadius: BorderRadius.circular(8.r),
+      width: pos == 'top' ? double.infinity : 96.w,
+      height: pos == 'top' ? null : 96.w,
+    )
         : null;
 
     final text = Expanded(
@@ -1199,6 +1200,41 @@ class PollPreview extends StatefulWidget {
 
 class _PollPreviewState extends State<PollPreview> {
   String? voted;
+  bool submitting = false;
+  String? errorText;
+
+  Future<void> _submitVote(Options o) async {
+    if (submitting || voted != null) return;
+
+    // Optimistic UI: select immediately, roll back if the request fails.
+    setState(() {
+      voted = o.id;
+      submitting = true;
+      errorText = null;
+    });
+
+    final res = await ApiService.post(
+      ApiEndPoint.answerPoll,
+      body: {
+        "poll_id": widget.data.id,
+        "answer": o.label,
+        "answer_id": o.id,
+      },
+    );
+
+    if (!mounted) return;
+
+    if (res.isSuccess) {
+      setState(() => submitting = false);
+    } else {
+      // Vote failed on the backend — undo the optimistic selection.
+      setState(() {
+        voted = null;
+        submitting = false;
+        errorText = res.message;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1230,7 +1266,7 @@ class _PollPreviewState extends State<PollPreview> {
               final o = options[i];
               final selected = voted == o.id;
               return GestureDetector(
-                onTap: () => setState(() => voted = o.id),
+                onTap: () => _submitVote(o),
                 child: Container(
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
@@ -1241,7 +1277,16 @@ class _PollPreviewState extends State<PollPreview> {
                       color: selected ? const Color(0xFF014B52) : const Color(0xFFE5E0D8),
                     ),
                   ),
-                  child: Text(
+                  child: selected && submitting
+                      ? SizedBox(
+                    width: 16.w,
+                    height: 16.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(Colors.white),
+                    ),
+                  )
+                      : Text(
                     '${o.emoji ?? ''} ${o.label ?? ''}'.trim(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -1254,7 +1299,14 @@ class _PollPreviewState extends State<PollPreview> {
               );
             },
           ),
-          if (voted != null && widget.data.thankYouMessage != null) ...[
+          if (errorText != null) ...[
+            SizedBox(height: 12.h),
+            Text(
+              errorText!,
+              style: TextStyle(fontSize: 12.5.sp, color: Colors.red.shade700, fontWeight: FontWeight.w600),
+            ),
+          ],
+          if (voted != null && !submitting && errorText == null && widget.data.thankYouMessage != null) ...[
             SizedBox(height: 12.h),
             Text(
               widget.data.thankYouMessage!,
@@ -1309,7 +1361,8 @@ class _PollPreviewState extends State<PollPreview> {
 
 class ReviewPreview extends StatefulWidget {
   final BlockData data;
-  const ReviewPreview({super.key, required this.data});
+  final Data? programme;
+  const ReviewPreview({super.key, required this.data, this.programme});
 
   @override
   State<ReviewPreview> createState() => _ReviewPreviewState();
@@ -1318,6 +1371,8 @@ class ReviewPreview extends StatefulWidget {
 class _ReviewPreviewState extends State<ReviewPreview> {
   int chars = 0;
   bool submitted = false;
+  bool submitting = false;
+  String? errorText;
   final controller = TextEditingController();
 
   @override
@@ -1326,8 +1381,52 @@ class _ReviewPreviewState extends State<ReviewPreview> {
     super.dispose();
   }
 
+  Future<void> _submitThought() async {
+    final thought = controller.text.trim();
+    final programmeId = widget.programme?.id;
+
+    if (thought.isEmpty || submitting) return;
+    if (programmeId == null) {
+      setState(() => errorText = "Couldn't find this programme, please reopen it and try again.");
+      return;
+    }
+
+    setState(() {
+      submitting = true;
+      errorText = null;
+    });
+
+    final res = await ApiService.post(
+      ApiEndPoint.submitUserThought,
+      body: {
+        "proggrame": programmeId,
+        "thought": thought,
+      },
+    );
+
+    if (!mounted) return;
+
+    if (res.isSuccess) {
+      setState(() {
+        submitting = false;
+        submitted = true;
+      });
+    } else {
+      setState(() {
+        submitting = false;
+        errorText = res.message;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final t = ReaderBlockTheme.maybeOf(context);
+    // Pull the colour the admin dashboard assigned for this block
+    // (title_color / text_color), instead of falling back to the
+    // default (black) text colour which disappears on a dark page.
+    final headingColor = t?.title ?? t?.ink ?? const Color(0xFFF5A800);
+    final counterColor = t?.inkFaint ?? Colors.black38;
     final max = widget.data.maxChars ?? 500;
     if (submitted) {
       return Container(
@@ -1350,13 +1449,14 @@ class _ReviewPreviewState extends State<ReviewPreview> {
       children: [
         Text(
           widget.data.prompt ?? 'Leave a review',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700),
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: headingColor),
         ),
         SizedBox(height: 8.h),
         TextField(
           controller: controller,
           maxLines: 3,
           maxLength: max,
+          enabled: !submitting,
           onChanged: (v) => setState(() => chars = v.length),
           decoration: InputDecoration(
             hintText: widget.data.placeholder ?? 'Write your thoughts...',
@@ -1370,7 +1470,14 @@ class _ReviewPreviewState extends State<ReviewPreview> {
             ),
           ),
         ),
-        Text('$chars / $max', style: TextStyle(fontSize: 11.sp, color: Colors.black38)),
+        Text('$chars / $max', style: TextStyle(fontSize: 11.sp, color: counterColor)),
+        if (errorText != null) ...[
+          SizedBox(height: 8.h),
+          Text(
+            errorText!,
+            style: TextStyle(fontSize: 12.sp, color: Colors.red.shade700, fontWeight: FontWeight.w600),
+          ),
+        ],
         SizedBox(height: 12.h),
         SizedBox(
           width: double.infinity,
@@ -1378,10 +1485,21 @@ class _ReviewPreviewState extends State<ReviewPreview> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF014B52),
+              disabledBackgroundColor: const Color(0xFF014B52).withValues(alpha: 0.4),
+              disabledForegroundColor: Colors.white.withValues(alpha: 0.7),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
             ),
-            onPressed: () => setState(() => submitted = true),
-            child: Text(
+            onPressed: (controller.text.trim().isEmpty || submitting) ? null : _submitThought,
+            child: submitting
+                ? SizedBox(
+              width: 18.w,
+              height: 18.w,
+              child: const CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            )
+                : Text(
               widget.data.submitLabel ?? 'Submit',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13.sp),
             ),
@@ -1723,11 +1841,11 @@ class _AdsPreviewState extends State<AdsPreview> {
   Future<void> _onTap(Map<String, dynamic> ad) async {
     final id = (ad['_id'] ?? ad['id'] ?? '').toString();
     final redirect = (ad['redirect_url'] ??
-            ad['redirectUrl'] ??
-            ad['link'] ??
-            ad['url'] ??
-            ad['website'] ??
-            '#')
+        ad['redirectUrl'] ??
+        ad['link'] ??
+        ad['url'] ??
+        ad['website'] ??
+        '#')
         .toString();
     try {
       if (id.isNotEmpty) await ApiService.get('/ads/$id');
@@ -2024,63 +2142,63 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                         onTap: _pickImage,
                         child: imageFile != null
                             ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: AspectRatio(
-                                  aspectRatio: 4 / 3,
-                                  child: Image.file(
-                                    File(imageFile!.path),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: AspectRatio(
+                            aspectRatio: 4 / 3,
+                            child: Image.file(
+                              File(imageFile!.path),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )
                             : Container(
-                                width: double.infinity,
-                                constraints: BoxConstraints(minHeight: 140.h),
+                          width: double.infinity,
+                          constraints: BoxConstraints(minHeight: 140.h),
+                          decoration: BoxDecoration(
+                            color: sunken,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(
+                              color: line,
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 56.w,
+                                height: 56.w,
                                 decoration: BoxDecoration(
-                                  color: sunken,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                    color: line,
-                                    width: 2,
-                                  ),
+                                  color: cardBg,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: line),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 56.w,
-                                      height: 56.w,
-                                      decoration: BoxDecoration(
-                                        color: cardBg,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: line),
-                                      ),
-                                      child: Icon(
-                                        Icons.photo_camera_outlined,
-                                        color: inkMuted,
-                                        size: 24.sp,
-                                      ),
-                                    ),
-                                    SizedBox(height: 10.h),
-                                    Text(
-                                      'Add your photo',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 13.sp,
-                                        color: inkMuted,
-                                      ),
-                                    ),
-                                    SizedBox(height: 2.h),
-                                    Text(
-                                      'Tap to choose from your gallery',
-                                      style: TextStyle(
-                                        fontSize: 11.sp,
-                                        color: inkFaint,
-                                      ),
-                                    ),
-                                  ],
+                                child: Icon(
+                                  Icons.photo_camera_outlined,
+                                  color: inkMuted,
+                                  size: 24.sp,
                                 ),
                               ),
+                              SizedBox(height: 10.h),
+                              Text(
+                                'Add your photo',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13.sp,
+                                  color: inkMuted,
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                'Tap to choose from your gallery',
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: inkFaint,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(height: 12.h),
                     ],
@@ -2138,27 +2256,27 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                           onPressed: hasContent && !generating ? _generate : null,
                           child: generating
                               ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
                               : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.auto_awesome, size: 14.sp),
-                                    SizedBox(width: 6.w),
-                                    Text(
-                                      widget.data.submitLabel ?? 'Create my memory',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 13.sp,
-                                      ),
-                                    ),
-                                  ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.auto_awesome, size: 14.sp),
+                              SizedBox(width: 6.w),
+                              Text(
+                                widget.data.submitLabel ?? 'Create my memory',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13.sp,
                                 ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     if (widget.data.privacyNote != null) ...[
@@ -2240,9 +2358,9 @@ class RecapPreview extends StatelessWidget {
 
   List<Blocks> get scopedPolls {
     final all = programme?.pages
-            ?.expand((p) => p.blocks ?? <Blocks>[])
-            .where((b) => b.type == 'poll')
-            .toList() ??
+        ?.expand((p) => p.blocks ?? <Blocks>[])
+        .where((b) => b.type == 'poll')
+        .toList() ??
         [];
     final pagePolls = page?.blocks?.where((b) => b.type == 'poll').toList() ?? [];
     final ids = data.pollIdsToInclude ?? [];
@@ -2291,56 +2409,56 @@ class RecapPreview extends StatelessWidget {
             ),
             child: isReleased
                 ? (polls.isEmpty
-                    ? Text('No polls selected for this recap yet.', style: TextStyle(color: Colors.white70, fontSize: 12.sp))
-                    : Column(
-                        children: polls.map((poll) {
-                          final opts = poll.data?.options ?? [];
-                          final results = poll.data?.results ?? [];
-                          final total = results.fold<int>(0, (a, r) => a + (r.count ?? 0));
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('POLL RESULT', style: TextStyle(color: Colors.white38, fontSize: 10.sp, fontWeight: FontWeight.w800, letterSpacing: 1)),
-                                Text(poll.data?.question ?? '', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.sp)),
-                                ...opts.asMap().entries.map((e) {
-                                  final count = e.key < results.length ? (results[e.key].count ?? 0) : 0;
-                                  final pct = total > 0 ? (count / total * 100).round() : 0;
-                                  return Padding(
-                                    padding: EdgeInsets.only(top: 8.h),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(e.value.label ?? '', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
-                                            Text('$count${total > 0 ? ' ($pct%)' : ''}', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
-                                          ],
-                                        ),
-                                        SizedBox(height: 4.h),
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(99),
-                                          child: LinearProgressIndicator(
-                                            value: (pct < 6 ? 6 : pct) / 100,
-                                            minHeight: 8.h,
-                                            backgroundColor: Colors.white10,
-                                            color: const Color(0xFFF5A800),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ))
-                : Text(
-                    'Poll results will unlock after ${data.releaseAfterHours ?? 0} hours.',
-                    style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                ? Text('No polls selected for this recap yet.', style: TextStyle(color: Colors.white70, fontSize: 12.sp))
+                : Column(
+              children: polls.map((poll) {
+                final opts = poll.data?.options ?? [];
+                final results = poll.data?.results ?? [];
+                final total = results.fold<int>(0, (a, r) => a + (r.count ?? 0));
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('POLL RESULT', style: TextStyle(color: Colors.white38, fontSize: 10.sp, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                      Text(poll.data?.question ?? '', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                      ...opts.asMap().entries.map((e) {
+                        final count = e.key < results.length ? (results[e.key].count ?? 0) : 0;
+                        final pct = total > 0 ? (count / total * 100).round() : 0;
+                        return Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(e.value.label ?? '', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
+                                  Text('$count${total > 0 ? ' ($pct%)' : ''}', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
+                                ],
+                              ),
+                              SizedBox(height: 4.h),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(99),
+                                child: LinearProgressIndicator(
+                                  value: (pct < 6 ? 6 : pct) / 100,
+                                  minHeight: 8.h,
+                                  backgroundColor: Colors.white10,
+                                  color: const Color(0xFFF5A800),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
                   ),
+                );
+              }).toList(),
+            ))
+                : Text(
+              'Poll results will unlock after ${data.releaseAfterHours ?? 0} hours.',
+              style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+            ),
           ),
         ],
       ),
