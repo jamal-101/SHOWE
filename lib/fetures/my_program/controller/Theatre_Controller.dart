@@ -65,7 +65,10 @@ class TheatreController extends GetxController {
           programmeList.assignAll(model.data!);
           _saveToLocalCache(category, response.data);
         } else {
-          await _loadFromLocalCache(category);
+          // Backend responded successfully — this category genuinely has
+          // no programmes yet. This is NOT a failure, so we must not fall
+          // back to dummy/cached data here; show a real empty state instead.
+          programmeList.clear();
         }
       } else {
         await _loadFromLocalCache(category);
@@ -150,8 +153,8 @@ class TheatreController extends GetxController {
 
         if (unauthorized) {
           Get.to(() => const ProgrammeNotFoundPage(
-                variant: ProgrammeErrorVariant.unauthorized,
-              ));
+            variant: ProgrammeErrorVariant.unauthorized,
+          ));
           return;
         }
 
@@ -159,29 +162,29 @@ class TheatreController extends GetxController {
         if (programmeDoc.data?.pages == null ||
             programmeDoc.data!.pages!.isEmpty) {
           Get.to(() => const ProgrammeNotFoundPage(
-                variant: ProgrammeErrorVariant.notFound,
-              ));
+            variant: ProgrammeErrorVariant.notFound,
+          ));
           return;
         }
       }
 
       Get.to(() => ReaderPage(
-            programme: programmeDoc,
-            heroTag: heroTag ?? 'reader_cover_$id',
-          ));
+        programme: programmeDoc,
+        heroTag: heroTag ?? 'reader_cover_$id',
+      ));
     } catch (e) {
       debugPrint("Error opening reader: $e");
       single_programm_model cachedDoc = await _loadReaderDocFromCache(id);
       if (cachedDoc.data?.pages == null || cachedDoc.data!.pages!.isEmpty) {
         Get.to(() => const ProgrammeNotFoundPage(
-              variant: ProgrammeErrorVariant.notFound,
-            ));
+          variant: ProgrammeErrorVariant.notFound,
+        ));
         return;
       }
       Get.to(() => ReaderPage(
-            programme: cachedDoc,
-            heroTag: heroTag ?? 'reader_cover_$id',
-          ));
+        programme: cachedDoc,
+        heroTag: heroTag ?? 'reader_cover_$id',
+      ));
     } finally {
       isLoading.value = false;
       update();
