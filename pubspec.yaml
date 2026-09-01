@@ -72,6 +72,7 @@ dependencies:
   path_provider: ^2.1.6
   cached_network_image: ^3.4.1
   video_player: ^2.11.1
+  gal: ^2.3.0
 
 dev_dependencies:
   flutter_test:

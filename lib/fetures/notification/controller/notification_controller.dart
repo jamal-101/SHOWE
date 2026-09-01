@@ -10,6 +10,7 @@ import '../../../core/utils/api_service.dart';
 import '../../home/controller/hom_controller.dart';
 import '../../home/screen/event_details_screen.dart';
 import '../../home/screen/venue_details_screen.dart';
+import '../../my_program/controller/Theatre_Controller.dart';
 import '../../my_program/screen/red_web_screen.dart';
 import '../model/notification_model.dart';
 
@@ -92,57 +93,77 @@ class NotificationController extends GetxController {
   void openNotificationUrl(BuildContext context, String? extraPath, {String? title}) async {
     if (extraPath == null || extraPath.trim().isEmpty) return;
 
-    String path = extraPath.trim();
-    if (!path.startsWith('/')) {
+    // Uri.parse handles both a relative path ("/reader/<id>?page=4") and a
+    // full external URL ("https://showe-web.vercel.app/reader/<id>?page=4")
+    // uniformly, so we can read pathSegments/queryParameters either way.
+    final String raw = extraPath.trim();
+    final Uri? parsedUri = Uri.tryParse(raw);
+    final List<String> segments = parsedUri?.pathSegments ?? [];
+
+    String path = raw;
+    if (!path.startsWith('/') && !path.startsWith('http')) {
       path = '/$path';
     }
-    if (path.startsWith('/events/')) {
-      final Uri uri = Uri.parse(path);
-      final List<String> segments = uri.pathSegments;
 
-      if (segments.length >= 2) {
-        String eventId = segments[1];
-        final HomController homeController = Get.find<HomController>();
-        await homeController.fetchEventDetails(eventId);
-        if (homeController.eventDetailsModel?.data != null) {
-          Get.to(() => const EventDetailsScreen(), arguments: homeController.eventDetailsModel!.data);
-        }
-        return;
+    if (segments.length >= 2 && segments[segments.length - 2] == 'events') {
+      String eventId = segments.last;
+      final HomController homeController = Get.find<HomController>();
+      await homeController.fetchEventDetails(eventId);
+      if (homeController.eventDetailsModel?.data != null) {
+        Get.to(() => const EventDetailsScreen(), arguments: homeController.eventDetailsModel!.data);
+      }
+      return;
+    }
+
+    if (segments.length >= 2 && segments[segments.length - 2] == 'venues') {
+      String venueId = segments.last;
+      final HomController homeController = Get.put(HomController());
+      await homeController.fetchVenueDetails(venueId);
+      if (homeController.venueDetailsModel?.data != null) {
+        Get.to(() => const VenueDetailsScreen());
+      }
+      return;
+    }
+
+    if (segments.length >= 2 && segments[segments.length - 2] == 'reader') {
+      final String programmeId = segments.last;
+      final String? pageParam = parsedUri?.queryParameters['page'];
+      int? initialPageIndex;
+      final int? pageNumber = pageParam != null ? int.tryParse(pageParam) : null;
+      // "page" in these links is 1-based (Page 1, Page 2...), ReaderPage wants a 0-based index.
+      if (pageNumber != null && pageNumber > 0) {
+        initialPageIndex = pageNumber - 1;
+      }
+
+      final TheatreController theatreController = Get.isRegistered<TheatreController>()
+          ? Get.find<TheatreController>()
+          : Get.put(TheatreController());
+
+      theatreController.openReaderUrl(
+        context,
+        programmeId,
+        title: title,
+        initialPageIndex: initialPageIndex,
+      );
+      return;
+    }
+
+    // Anything we don't specifically recognise — open it in the in-app
+    // webview instead of silently doing nothing.
+    String webviewUrl = path;
+    if (parsedUri == null || !parsedUri.hasScheme) {
+      final String token = LocalStorage.token;
+      webviewUrl = "${ApiEndPoint.websiteUrl}$path";
+      if (token.isNotEmpty) {
+        String separator = webviewUrl.contains('?') ? '&' : '?';
+        webviewUrl = "$webviewUrl${separator}token=${Uri.encodeComponent(token)}";
       }
     }
 
-    if (path.startsWith('/venues/')) {
-      final Uri uri = Uri.parse(path);
-      final List<String> segments = uri.pathSegments;
-
-      if (segments.length >= 2) {
-        String venueId = segments[1];
-
-        final HomController homeController = Get.put(HomController());
-
-        await homeController.fetchVenueDetails(venueId);
-        if (homeController.venueDetailsModel?.data != null) {
-          Get.to(() => const VenueDetailsScreen());
-        }
-        return;
-      }
-    }
-    final String token = LocalStorage.token;
-    String finalUrl = "${ApiEndPoint.websiteUrl}$path";
-
-    if (token.isNotEmpty) {
-      String separator = finalUrl.contains('?') ? '&' : '?';
-      finalUrl = "$finalUrl${separator}token=${Uri.encodeComponent(token)}";
-    }
-
-    log("==========================================");
-    log("GENERATED WEBVIEW URL: $finalUrl");
-    log("==========================================");
-
-    // Get.to(() => ReaderWebScreen(
-    //   readerUrl: finalUrl,
-    //   title: title ?? "Reader",
-    // ));
+    Get.to(() => ReaderWebScreen(
+      readerUrl: webviewUrl,
+      title: title ?? "Reader",
+    ));
   }
 
 }

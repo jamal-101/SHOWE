@@ -127,7 +127,7 @@ class TheatreController extends GetxController {
   // }
 
 
-  void openReaderUrl(BuildContext context, String? id, {String? title, String? heroTag}) async {
+  void openReaderUrl(BuildContext context, String? id, {String? title, String? heroTag, int? initialPageIndex}) async {
     if (id == null || id.trim().isEmpty) return;
 
     try {
@@ -171,6 +171,7 @@ class TheatreController extends GetxController {
       Get.to(() => ReaderPage(
         programme: programmeDoc,
         heroTag: heroTag ?? 'reader_cover_$id',
+        initialPageIndex: initialPageIndex,
       ));
     } catch (e) {
       debugPrint("Error opening reader: $e");
@@ -184,6 +185,7 @@ class TheatreController extends GetxController {
       Get.to(() => ReaderPage(
         programme: cachedDoc,
         heroTag: heroTag ?? 'reader_cover_$id',
+        initialPageIndex: initialPageIndex,
       ));
     } finally {
       isLoading.value = false;
