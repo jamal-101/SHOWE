@@ -7,7 +7,8 @@
 // }
 
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digital_event/core/storage/storage_key.dart';
 import 'core/storage/local_storage.dart';
@@ -15,6 +16,23 @@ import 'app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Explicitly opt in to edge-to-edge — on Android 15+ this is enforced
+  // regardless, but declaring it ourselves keeps window-inset reporting
+  // (and therefore SafeArea/MediaQuery.padding) consistent across Android
+  // versions instead of relying on whatever the OS defaults to.
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   await saveDeviceIdOnStartup();
   await LocalStorage.getAllPrefData();
   runApp(const MyApp());

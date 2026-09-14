@@ -73,7 +73,6 @@
             </array>
         </dict>
     </array>
-
     <!-- 🔹 Permissions for Camera and Photo Library -->
     <key>NSCameraUsageDescription</key>
     <string>This app needs camera access to take photos for event registration and profile updates.</string>
@@ -83,6 +82,5 @@
     <string>This app requires access to your location to display nearby events and services.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>This app requires access to your location to display nearby events and services.</string>
-
 </dict>
 </plist>

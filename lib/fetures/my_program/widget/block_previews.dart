@@ -2238,18 +2238,34 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
 
     return Column(
       children: [
-        IgnorePointer(
-          child: Opacity(
-            opacity: 0.01,
-            child: Transform.translate(
-              offset: const Offset(-10000, 0),
-              child: RepaintBoundary(
-                key: cardKey,
-                child: _MemoryCardVisual(
-                  text: textCtrl.text.isEmpty
-                      ? (widget.data.placeholder ?? '')
-                      : textCtrl.text,
-                  imagePath: imageFile?.path,
+        // This is an off-screen render target used only to snapshot the
+        // final "memory card" image (see _generate()) — it must NOT take
+        // up real layout space. Transform.translate only shifts where a
+        // widget is PAINTED; the Column below still reserved its full
+        // height as if it were visible, which is exactly what was pushing
+        // everything else down and leaving a big empty gap on the page.
+        // SizedBox(0,0) + OverflowBox lets it render at full size for the
+        // screenshot while reporting zero size to the layout above it.
+        SizedBox(
+          width: 0,
+          height: 0,
+          child: OverflowBox(
+            alignment: Alignment.topLeft,
+            minWidth: 0,
+            minHeight: 0,
+            maxWidth: double.infinity,
+            maxHeight: double.infinity,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: 0.01,
+                child: RepaintBoundary(
+                  key: cardKey,
+                  child: _MemoryCardVisual(
+                    text: textCtrl.text.isEmpty
+                        ? (widget.data.placeholder ?? '')
+                        : textCtrl.text,
+                    imagePath: imageFile?.path,
+                  ),
                 ),
               ),
             ),

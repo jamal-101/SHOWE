@@ -36,10 +36,10 @@ Widget eyebrowLabel(String text, {Color? color, BuildContext? context}) {
 
 /// Opens hero / inline video in fullscreen with play controls.
 void openProgrammeVideoFullscreen(
-  BuildContext context, {
-  required String? src,
-  bool initialMuted = true,
-}) {
+    BuildContext context, {
+      required String? src,
+      bool initialMuted = true,
+    }) {
   final url = getProgrammeImageUrl(src);
   if (url.isEmpty || !isProgrammeVideoUrl(url)) return;
   showDialog(
@@ -524,6 +524,18 @@ class _FullscreenVideoDialogState extends State<_FullscreenVideoDialog> {
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // Restore the app's normal status-bar icon style too — switching UI
+    // mode alone doesn't bring this back, so without this the status bar
+    // could be left in whatever state the video player put it in.
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
     super.dispose();
   }
 

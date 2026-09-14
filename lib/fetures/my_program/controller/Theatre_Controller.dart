@@ -87,6 +87,21 @@ class TheatreController extends GetxController {
     await prefs.setString(_getCategoryCacheKey(category), jsonEncode(rawData));
   }
 
+  // Future<void> _loadFromLocalCache(String category) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String? jsonString = prefs.getString(_getCategoryCacheKey(category));
+  //
+  //   if (jsonString != null) {
+  //     dynamic jsonMap = jsonDecode(jsonString);
+  //     ProgrammeModel model = ProgrammeModel.fromJson(Map<String, dynamic>.from(jsonMap));
+  //     if (model.data != null && model.data!.isNotEmpty) {
+  //       programmeList.assignAll(model.data!);
+  //       return;
+  //     }
+  //   }
+  //   programmeList.assignAll(fallbackData);
+  // }
+
   Future<void> _loadFromLocalCache(String category) async {
     final prefs = await SharedPreferences.getInstance();
     String? jsonString = prefs.getString(_getCategoryCacheKey(category));
@@ -99,7 +114,7 @@ class TheatreController extends GetxController {
         return;
       }
     }
-    programmeList.assignAll(fallbackData);
+    programmeList.clear();   // fallbackData এর বদলে খালি list — real "no programs" state দেখাবে
   }
 
   ProgrammeData? getItem(int index) {

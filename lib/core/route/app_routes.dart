@@ -6,7 +6,7 @@ import 'package:digital_event/fetures/authentication/screen/set_new_password_scr
 import 'package:digital_event/fetures/authentication/screen/sing_up_or_login_screen.dart';
 import 'package:digital_event/fetures/authentication/screen/verify_otp_screen.dart';
 import 'package:digital_event/fetures/bottom_navigation_bar/controller/bottom_navigation_controller.dart';
-import 'package:digital_event/fetures/bottom_navigation_bar/screen/mainWrap.dart';
+// import 'package:digital_event/fetures/bottom_navigation_bar/screen/mainWrap.dart';
 import 'package:digital_event/fetures/favorites/screen/favorite_screen.dart';
 import 'package:digital_event/fetures/home/screen/artist_profile_view.dart';
 import 'package:digital_event/fetures/home/screen/event_screen.dart';

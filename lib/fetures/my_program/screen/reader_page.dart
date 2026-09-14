@@ -104,6 +104,7 @@ class _ReaderPageState extends State<ReaderPage> {
     return Scaffold(
       backgroundColor: surface,
       body: SafeArea(
+
         child: Stack(
           children: [
             Positioned.fill(
