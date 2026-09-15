@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -17,14 +18,23 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       designSize: const Size(430, 932),
-      child: GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        navigatorKey: Get.key,
-        defaultTransition: Transition.fadeIn,
-        theme: themeData,
-        transitionDuration: const Duration(milliseconds: 300),
-        initialRoute: AppRoutes.splashScreen,
-        getPages: AppRoutes.routes,
+      child: AnnotatedRegion(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.light,
+          ),
+        child:
+           GetMaterialApp(
+            debugShowCheckedModeBanner: false,
+            navigatorKey: Get.key,
+            defaultTransition: Transition.fadeIn,
+            theme: themeData,
+            transitionDuration: const Duration(milliseconds: 300),
+            initialRoute: AppRoutes.splashScreen,
+            getPages: AppRoutes.routes,
+          ),
+
       ),
     );
   }

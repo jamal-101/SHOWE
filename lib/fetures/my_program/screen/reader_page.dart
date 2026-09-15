@@ -104,10 +104,10 @@ class _ReaderPageState extends State<ReaderPage> {
     return Scaffold(
       backgroundColor: surface,
       body: SafeArea(
-
         child: Stack(
           children: [
             Positioned.fill(
+              top: 50,
               child: PageView.builder(
                 controller: _pageController,
                 itemCount: totalPages,
@@ -144,10 +144,11 @@ class _ReaderPageState extends State<ReaderPage> {
               ),
             ),
             Positioned(
-              top: -12,
+              top: 10,
               left: 10,
               child: _BackChip(onTap: () => Navigator.maybePop(context)),
             ),
+
             if (totalPages > 1)
               Positioned(
                 bottom: 20,
