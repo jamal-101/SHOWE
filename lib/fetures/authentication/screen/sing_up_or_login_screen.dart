@@ -69,11 +69,13 @@ class SingUpOrLoginScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+
                   // Obx(
                   //   () => controller.isLoginSelected.value
                   //       ? _buildLoginForm(controller)
                   //       : _buildSignUpForm(controller),
                   // ),
+
                   Obx(() {
                     if (controller.isLoginSelected.value) {
                       return Form(
@@ -156,6 +158,8 @@ class SingUpOrLoginScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Get.toNamed(AppRoutes.forgotPasswordScreen);
+
+
                 // Get.toNamed(AppRoutes.setNewPass);
               },
               child: const Text(
@@ -166,6 +170,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20.h),
+
         Row(
           children: [
             Expanded(
@@ -314,7 +319,10 @@ class SingUpOrLoginScreen extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade700, fontSize: 14.sp),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.toNamed(AppRoutes.termsConditionScreen);
+
+              },
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(
@@ -336,14 +344,16 @@ class SingUpOrLoginScreen extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade700, fontSize: 14.sp),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.toNamed(AppRoutes.privacyPolicyScreen);
+              },
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
                       color: Color(0xFF060606),
                       width: 1,
-                    ), // আন্ডারলাইন
+                    ), //
                   ),
                 ),
                 child: Text(
@@ -403,7 +413,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
                         child: Image.asset(
                           visibilityVariable.value
                               ? AppImages.toggleOn
-                              : AppImages.toggleoff,
+                              : AppImages.toggleOff,
                           height: 10.h,
                           fit: BoxFit.contain,
                         ),
@@ -499,7 +509,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade700, fontSize: 14.sp),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.toNamed(AppRoutes.termsConditionScreen);
+              },
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(
@@ -521,7 +533,9 @@ class SingUpOrLoginScreen extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade700, fontSize: 14.sp),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.toNamed(AppRoutes.privacyPolicyScreen);
+              },
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(

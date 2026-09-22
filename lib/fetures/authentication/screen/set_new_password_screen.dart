@@ -142,7 +142,7 @@ class SetNewPasswordScreen extends StatelessWidget {
                   child: Image.asset(
                     visibilityVariable?.value == true
                         ? AppImages.toggleOn
-                        : AppImages.toggleoff,
+                        : AppImages.toggleOff,
                     height: 10.h,
                     fit: BoxFit.cover,
                   ),

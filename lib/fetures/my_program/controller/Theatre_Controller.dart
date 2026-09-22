@@ -9,6 +9,7 @@ import '../../../core/utils/api_service.dart';
 import '../model/single_proram_model.dart';
 import '../model/theatre_model.dart';
 import '../utils/programme_map.dart';
+import '../utils/programme_offline_store.dart';
 import '../utils/programme_video_cache.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import '../screen/reader_page.dart';
@@ -38,7 +39,10 @@ class TheatreController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchProgrammes();
+    // Drop only downloaded CONTENT for anything not opened in the last 7
+    // days. Cards themselves are untouched by this — see
+    // ProgrammeOfflineStore for why the two are separate.
+    ProgrammeOfflineStore.purgeExpiredContent().whenComplete(fetchProgrammes);
   }
 
   void selectCategory(int index) {
@@ -48,7 +52,6 @@ class TheatreController extends GetxController {
   }
 
   String get currentBackground => categories[selectedCategoryIndex.value].backgroundAsset;
-  String _getCategoryCacheKey(String category) => "cached_programmes_$category";
 
   Future<void> fetchProgrammes() async {
     String category = categories[selectedCategoryIndex.value].apiValue;
@@ -63,58 +66,40 @@ class TheatreController extends GetxController {
         ProgrammeModel model = ProgrammeModel.fromJson(Map<String, dynamic>.from(response.data));
         if (model.data != null && model.data!.isNotEmpty) {
           programmeList.assignAll(model.data!);
-          _saveToLocalCache(category, response.data);
         } else {
           // Backend responded successfully — this category genuinely has
           // no programmes yet. This is NOT a failure, so we must not fall
           // back to dummy/cached data here; show a real empty state instead.
           programmeList.clear();
         }
+
+        // Keep the cumulative offline catalog for this category in sync:
+        // add/refresh whatever the server just returned, and immediately
+        // drop anything previously known that the server no longer returns
+        // at all (unpublished/deleted) — no 7-day wait for that removal.
+        await ProgrammeOfflineStore.mergeCatalog(
+            category, model.data ?? const <ProgrammeData>[]);
       } else {
-        await _loadFromLocalCache(category);
+        await _loadOfflineList(category);
       }
     } catch (e) {
-      debugPrint("Offline mode: Loading local cache for $category");
-      await _loadFromLocalCache(category);
+      debugPrint("Offline mode: loading catalog for $category");
+      await _loadOfflineList(category);
     } finally {
       isLoading.value = false;
       update();
     }
   }
 
-  Future<void> _saveToLocalCache(String category, dynamic rawData) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_getCategoryCacheKey(category), jsonEncode(rawData));
-  }
-
-  // Future<void> _loadFromLocalCache(String category) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   String? jsonString = prefs.getString(_getCategoryCacheKey(category));
-  //
-  //   if (jsonString != null) {
-  //     dynamic jsonMap = jsonDecode(jsonString);
-  //     ProgrammeModel model = ProgrammeModel.fromJson(Map<String, dynamic>.from(jsonMap));
-  //     if (model.data != null && model.data!.isNotEmpty) {
-  //       programmeList.assignAll(model.data!);
-  //       return;
-  //     }
-  //   }
-  //   programmeList.assignAll(fallbackData);
-  // }
-
-  Future<void> _loadFromLocalCache(String category) async {
-    final prefs = await SharedPreferences.getInstance();
-    String? jsonString = prefs.getString(_getCategoryCacheKey(category));
-
-    if (jsonString != null) {
-      dynamic jsonMap = jsonDecode(jsonString);
-      ProgrammeModel model = ProgrammeModel.fromJson(Map<String, dynamic>.from(jsonMap));
-      if (model.data != null && model.data!.isNotEmpty) {
-        programmeList.assignAll(model.data!);
-        return;
-      }
-    }
-    programmeList.clear();   // fallbackData এর বদলে খালি list — real "no programs" state দেখাবে
+  /// Offline entry point. Shows every card the app has ever seen for this
+  /// category (the cumulative catalog), not just the last raw response —
+  /// and not just the ones the user actually opened. Tapping a card whose
+  /// content wasn't downloaded (never opened, or its 7-day content window
+  /// lapsed) is handled separately in openReaderUrl, which falls back to
+  /// the "not available offline" screen.
+  Future<void> _loadOfflineList(String category) async {
+    final catalog = await ProgrammeOfflineStore.getCatalogForCategory(category);
+    programmeList.assignAll(catalog); // empty list -> real "no programmes" state
   }
 
   ProgrammeData? getItem(int index) {
@@ -142,8 +127,10 @@ class TheatreController extends GetxController {
   // }
 
 
-  void openReaderUrl(BuildContext context, String? id, {String? title, String? heroTag, int? initialPageIndex}) async {
+  void openReaderUrl(BuildContext context, String? id, {String? title, String? heroTag, int? initialPageIndex, ProgrammeData? programmeData}) async {
     if (id == null || id.trim().isEmpty) return;
+
+    final String category = categories[selectedCategoryIndex.value].apiValue;
 
     try {
       isLoading.value = true;
@@ -159,6 +146,12 @@ class TheatreController extends GetxController {
         _saveReaderDocToCache(id, raw);
         ProgrammeVideoCache.prefetchProgramme(programmeDoc);
         ProgrammeMapCache.prefetchProgramme(programmeDoc);
+
+        // The user has now actually opened this programme — this is what
+        // "viewed" means. Ensure it's in the offline catalog and
+        // (re)start its 7-day content-availability timer.
+        final card = programmeData ?? ProgrammeData(sId: id, title: title);
+        await ProgrammeOfflineStore.markViewed(category, card);
       } else {
         final msg = (response.message).toLowerCase();
         final unauthorized = msg.contains('jwt') ||

@@ -78,6 +78,19 @@ class ProgrammeVideoCache {
       download(url);
     }
   }
+
+  /// Deletes any downloaded video files belonging to this programme.
+  /// Used when a viewed programme's 7-day offline window expires, or when
+  /// it's removed from the server, so storage doesn't grow forever.
+  static Future<void> deleteProgrammeVideos(single_programm_model programme) async {
+    final urls = collectProgrammeVideoUrls(programme);
+    for (final url in urls) {
+      try {
+        final file = await _fileForUrl(url);
+        if (await file.exists()) await file.delete();
+      } catch (_) {}
+    }
+  }
 }
 
 List<String> collectProgrammeVideoUrls(single_programm_model programme) {

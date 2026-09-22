@@ -17,10 +17,10 @@ class ProgrammeNotFoundPage extends StatelessWidget {
 
     final eyebrow = isLocked ? 'Locked Programme' : 'Programme Reader';
     final title =
-        isLocked ? 'This programme is locked' : 'This programme isn’t here';
+        isLocked ? 'This programme is locked' : 'Not available offline yet';
     final description = isLocked
         ? 'You don’t have access to this programme yet. Purchase it to unlock the full interactive experience—rich media, artist profiles and behind-the-scenes content.'
-        : 'The programme you’re looking for may have been removed, unpublished, or the link is incorrect. Explore our library to find your next experience.';
+        : 'You haven’t opened this programme while online yet, so it isn’t saved on this device. Connect to the internet to view it for the first time.';
 
     return Scaffold(
       body: Container(

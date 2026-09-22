@@ -172,7 +172,7 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
                               //   c.openReaderUrl(item.sId);
                               // }
                               if (item.sId != null) {
-                                c.openReaderUrl(context, item.sId, title: item.title);
+                                c.openReaderUrl(context, item.sId, title: item.title, programmeData: item);
                               }
                               // if (item.sId != null) {
                               //   c.openReaderUrl(context, item.sId, title: item.title);

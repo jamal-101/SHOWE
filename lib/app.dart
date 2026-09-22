@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
             initialRoute: AppRoutes.splashScreen,
             getPages: AppRoutes.routes,
           ),
-
       ),
     );
   }

@@ -49,6 +49,18 @@ class ProgrammeData {
     coverImage = json['cover_image'];
     description = json['description'] ?? "No description available";
   }
+
+  /// Used to save this card's display data into the offline "viewed
+  /// programmes" store. Keeps the same key names as fromJson so it can be
+  /// round-tripped.
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': sId,
+      'title': title,
+      'cover_image': coverImage,
+      'description': description,
+    };
+  }
 }
 
 class CategoryModel {

@@ -165,7 +165,7 @@ class ProfileScreen extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: Image.asset(
-                                AppImages.editeProfile_icon,
+                                AppImages.editeProfileIcon,
                                 height: 30.h,
                                 width: 30.w,
                               ),

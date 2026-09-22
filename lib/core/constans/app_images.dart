@@ -74,6 +74,6 @@ class AppImages {
   static const String logoutIcon = "$baseurlIcon/logout_icon.png";
   static const String scanIcon = "$baseurlIcon/scan_icon.png";
   static const String toggleOn = "$baseurlIcon/toggole_on.png";
-  static const String toggleoff = "$baseurlIcon/toggole_of.png";
-  static const String editeProfile_icon = "$baseurlIcon/edite_profile_icon.png";
+  static const String toggleOff = "$baseurlIcon/toggole_of.png";
+  static const String editeProfileIcon = "$baseurlIcon/edite_profile_icon.png";
 }

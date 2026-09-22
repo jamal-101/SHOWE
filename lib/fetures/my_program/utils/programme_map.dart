@@ -156,6 +156,39 @@ class ProgrammeMapCache {
       }
     }
   }
+
+  /// Deletes cached coords + snapshot image for every map address in this
+  /// programme. Used when a viewed programme's 7-day offline window
+  /// expires, or when it's removed from the server.
+  static Future<void> deleteProgrammeMaps(single_programm_model programme) async {
+    final prefs = await SharedPreferences.getInstance();
+    final store = await _loadCoordsStore();
+    bool changed = false;
+
+    for (final page in programme.data?.pages ?? const []) {
+      for (final block in page.blocks ?? const []) {
+        if (block.type != 'map') continue;
+        final d = block.data;
+        final address = d?.address?.trim() ?? '';
+        final query = address.isNotEmpty
+            ? address
+            : (d?.lat != null && d?.lng != null ? '${d!.lat},${d.lng}' : '');
+        if (query.isEmpty) continue;
+
+        try {
+          final dir = await _mapDir();
+          final file = File('${dir.path}/${snapshotFileName(query)}');
+          if (await file.exists()) await file.delete();
+        } catch (_) {}
+
+        if (store.remove(_coordsCacheKey(query)) != null) changed = true;
+      }
+    }
+
+    if (changed) {
+      await prefs.setString(_coordsKey, jsonEncode(store));
+    }
+  }
 }
 
 Future<LatLng?> geocodeAddressOnline(String address) async {
