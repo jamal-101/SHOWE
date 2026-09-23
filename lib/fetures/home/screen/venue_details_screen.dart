@@ -560,11 +560,14 @@
 // }
 
 import 'package:digital_event/core/constans/app_colors.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // গুগল ম্যাপের জন্য
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constans/app_images.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../controller/hom_controller.dart';
@@ -590,9 +593,23 @@ class VenueDetailsScreen extends StatelessWidget {
         double longitude = 0.0;
         if (venueData.location?.coordinates != null &&
             venueData.location!.coordinates!.length >= 2) {
-          longitude = venueData.location!.coordinates![0];
-          latitude = venueData.location!.coordinates![1];
+          final val0 = venueData.location!.coordinates![0];
+          final val1 = venueData.location!.coordinates![1];
+          if (val0.abs() <= 90 && val1.abs() <= 180 && (val1.abs() > 90 || val0.abs() < val1.abs())) {
+            latitude = val0;
+            longitude = val1;
+          } else {
+            longitude = val0;
+            latitude = val1;
+          }
         }
+
+        final bool hasValidCoordinates = latitude != 0.0 &&
+            longitude != 0.0 &&
+            latitude >= -90 &&
+            latitude <= 90 &&
+            longitude >= -180 &&
+            longitude <= 180;
 
         return SingleChildScrollView(
           child: Column(
@@ -651,37 +668,165 @@ class VenueDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 15.h),
 
-                    if (latitude != 0.0 && longitude != 0.0)
+                    if (hasValidCoordinates)
+                      Stack(
+                        children: [
+                          Container(
+                            height: 200.h,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.r),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.r),
+                              child: GoogleMap(
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(latitude, longitude),
+                                  zoom: 15,
+                                ),
+                                markers: {
+                                  Marker(
+                                    markerId: const MarkerId("venue_loc"),
+                                    position: LatLng(latitude, longitude),
+                                    infoWindow: InfoWindow(
+                                      title: venueData.name ?? "Venue Location",
+                                    ),
+                                  ),
+                                },
+                                mapType: MapType.normal,
+                                zoomControlsEnabled: false,
+                                myLocationButtonEnabled: false,
+                                gestureRecognizers:
+                                    <Factory<OneSequenceGestureRecognizer>>{
+                                  Factory<OneSequenceGestureRecognizer>(
+                                    () => EagerGestureRecognizer(),
+                                  ),
+                                },
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 10.w,
+                            bottom: 10.h,
+                            child: InkWell(
+                              onTap: () async {
+                                final Uri googleMapsUrl = Uri.parse(
+                                  "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude",
+                                );
+                                if (await canLaunchUrl(googleMapsUrl)) {
+                                  await launchUrl(
+                                    googleMapsUrl,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF0F4C5C),
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.directions,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      "Open in Maps",
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    else
                       Container(
-                        height: 200.h,
                         width: double.infinity,
+                        padding: EdgeInsets.all(16.w),
                         decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(15.r),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.r),
-                          child: GoogleMap(
-                            initialCameraPosition: CameraPosition(
-                              target: LatLng(latitude, longitude),
-                              zoom: 15,
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.location_off,
+                              size: 36,
+                              color: Colors.grey,
                             ),
-                            markers: {
-                              Marker(
-                                markerId: const MarkerId("venue_loc"),
-                                position: LatLng(latitude, longitude),
-                                infoWindow: InfoWindow(title: venueData.name),
+                            SizedBox(height: 8.h),
+                            Text(
+                              "Exact map coordinates not available",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700,
                               ),
-                            },
-                            mapType: MapType.normal,
-                            zoomControlsEnabled: false,
-                            myLocationButtonEnabled: false,
-                          ),
+                            ),
+                            if (venueData.addressLine1 != null ||
+                                venueData.name != null) ...[
+                              SizedBox(height: 10.h),
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  final query = Uri.encodeComponent(
+                                    "${venueData.name ?? ''} ${venueData.addressLine1 ?? ''} ${venueData.city ?? ''}"
+                                        .trim(),
+                                  );
+                                  final Uri googleMapsUrl = Uri.parse(
+                                    "https://www.google.com/maps/search/?api=1&query=$query",
+                                  );
+                                  if (await canLaunchUrl(googleMapsUrl)) {
+                                    await launchUrl(
+                                      googleMapsUrl,
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF0F4C5C),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  Icons.map,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  "Search Address on Google Maps",
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                      )
-                    else
-                      const Center(
-                        child: Text("Exact location coordinates not available"),
                       ),
 
                     SizedBox(height: 30.h),
