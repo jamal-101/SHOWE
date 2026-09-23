@@ -169,7 +169,7 @@ class WalletScreen extends StatelessWidget {
                           ? Stack(
                         children: [
                           Image.network(
-                            "${ApiEndPoint.imageUrl}${controller.existingFileUrl}",
+                            ApiEndPoint.getImageUrl(controller.existingFileUrl),
                             width: double.infinity,
                             height: double.infinity,
                             fit: BoxFit.cover,

@@ -574,9 +574,8 @@ class ArtistProfileView extends StatelessWidget {
   }
 
   Widget _buildArtistHeader(dynamic data, HomController controller) {
-    final String coverUrl =
-        "${ApiEndPoint.imageUrl}${data['cover_image'] ?? ""}";
-    final String profileUrl = "${ApiEndPoint.imageUrl}${data['image'] ?? ""}";
+    final String coverUrl = ApiEndPoint.getImageUrl(data['cover_image']);
+    final String profileUrl = ApiEndPoint.getImageUrl(data['image']);
 
     return Stack(
       clipBehavior: Clip.none,
@@ -692,7 +691,7 @@ class ArtistProfileView extends StatelessWidget {
   }
 
   Widget _buildEventCard(dynamic data, HomController controller, int index) {
-    final String coverUrl = "${ApiEndPoint.imageUrl}${data is EventModel.Data ? data.coverImage ?? "" : data['cover_image'] ?? ""}";
+    final String coverUrl = ApiEndPoint.getImageUrl(data is EventModel.Data ? data.coverImage : data['cover_image']);
     final String title = data is EventModel.Data ? (data.title ?? "Concert Title") : (data['title'] ?? "Concert Title");
     final String category = data is EventModel.Data ? (data.category ?? "Music") : (data['category'] ?? "Music");
     final dynamic price = data is EventModel.Data ? (data.price ?? 0) : (data['price'] ?? 0);

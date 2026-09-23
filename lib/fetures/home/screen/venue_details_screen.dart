@@ -696,8 +696,8 @@ class VenueDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildVenueHeader(dynamic venueData, HomController controller) {
-    String coverUrl = "${ApiEndPoint.imageUrl}${venueData.coverImage ?? ""}";
-    String logoUrl = "${ApiEndPoint.imageUrl}${venueData.logo ?? ""}";
+    String coverUrl = ApiEndPoint.getImageUrl(venueData.coverImage);
+    String logoUrl = ApiEndPoint.getImageUrl(venueData.logo);
     return Stack(
       clipBehavior: Clip.none,
       children: [

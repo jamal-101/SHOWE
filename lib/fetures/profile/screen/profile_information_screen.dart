@@ -265,9 +265,7 @@ class UpdateProfileInformationScreen extends StatelessWidget {
               return FileImage(controller.profileImage!);
             } else if (networkImageUrl != null && networkImageUrl.isNotEmpty) {
               return NetworkImage(
-                networkImageUrl.startsWith('http')
-                    ? networkImageUrl
-                    : "${ApiEndPoint.imageUrl}$networkImageUrl",
+                ApiEndPoint.getImageUrl(networkImageUrl),
               );
             }
             return null;

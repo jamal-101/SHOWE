@@ -124,11 +124,7 @@ class ProfileScreen extends StatelessWidget {
                 backgroundColor: Colors.grey[200],
                 backgroundImage:
                     (profileImage != null && profileImage.isNotEmpty)
-                    ? NetworkImage(
-                            profileImage.startsWith('http')
-                                ? profileImage
-                                : "${ApiEndPoint.imageUrl}$profileImage",
-                          )
+                    ? NetworkImage(ApiEndPoint.getImageUrl(profileImage))
                           as ImageProvider
                     : AssetImage(AppImages.profileImage),
               ),

@@ -26,7 +26,7 @@ class BookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool hasImage = item.coverImage != null && item.coverImage!.trim().isNotEmpty;
-    String fullImageUrl = "${ApiEndPoint.imageUrl}${item.coverImage ?? ""}";
+    String fullImageUrl = ApiEndPoint.getImageUrl(item.coverImage);
     final String customHeroTag = 'reader_cover_${item.sId ?? 'no_id'}_${index ?? 0}';
 
     return GestureDetector(

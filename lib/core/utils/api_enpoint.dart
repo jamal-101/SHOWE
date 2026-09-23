@@ -2,8 +2,26 @@ class ApiEndPoint {
 
   // static const baseUrl = "http://168.144.106.179:3005/api/v1";
   static const baseUrl = "https://shariful5003.binarybards.online/api/v1";
-  static const websiteUrl = "https://shariful5003.binarybards.online";
-  static const imageUrl = "https://shariful5003.binarybards.online";
+  static const websiteUrl = "http://168.144.106.179:3009";
+  static const imageUrl = "https://shariful5003.binarybards.online/files";
+
+  /// Resolves an image path from backend.
+  /// If [path] is already an HTTP/HTTPS URL, returns it directly.
+  /// Otherwise, prepends [imageUrl].
+  static String getImageUrl(String? path) {
+    if (path == null || path.trim().isEmpty) return '';
+    final trimmed = path.trim();
+    if (trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://') ||
+        trimmed.startsWith('data:')) {
+      return trimmed;
+    }
+    final base = imageUrl.endsWith('/')
+        ? imageUrl.substring(0, imageUrl.length - 1)
+        : imageUrl;
+    final formattedPath = trimmed.startsWith('/') ? trimmed : '/$trimmed';
+    return '$base$formattedPath';
+  }
 
   // static const websiteUrl = "http://168.144.106.179:3009";
   // static const imageUrl = "http://10.10.26.164:5002/files";

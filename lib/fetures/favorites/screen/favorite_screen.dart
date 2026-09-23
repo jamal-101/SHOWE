@@ -115,7 +115,7 @@ class FavoriteScreen extends StatelessWidget {
   }
 
   Widget _buildFavouriteEventCard(ev.Data data) {
-    final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.coverImage ?? ""}";
+    final String fullImageUrl = ApiEndPoint.getImageUrl(data.coverImage);
     final HomController homController = Get.isRegistered<HomController>()
         ? Get.find<HomController>()
         : Get.put(HomController());
@@ -357,7 +357,7 @@ class FavoriteScreen extends StatelessWidget {
   }
 
   Widget _buildFavoriteArtistCard(af.Data data) {
-    final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.image ?? ""}";
+    final String fullImageUrl = ApiEndPoint.getImageUrl(data.image);
 
     return GestureDetector(
       onTap: (){

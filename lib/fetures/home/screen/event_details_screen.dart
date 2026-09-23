@@ -330,7 +330,7 @@ class EventDetailsScreen extends StatelessWidget {
                         ),
                         itemBuilder: (context, index, realIndex) {
                           final String fullImageUrl =
-                              "${ApiEndPoint.imageUrl}${images[index]}";
+                              ApiEndPoint.getImageUrl(images[index]);
                           return Image.network(
                             fullImageUrl,
                             height: 300.h,
@@ -492,7 +492,7 @@ class EventDetailsScreen extends StatelessWidget {
                       if (eventData.artist != null)
                         _buildInfoTile(
                           imagePath: eventData.artist?.image != null
-                              ? "${ApiEndPoint.imageUrl}${eventData.artist!.image}"
+                              ? ApiEndPoint.getImageUrl(eventData.artist!.image)
                               : AppImages.artistImage,
                           title: eventData.artist?.name ?? "Unknown Artist",
                           subTitle: eventData.artist?.type ?? "Artist",
@@ -557,9 +557,7 @@ class EventDetailsScreen extends StatelessWidget {
                         imagePath:
                             (eventData.author?.image != null &&
                                 eventData.author!.image!.isNotEmpty)
-                            ? (eventData.author!.image!.startsWith('http')
-                                  ? eventData.author!.image!
-                                  : "${ApiEndPoint.imageUrl}${eventData.author!.image}")
+                            ? ApiEndPoint.getImageUrl(eventData.author!.image)
                             : AppImages.artistImage,
                         title: eventData.author?.name ?? "Artist Name",
                         subTitle: "Organizer",
@@ -858,7 +856,7 @@ class EventDetailsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6.r),
                         child: item.image != null
                             ? Image.network(
-                                "${ApiEndPoint.imageUrl}${item.image}",
+                                ApiEndPoint.getImageUrl(item.image),
                                 width: 50.w,
                                 height: 50.h,
                                 fit: BoxFit.cover,

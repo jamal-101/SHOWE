@@ -276,7 +276,7 @@ class EventScreen extends StatelessWidget {
 
   Widget _buildEventCard(dynamic data) {
     final String fullImageUrl =
-        "${ApiEndPoint.imageUrl}${data.coverImage ?? ""}";
+        ApiEndPoint.getImageUrl(data.coverImage);
     final HomController controller = Get.find<HomController>();
 
     return GestureDetector(
@@ -414,7 +414,7 @@ class EventScreen extends StatelessWidget {
 
 
   Widget _buildArtistCard(dynamic data, HomController controller) {
-    final String fullImageUrl = "${ApiEndPoint.imageUrl}${data.image ?? ""}";
+    final String fullImageUrl = ApiEndPoint.getImageUrl(data.image);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {

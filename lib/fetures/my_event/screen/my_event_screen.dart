@@ -70,7 +70,7 @@ class MyEventScreen extends StatelessWidget {
                       itemCount: controller.ticketList.length,
                       itemBuilder: (context, index) {
                         final ticket = controller.ticketList[index];
-                        final String fullFileUrl = "${ApiEndPoint.imageUrl}${ticket.file ?? ""}";
+                        final String fullFileUrl = ApiEndPoint.getImageUrl(ticket.file);
                         final bool isPdf = (ticket.file ?? "").toLowerCase().endsWith('.pdf');
 
                         return Container(
