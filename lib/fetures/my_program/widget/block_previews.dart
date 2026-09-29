@@ -1750,33 +1750,40 @@ class FutureShowsPreview extends StatelessWidget {
         eyebrowLabel(data.title ?? 'Coming up'),
         SizedBox(height: 12.h),
         ...shows.map((s) {
-          return Container(
-            margin: EdgeInsets.only(bottom: 10.h),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: const Color(0xFFE5E0D8)),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (s.image != null)
-                  AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: ProgrammeMedia(src: s.image, fit: BoxFit.cover),
+          return GestureDetector(
+            onTap: () {
+              if (s.url != null && s.url!.trim().isNotEmpty) {
+                openExternalUrl(s.url!.trim());
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(bottom: 10.h),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: const Color(0xFFE5E0D8)),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (s.image != null)
+                    AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: ProgrammeMedia(src: s.image, fit: BoxFit.cover),
+                    ),
+                  Padding(
+                    padding: EdgeInsets.all(12.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(s.name ?? '', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                        if (s.date != null)
+                          Text(s.date!, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+                      ],
+                    ),
                   ),
-                Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(s.name ?? '', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
-                      if (s.date != null)
-                        Text(s.date!, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }),
@@ -2988,11 +2995,23 @@ class MapPreview extends StatelessWidget {
                               title: address.split(',').first,
                               snippet: address,
                             ),
+                            onTap: () {
+                              final query = address.trim().isNotEmpty
+                                  ? address.trim()
+                                  : "$lat,$lng";
+                              openExternalUrl(googleMapsSearchUrl(query));
+                            },
                           ),
                         },
                         zoomControlsEnabled: false,
                         myLocationButtonEnabled: false,
                         mapToolbarEnabled: false,
+                        onTap: (_) {
+                          final query = address.trim().isNotEmpty
+                              ? address.trim()
+                              : "$lat,$lng";
+                          openExternalUrl(googleMapsSearchUrl(query));
+                        },
                       )
                     else if (address.trim().isNotEmpty)
                       _AddressMapPreview(
@@ -3007,37 +3026,53 @@ class MapPreview extends StatelessWidget {
                       left: 8.w,
                       right: 8.w,
                       bottom: 8.h,
-                      child: Container(
-                        padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(
-                          color: sunken.withValues(alpha: 0.95),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              address.isNotEmpty
-                                  ? address.split(',').first
-                                  : 'Venue location',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12.sp,
-                                color: ink,
+                      child: GestureDetector(
+                        onTap: () {
+                          final query = address.trim().isNotEmpty
+                              ? address.trim()
+                              : "$lat,$lng";
+                          openExternalUrl(googleMapsSearchUrl(query));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: BoxDecoration(
+                            color: sunken.withValues(alpha: 0.95),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      address.isNotEmpty
+                                          ? address.split(',').first
+                                          : 'Venue location',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12.sp,
+                                        color: ink,
+                                      ),
+                                    ),
+                                    Text(
+                                      address.isNotEmpty
+                                          ? address
+                                          : 'Add an address to preview the map.',
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        color: inkFaint,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Text(
-                              address.isNotEmpty
-                                  ? address
-                                  : 'Add an address to preview the map.',
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                color: inkFaint,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                              SizedBox(width: 6.w),
+                              Icon(Icons.open_in_new, size: 16.sp, color: primary),
+                            ],
+                          ),
                         ),
                       ),
                     ),

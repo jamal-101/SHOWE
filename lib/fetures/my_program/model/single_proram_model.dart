@@ -785,14 +785,16 @@ class ShowItem {
   String? name;
   String? date;
   String? image;
+  String? url;
 
-  ShowItem({this.id, this.name, this.date, this.image});
+  ShowItem({this.id, this.name, this.date, this.image, this.url});
 
   ShowItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     date = json['date'];
     image = json['image'];
+    url = json['url'];
   }
 }
 
