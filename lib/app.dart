@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
           ),
         child:
            GetMaterialApp(
+            title: 'SHOWE',
             debugShowCheckedModeBanner: false,
             navigatorKey: Get.key,
             defaultTransition: Transition.fadeIn,

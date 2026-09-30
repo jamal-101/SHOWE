@@ -19,7 +19,7 @@
     </queries>
 
     <application
-        android:label="digital_event"
+        android:label="SHOWE"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
