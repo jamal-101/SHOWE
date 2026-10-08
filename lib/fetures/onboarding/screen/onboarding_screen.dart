@@ -127,7 +127,6 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-
   Widget _buildGetStartedLayout() {
     return Container(
       decoration: BoxDecoration(),
