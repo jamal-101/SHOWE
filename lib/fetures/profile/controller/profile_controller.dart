@@ -113,6 +113,7 @@ class ProfileController extends GetxController {
   bool isNewObscure = true;
   bool isConfirmObscure = true;
 
+  RxString rxUserName = ''.obs;
 
   File? profileImage;
   final ImagePicker _picker = ImagePicker();
@@ -143,6 +144,7 @@ class ProfileController extends GetxController {
     nameController.text = LocalStorage.myName;
     emailController.text = LocalStorage.myEmail;
     phoneController.text = LocalStorage.deviceId;
+    rxUserName.value = LocalStorage.myName;
     update();
   }
 
@@ -162,6 +164,7 @@ class ProfileController extends GetxController {
           nameController.text = userData.name ?? "";
           emailController.text = userData.email ?? "";
           phoneController.text = userData.contact ?? "";
+          rxUserName.value = userData.name ?? "";
           await LocalStorage.setString(LocalStorageKeys.myName, userData.name ?? "");
           await LocalStorage.setString(LocalStorageKeys.myEmail, userData.email ?? "");
           await LocalStorage.setString(LocalStorageKeys.profileImage, userData.image ?? "");

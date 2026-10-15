@@ -256,133 +256,135 @@ class UpdateProfileInformationScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: GetBuilder<ProfileController>(
-        init: ProfileController(),
-        builder: (controller) {
-          final String? networkImageUrl = controller.profileModel?.data?.image;
-          ImageProvider? getProfileImageProvider() {
-            if (controller.profileImage != null) {
-              return FileImage(controller.profileImage!);
-            } else if (networkImageUrl != null && networkImageUrl.isNotEmpty) {
-              return NetworkImage(
-                ApiEndPoint.getImageUrl(networkImageUrl),
-              );
+      body: SafeArea(
+        child: GetBuilder<ProfileController>(
+          init: ProfileController(),
+          builder: (controller) {
+            final String? networkImageUrl = controller.profileModel?.data?.image;
+            ImageProvider? getProfileImageProvider() {
+              if (controller.profileImage != null) {
+                return FileImage(controller.profileImage!);
+              } else if (networkImageUrl != null && networkImageUrl.isNotEmpty) {
+                return NetworkImage(
+                  ApiEndPoint.getImageUrl(networkImageUrl),
+                );
+              }
+              return null;
             }
-            return null;
-          }
-
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: RefreshIndicator(
-                      color: const Color(0xFF0F4C5C),
-                      backgroundColor: Colors.white,
-                      onRefresh: () async {
-                        await Get.put(ProfileController()).getProfile();
-                      },
-                      child: SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 20.h),
-                            Center(
-                              child: Stack(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 50.r,
-                                    backgroundColor: Colors.grey[200],
-                                    backgroundImage: getProfileImageProvider(),
-                                    child: (controller.profileImage == null &&
-                                        (networkImageUrl == null || networkImageUrl.isEmpty))
-                                        ? Icon(
-                                      Icons.person,
-                                      size: 50.sp,
-                                      color: Colors.grey[400],
-                                    )
-                                        : null,
-                                  ),
-                                  if (isEditeMode)
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        _showImagePickerBottomSheet(
-                                          context,
-                                          controller,
-                                        );
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 16.r,
-                                        backgroundColor: const Color(0xFF0F4C5C),
-                                        child: Icon(
-                                          Icons.camera_alt,
-                                          color: Colors.white,
-                                          size: 16.sp,
+        
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: RefreshIndicator(
+                        color: const Color(0xFF0F4C5C),
+                        backgroundColor: Colors.white,
+                        onRefresh: () async {
+                          await Get.put(ProfileController()).getProfile();
+                        },
+                        child: SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 20.h),
+                              Center(
+                                child: Stack(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 50.r,
+                                      backgroundColor: Colors.grey[200],
+                                      backgroundImage: getProfileImageProvider(),
+                                      child: (controller.profileImage == null &&
+                                          (networkImageUrl == null || networkImageUrl.isEmpty))
+                                          ? Icon(
+                                        Icons.person,
+                                        size: 50.sp,
+                                        color: Colors.grey[400],
+                                      )
+                                          : null,
+                                    ),
+                                    if (isEditeMode)
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _showImagePickerBottomSheet(
+                                            context,
+                                            controller,
+                                          );
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 16.r,
+                                          backgroundColor: const Color(0xFF0F4C5C),
+                                          child: Icon(
+                                            Icons.camera_alt,
+                                            color: Colors.white,
+                                            size: 16.sp,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 25.h),
-                            _buildLabel("Full Name"),
-                            TextFormField(
-                              readOnly: !isEditeMode,
-                              // validator: Utils.fullNameValidator,
-                              controller: controller.nameController,
-                              decoration: _inputDecoration("Mohammad Shakil",isEditMode: isEditeMode),
-                            ),
-                            SizedBox(height: 20.h),
-                            _buildLabel("Email"),
-                            TextFormField(
-                              readOnly: !isEditeMode,
-                              // validator: Utils.emailValidator,
-                              controller: controller.emailController,
-                              decoration: _inputDecoration(
-                                "example.email123@gmail.com",
-                                isEditMode: isEditeMode
+                              SizedBox(height: 25.h),
+                              _buildLabel("Full Name"),
+                              TextFormField(
+                                readOnly: !isEditeMode,
+                                // validator: Utils.fullNameValidator,
+                                controller: controller.nameController,
+                                decoration: _inputDecoration("Mohammad Shakil",isEditMode: isEditeMode),
                               ),
-                            ),
-                            SizedBox(height: 20.h),
-                            _buildLabel("Phone"),
-                            TextFormField(
-                              readOnly: !isEditeMode,
-                              // validator: Utils.phoneValidator,
-                              controller: controller.phoneController,
-                              keyboardType: TextInputType.phone,
-                              decoration: _inputDecoration("+61 0000 000 00",isEditMode: isEditeMode),
-                            ),
-                          ],
+                              SizedBox(height: 20.h),
+                              _buildLabel("Email"),
+                              TextFormField(
+                                readOnly: !isEditeMode,
+                                // validator: Utils.emailValidator,
+                                controller: controller.emailController,
+                                decoration: _inputDecoration(
+                                  "example.email123@gmail.com",
+                                  isEditMode: isEditeMode
+                                ),
+                              ),
+                              SizedBox(height: 20.h),
+                              _buildLabel("Phone"),
+                              TextFormField(
+                                readOnly: !isEditeMode,
+                                // validator: Utils.phoneValidator,
+                                controller: controller.phoneController,
+                                keyboardType: TextInputType.phone,
+                                decoration: _inputDecoration("+61 0000 000 00",isEditMode: isEditeMode),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  if (pageTitle == "Update Profile")
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.h),
-                    child: CommonButton(
-                      isLoading: controller.isLoading.value,
-                      title: "Update Profile",
-                      onTap: () {
-                        // if (_formKey.currentState!.validate()) {
-                        controller.updateProfile();
-                        // }
-                      },
+                    if (pageTitle == "Update Profile")
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.h),
+                      child: CommonButton(
+                        isLoading: controller.isLoading.value,
+                        title: "Update Profile",
+                        onTap: () {
+                          // if (_formKey.currentState!.validate()) {
+                          controller.updateProfile();
+                          // }
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

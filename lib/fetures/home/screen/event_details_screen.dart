@@ -291,405 +291,413 @@ class EventDetailsScreen extends StatelessWidget {
     final RxInt activeIndex = 0.obs;
 
     return Scaffold(
-      body: GetBuilder<HomController>(
-        builder: (controller) {
-          if (controller.isDetailsLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF0F4C5C)),
-            );
-          }
-          if (controller.eventDetailsModel == null ||
-              controller.eventDetailsModel!.data == null) {
-            return const Center(child: Text("Event details not found"));
-          }
-
-          final Data eventData = controller.eventDetailsModel!.data!;
-          final detailData = controller.eventDetailsModel?.data;
-          if (detailData == null) return const SizedBox();
-          final List<String> images =
-              (eventData.gallery != null && eventData.gallery!.isNotEmpty)
-              ? eventData.gallery!
-              : (eventData.coverImage != null ? [eventData.coverImage!] : []);
-
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    if (images.isNotEmpty)
-                      CarouselSlider.builder(
-                        itemCount: images.length,
-                        options: CarouselOptions(
-                          height: 300.h,
-                          viewportFraction: 1,
-                          autoPlay: images.length > 1,
-                          onPageChanged: (index, reason) {
-                            activeIndex.value = index;
-                          },
-                        ),
-                        itemBuilder: (context, index, realIndex) {
-                          final String fullImageUrl =
-                              ApiEndPoint.getImageUrl(images[index]);
-                          return Image.network(
-                            fullImageUrl,
+      body: SafeArea(
+        child: GetBuilder<HomController>(
+          builder: (controller) {
+            if (controller.isDetailsLoading.value) {
+              return const Center(
+                child: CircularProgressIndicator(color: Color(0xFF0F4C5C)),
+              );
+            }
+            if (controller.eventDetailsModel == null ||
+                controller.eventDetailsModel!.data == null) {
+              return const Center(child: Text("Event details not found"));
+            }
+        
+            final Data eventData = controller.eventDetailsModel!.data!;
+            final detailData = controller.eventDetailsModel?.data;
+            if (detailData == null) return const SizedBox();
+            final List<String> images =
+                (eventData.gallery != null && eventData.gallery!.isNotEmpty)
+                ? eventData.gallery!
+                : (eventData.coverImage != null ? [eventData.coverImage!] : []);
+        
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      if (images.isNotEmpty)
+                        CarouselSlider.builder(
+                          itemCount: images.length,
+                          options: CarouselOptions(
                             height: 300.h,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
-                                  color: Colors.grey[300],
-                                  child: const Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey,
-                                    size: 50,
+                            viewportFraction: 1,
+                            autoPlay: images.length > 1,
+                            onPageChanged: (index, reason) {
+                              activeIndex.value = index;
+                            },
+                          ),
+                          itemBuilder: (context, index, realIndex) {
+                            final String fullImageUrl =
+                                ApiEndPoint.getImageUrl(images[index]);
+                            return Image.network(
+                              fullImageUrl,
+                              height: 300.h,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    color: Colors.grey[300],
+                                    child: const Icon(
+                                      Icons.image_not_supported,
+                                      color: Colors.grey,
+                                      size: 50,
+                                    ),
                                   ),
-                                ),
-                          );
-                        },
-                      )
-                    else
-                      Container(
-                        height: 300.h,
-                        width: double.infinity,
-                        color: Colors.grey[300],
-                        child: const Icon(
-                          Icons.image,
-                          size: 50,
-                          color: Colors.grey,
+                            );
+                          },
+                        )
+                      else
+                        Container(
+                          height: 300.h,
+                          width: double.infinity,
+                          color: Colors.grey[300],
+                          child: const Icon(
+                            Icons.image,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    if (images.length > 1)
-                      Positioned(
-                        bottom: 20.h,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: Obx(
-                            () => AnimatedSmoothIndicator(
-                              activeIndex: activeIndex.value,
-                              count: images.length,
-                              effect: ExpandingDotsEffect(
-                                dotHeight: 8.h,
-                                dotWidth: 8.w,
-                                activeDotColor: const Color(0xFFF2A900),
-                                dotColor: Colors.white,
+                      if (images.length > 1)
+                        Positioned(
+                          bottom: 20.h,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Obx(
+                              () => AnimatedSmoothIndicator(
+                                activeIndex: activeIndex.value,
+                                count: images.length,
+                                effect: ExpandingDotsEffect(
+                                  dotHeight: 8.h,
+                                  dotWidth: 8.w,
+                                  activeDotColor: const Color(0xFFF2A900),
+                                  dotColor: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    Positioned(
-                      top: 50.h,
-                      left: 20.w,
-                      child: GestureDetector(
-                        onTap: (){
-                          Get.find<HomController>().fetchEvents(isRefresh: true);
-                                Navigator.pop(context);
-                        },
-                        child: Container(
-                          height: 30.h,
-                          width: 30.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.5)
-                          ),child: Padding(
-                            padding: EdgeInsets.only(left: 7),
-                            child: Icon(Icons.arrow_back_ios,size: 20.sp,color: Colors.black87),
+                      Positioned(
+                        top: 50.h,
+                        left: 20.w,
+                        child: GestureDetector(
+                          onTap: (){
+                            Get.find<HomController>().fetchEvents(isRefresh: true);
+                                  Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: 30.h,
+                            width: 30.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.5)
+                            ),child: Padding(
+                              padding: EdgeInsets.only(left: 7),
+                              child: Icon(Icons.arrow_back_ios,size: 20.sp,color: Colors.black87),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 50.h,
-                      right: 20.w,
-                      child: GestureDetector(
-                        onTap: () {
-                          controller.toggleFavorite(detailData);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withValues(alpha: 0.3),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: (detailData.isFavorited ?? false)
-                                ? Image.asset(
-                                    AppImages.selectFavoriteIcon,
-                                    height: 25.h,
-                                    width: 25.w,
-                                  )
-                                : Image.asset(
-                                    AppImages.unFavoriteIcon,
-                                    height: 25.h,
-                                    width: 25.w,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.all(20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (eventData.category != null &&
-                          eventData.category!.isNotEmpty)
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0xFF7C7C7C1A,
-                            ).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(5.r),
-                          ),
-                          child: CommonText(
-                            text: eventData.category!,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xFF0F4C5C),
+                      Positioned(
+                        top: 50.h,
+                        right: 20.w,
+                        child: GestureDetector(
+                          onTap: () {
+                            controller.toggleFavorite(detailData);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withValues(alpha: 0.3),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: (detailData.isFavorited ?? false)
+                                  ? Image.asset(
+                                      AppImages.selectFavoriteIcon,
+                                      height: 25.h,
+                                      width: 25.w,
+                                    )
+                                  : Image.asset(
+                                      AppImages.unFavoriteIcon,
+                                      height: 25.h,
+                                      width: 25.w,
+                                    ),
+                            ),
                           ),
                         ),
-                      SizedBox(height: 10.h),
-                      Text(
-                        eventData.title ?? "Event Details",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1D2125),
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      _buildInfoTile(
-                        imagePath: AppImages.calender,
-                        title: eventData.eventDate != null
-                            ? DateFormat(
-                                'EEEE, MMM dd, yyyy',
-                              ).format(DateTime.parse(eventData.eventDate!))
-                            : 'TBA',
-                        subTitle:
-                            (eventData.performances != null &&
-                                eventData.performances!.isNotEmpty)
-                            ? "${eventData.performances!.first.startTime ?? ''} - ${eventData.performances!.first.endTime ?? ''} (${eventData.performances!.first.type ?? ''})"
-                            : "Time TBA",
-                      ),
-                      SizedBox(height: 15.h),
-                      _buildInfoTile(
-                        imagePath: AppImages.location_1,
-                        title: eventData.vanue?.name ?? "Venue TBA",
-                        subTitle:
-                            eventData.address ??
-                            eventData.vanue?.addressLine1 ??
-                            "Address TBA",
-                      ),
-                      SizedBox(height: 15.h),
-                      if (eventData.artist != null)
-                        _buildInfoTile(
-                          imagePath: eventData.artist?.image != null
-                              ? ApiEndPoint.getImageUrl(eventData.artist!.image)
-                              : AppImages.artistImage,
-                          title: eventData.artist?.name ?? "Unknown Artist",
-                          subTitle: eventData.artist?.type ?? "Artist",
-                          isFollow: false,
-                          isNetworkImage: eventData.artist?.image != null,
-                          // onFollowTap: () {
-                          //   // Follow button logic
-                          // },
-                        ),
-                      SizedBox(height: 25.h),
-                      Text(
-                        "About event",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      HtmlWidget(
-                        (eventData.descriptionHtml != null && eventData.descriptionHtml!.isNotEmpty)
-                            ? eventData.descriptionHtml!
-                            : "No description available for this event.",
-                        textStyle: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 14.sp,
-                          height: 1.4,
-                        ),
-                      ),
-                      _buildNearbySection(
-                        "Nearby Restaurants",
-                        eventData.nearbyRestaurants?.map((res) => _NearbyItem(
-                          name: res.name,
-                          image: res.image,
-                          rating: res.rating?.toString(),
-                          distance: res.distance,
-                          website: res.website,
-                        )).toList(),
-                        controller,
-                      ),
-                       _buildNearbySection(
-                          "Nearby Hotels",
-                          eventData.nearbyHotels?.map((hotel) => _NearbyItem(
-                            name: hotel.name,
-                            image: hotel.image,
-                            rating: hotel.rating,
-                            distance: hotel.distance,
-                            website: hotel.website,
-                          )).toList(),controller,
-                        ),
-
-                      _buildNearbySection(
-                        "Nearby Bars",
-                        eventData.nearbyBars?.map((bar) => _NearbyItem(
-                          name: bar.name,
-                          image: bar.image,
-                          rating: bar.rating,
-                          distance: bar.distance,
-                        )).toList(),controller,
-                      ),
-                      SizedBox(height: 20.h),
-                      _buildInfoTile(
-                        imagePath:
-                            (eventData.author?.image != null &&
-                                eventData.author!.image!.isNotEmpty)
-                            ? ApiEndPoint.getImageUrl(eventData.author!.image)
-                            : AppImages.artistImage,
-                        title: eventData.author?.name ?? "Artist Name",
-                        subTitle: "Organizer",
-                        isFollow: false,
-                        isNetworkImage:
-                            eventData.author?.image != null &&
-                            eventData.author!.image!.isNotEmpty,
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                  Padding(
+                    padding: EdgeInsets.all(20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (eventData.category != null &&
+                            eventData.category!.isNotEmpty)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF7C7C7C1A,
+                              ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(5.r),
+                            ),
+                            child: CommonText(
+                              text: eventData.category!,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF0F4C5C),
+                            ),
+                          ),
+                        SizedBox(height: 10.h),
+                        Text(
+                          eventData.title ?? "Event Details",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF1D2125),
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+                        _buildInfoTile(
+                          imagePath: AppImages.calender,
+                          title: eventData.eventDate != null
+                              ? DateFormat(
+                                  'EEEE, MMM dd, yyyy',
+                                ).format(DateTime.parse(eventData.eventDate!))
+                              : 'TBA',
+                          subTitle:
+                              (eventData.performances != null &&
+                                  eventData.performances!.isNotEmpty)
+                              ? "${eventData.performances!.first.startTime ?? ''} - ${eventData.performances!.first.endTime ?? ''} (${eventData.performances!.first.type ?? ''})"
+                              : "Time TBA",
+                        ),
+                        SizedBox(height: 15.h),
+                        _buildInfoTile(
+                          imagePath: AppImages.location_1,
+                          title: eventData.vanue?.name ?? "Venue TBA",
+                          subTitle:
+                              eventData.address ??
+                              eventData.vanue?.addressLine1 ??
+                              "Address TBA",
+                        ),
+                        SizedBox(height: 15.h),
+                        if (eventData.artist != null)
+                          _buildInfoTile(
+                            imagePath: eventData.artist?.image != null
+                                ? ApiEndPoint.getImageUrl(eventData.artist!.image)
+                                : AppImages.artistImage,
+                            title: eventData.artist?.name ?? "Unknown Artist",
+                            subTitle: eventData.artist?.type ?? "Artist",
+                            isFollow: false,
+                            isNetworkImage: eventData.artist?.image != null,
+                            // onFollowTap: () {
+                            //   // Follow button logic
+                            // },
+                          ),
+                        SizedBox(height: 25.h),
+                        Text(
+                          "About event",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        HtmlWidget(
+                          (eventData.descriptionHtml != null && eventData.descriptionHtml!.isNotEmpty)
+                              ? eventData.descriptionHtml!
+                              : "No description available for this event.",
+                          textStyle: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 14.sp,
+                            height: 1.4,
+                          ),
+                        ),
+                        _buildNearbySection(
+                          "Nearby Restaurants",
+                          eventData.nearbyRestaurants?.map((res) => _NearbyItem(
+                            name: res.name,
+                            image: res.image,
+                            rating: res.rating?.toString(),
+                            distance: res.distance,
+                            website: res.website,
+                          )).toList(),
+                          controller,
+                        ),
+                         _buildNearbySection(
+                            "Nearby Hotels",
+                            eventData.nearbyHotels?.map((hotel) => _NearbyItem(
+                              name: hotel.name,
+                              image: hotel.image,
+                              rating: hotel.rating,
+                              distance: hotel.distance,
+                              website: hotel.website,
+                            )).toList(),controller,
+                          ),
+        
+                        _buildNearbySection(
+                          "Nearby Bars",
+                          eventData.nearbyBars?.map((bar) => _NearbyItem(
+                            name: bar.name,
+                            image: bar.image,
+                            rating: bar.rating,
+                            distance: bar.distance,
+                          )).toList(),controller,
+                        ),
+                        SizedBox(height: 20.h),
+                        _buildInfoTile(
+                          imagePath:
+                              (eventData.author?.image != null &&
+                                  eventData.author!.image!.isNotEmpty)
+                              ? ApiEndPoint.getImageUrl(eventData.author!.image)
+                              : AppImages.artistImage,
+                          title: eventData.author?.name ?? "Artist Name",
+                          subTitle: "Organizer",
+                          isFollow: false,
+                          isNetworkImage:
+                              eventData.author?.image != null &&
+                              eventData.author!.image!.isNotEmpty,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: GetBuilder<HomController>(
         builder: (controller) {
           if (controller.eventDetailsModel?.data == null) {
             return const SizedBox.shrink();
           }
-
           final eventData = controller.eventDetailsModel!.data!;
           final price = eventData.price;
           final eventId = eventData.sId;
           final ticketUrl = eventData.getTicketsUrl;
           final isPurchased = eventData.isAlreadyProgrammePurchased ?? false;
 
-          return Padding(
-            padding: EdgeInsets.all(20.w),
-            child: Obx(() {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CommonButton(
-                    title: controller.ticketIsPurchaseLoading.value
-                        ? "Processing..."
-                        : "Get Ticket - £${price ?? 0}",
-                    onTap: () {
-                      if (controller.ticketIsPurchaseLoading.value) return;
-                      controller.openTicketUrl(ticketUrl);
-                    },
-                  ),
-                  SizedBox(height: 10.h,),
-                  if (isPurchased)
-                    GestureDetector(
+          return SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 20.w,
+                right: 20.w,
+                top: 10.h,
+                bottom: 10.h,
+              ),
+              child: Obx(() {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CommonButton(
+                      title: controller.ticketIsPurchaseLoading.value
+                          ? "Processing..."
+                          : "Get Ticket - £${price ?? 0}",
                       onTap: () {
-                       Get.toNamed(AppRoutes.myProgramScreen);
+                        if (controller.ticketIsPurchaseLoading.value) return;
+                        controller.openTicketUrl(ticketUrl);
                       },
-                      child: Container(
-                        width: double.infinity,
-                        height: 50.h,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF009661),
-                          borderRadius: BorderRadius.circular(500.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(2.r),
-                              decoration: const BoxDecoration(
-                                color: Colors.transparent,
-                                shape: BoxShape.circle,
+                    ),
+                    SizedBox(height: 10.h,),
+                    if (isPurchased)
+                      GestureDetector(
+                        onTap: () {
+                         Get.toNamed(AppRoutes.myProgramScreen);
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF009661),
+                            borderRadius: BorderRadius.circular(500.r),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(2.r),
+                                decoration: const BoxDecoration(
+                                  color: Colors.transparent,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.white,
+                                  size: 20.sp,
+                                ),
                               ),
-                              child: Icon(
-                                Icons.check_circle_outline,
+                              SizedBox(width: 8.w),
+                              Text(
+                                "Purchased • View Programmes",
+                                style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Icon(
+                                Icons.arrow_forward_ios,
                                 color: Colors.white,
-                                size: 20.sp,
+                                size: 16.sp,
                               ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              "Purchased • View Programmes",
-                              style: GoogleFonts.montserrat(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                              size: 16.sp,
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
-                    GestureDetector(
-                      onTap: () {
-                        if (controller.isPurchaseLoading.value) return;
-                        if (eventId != null && eventId.isNotEmpty) {
-                          controller.purchaseTicket(eventId);
-                        } else {
-                          Get.snackbar(
-                            "Error",
-                            "Invalid Event ID",
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white,
-                          );
-                        }
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 50.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(500.r),
-                          border: Border.all(
-                            width: 1.w,
-                            color: const Color(0xFF0F4C5C),
+                            ],
                           ),
                         ),
-                        child: Center(
-                          child: Text(
-                            controller.isPurchaseLoading.value
-                                ? "Purchase Programme..."
-                                : "Purchase Programme - £${eventData.revingeCount ?? 0}",
-                            style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16.sp,
+                      )
+                    else
+                      GestureDetector(
+                        onTap: () {
+                          if (controller.isPurchaseLoading.value) return;
+                          if (eventId != null && eventId.isNotEmpty) {
+                            controller.purchaseTicket(eventId);
+                          } else {
+                            Get.snackbar(
+                              "Error",
+                              "Invalid Event ID",
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          }
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(500.r),
+                            border: Border.all(
+                              width: 1.w,
                               color: const Color(0xFF0F4C5C),
                             ),
                           ),
+                          child: Center(
+                            child: Text(
+                              controller.isPurchaseLoading.value
+                                  ? "Purchase Programme..."
+                                  : "Purchase Programme - £${eventData.revingeCount ?? 0}",
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16.sp,
+                                color: const Color(0xFF0F4C5C),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              );
-            }),
+                  ],
+                );
+              }),
+            ),
           );
         },
       ),
