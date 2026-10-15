@@ -1,9 +1,9 @@
 class ApiEndPoint {
 
   // static const baseUrl = "http://168.144.106.179:3005/api/v1";
-  static const baseUrl = "https://shariful5003.binarybards.online/api/v1";
+  static const baseUrl = "https://api.showe.biz//api/v1";
   static const websiteUrl = "http://168.144.106.179:3009";
-  static const imageUrl = "https://shariful5003.binarybards.online/files";
+  static const imageUrl = "https://api.showe.biz/files";
   // static const baseUrl = "https://api.showe.biz/api/v1";
   // static const websiteUrl = "https://showe.biz";
   // static const imageUrl = "https://api.showe.biz/files";

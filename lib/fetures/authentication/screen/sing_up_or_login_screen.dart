@@ -70,12 +70,6 @@ class SingUpOrLoginScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // Obx(
-                  //   () => controller.isLoginSelected.value
-                  //       ? _buildLoginForm(controller)
-                  //       : _buildSignUpForm(controller),
-                  // ),
-
                   Obx(() {
                     if (controller.isLoginSelected.value) {
                       return Form(
@@ -159,7 +153,6 @@ class SingUpOrLoginScreen extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AppRoutes.forgotPasswordScreen);
 
-
                 // Get.toNamed(AppRoutes.setNewPass);
               },
               child: const Text(
@@ -175,23 +168,23 @@ class SingUpOrLoginScreen extends StatelessWidget {
           children: [
             Expanded(
               child: Obx(
-                    () => controller.isLoginLoading.value
+                () => controller.isLoginLoading.value
                     ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Color(0xFF0F4C5C),
-                  ),
-                )
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF0F4C5C),
+                        ),
+                      )
                     : CommonButton(
-                  title: AppString.login,
-                  onTap: () {
-                    if (_loginFormKey.currentState!.validate()) {
-                      controller.loginUser(
-                        email: _loginEmailController.text.trim(),
-                        password: _loginPasswordController.text.trim(),
-                      );
-                    }
-                  },
-                ),
+                        title: AppString.login,
+                        onTap: () {
+                          if (_loginFormKey.currentState!.validate()) {
+                            controller.loginUser(
+                              email: _loginEmailController.text.trim(),
+                              password: _loginPasswordController.text.trim(),
+                            );
+                          }
+                        },
+                      ),
               ),
             ),
             SizedBox(width: 5.w),
@@ -232,7 +225,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
           label: AppString.name,
           hint: "Lois becket",
           validator: Utils.fullNameValidator,
-          controller: _signUpNameController
+          controller: _signUpNameController,
         ),
         SizedBox(height: 15.h),
         _buildTextField(
@@ -255,34 +248,33 @@ class SingUpOrLoginScreen extends StatelessWidget {
         _buildTextField(
           controller: _signUpConfirmPasswordController,
           label: AppString.confirmPass,
-          validator: (value) => Utils.confirmPasswordValidator(value, _signUpPasswordController.text),
+          validator: (value) => Utils.confirmPasswordValidator(
+            value,
+            _signUpPasswordController.text,
+          ),
           hint: "********",
           isPassword: true,
           visibilityVariable: controller.isConfirmPasswordVisible,
           onIconTap: () => controller.toggleConfirmPasswordVisibility(),
         ),
         SizedBox(height: 30.h),
-        // CommonButton(
-        //   title: AppString.singUp,
-        //   onTap: () {
-        //     controller.isLoginSelected.value = true;
-        //   },
-        // ),
         Obx(
-              () => controller.isSignUpLoading.value
-              ? const Center(child: CircularProgressIndicator(color: Color(0xFF0F4C5C)))
+          () => controller.isSignUpLoading.value
+              ? const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF0F4C5C)),
+                )
               : CommonButton(
-            title: AppString.singUp,
-            onTap: () {
-              if (_signUpFormKey.currentState!.validate()) {
-                controller.registerUser(
-                  name: _signUpNameController.text.trim(),
-                  email: _signUpEmailController.text.trim(),
-                  password: _signUpPasswordController.text.trim(),
-                );
-              }
-            },
-          ),
+                  title: AppString.singUp,
+                  onTap: () {
+                    if (_signUpFormKey.currentState!.validate()) {
+                      controller.registerUser(
+                        name: _signUpNameController.text.trim(),
+                        email: _signUpEmailController.text.trim(),
+                        password: _signUpPasswordController.text.trim(),
+                      );
+                    }
+                  },
+                ),
         ),
         SizedBox(height: 20.h),
         Row(
@@ -321,7 +313,6 @@ class SingUpOrLoginScreen extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 Get.toNamed(AppRoutes.termsConditionScreen);
-
               },
               child: Container(
                 decoration: const BoxDecoration(
@@ -350,10 +341,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
               child: Container(
                 decoration: const BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(
-                      color: Color(0xFF060606),
-                      width: 1,
-                    ), //
+                    bottom: BorderSide(color: Color(0xFF060606), width: 1), //
                   ),
                 ),
                 child: Text(
@@ -423,8 +411,8 @@ class SingUpOrLoginScreen extends StatelessWidget {
                 ),
               )
             : TextFormField(
-          controller: controller,
-          validator: validator,
+                controller: controller,
+                validator: validator,
                 decoration: InputDecoration(
                   hintText: hint,
                   filled: true,
@@ -460,20 +448,20 @@ class SingUpOrLoginScreen extends StatelessWidget {
             ),
           ],
         ),
-        // SizedBox(height: 20.h),
-        // _socialButton(
-        //   AppString.continueGoogle,
-        //   isLoading: controller.isGoogleLoading.value,
-        //   AppImages.googleIcon,
-        //   onTap: () => controller.googleLogin(),
-        // ),
-        // SizedBox(height: 12.h),
-        // _socialButton(
-        //   AppString.continueFacebook,
-        //   isLoading: controller.isFacebookLoading.value,
-        //   AppImages.facebookIcon,
-        //   onTap: () => controller.faceBookLogin(),
-        // ),
+        SizedBox(height: 20.h),
+        _socialButton(
+          AppString.continueGoogle,
+          isLoading: controller.isGoogleLoading.value,
+          AppImages.googleIcon,
+          onTap: () => controller.googleLogin(),
+        ),
+        SizedBox(height: 12.h),
+        _socialButton(
+          AppString.continueFacebook,
+          isLoading: controller.isFacebookLoading.value,
+          AppImages.facebookIcon,
+          onTap: () => controller.faceBookLogin(),
+        ),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,

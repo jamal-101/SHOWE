@@ -53,8 +53,7 @@ class EventScreen extends StatelessWidget {
         init: HomController(),
         builder: (controller) {
           if (controller.selectedTabIndex.value == 0) {
-          } else if (controller.selectedTabIndex.value == 1) {
-          }
+          } else if (controller.selectedTabIndex.value == 1) {}
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
@@ -79,7 +78,10 @@ class EventScreen extends StatelessWidget {
                                 onSubmitted: (value) {
                                   if (controller.selectedTabIndex.value == 0) {
                                     controller.fetchEvents(isRefresh: true);
-                                  } else if (controller.selectedTabIndex.value == 2) {
+                                  } else if (controller
+                                          .selectedTabIndex
+                                          .value ==
+                                      2) {
                                     controller.fetchVenues(isRefresh: true);
                                   }
                                 },
@@ -92,7 +94,8 @@ class EventScreen extends StatelessWidget {
                                   controller.onSearchChanged(value);
                                 },
                                 decoration: InputDecoration(
-                                  hintText: controller.selectedTabIndex.value == 2
+                                  hintText:
+                                      controller.selectedTabIndex.value == 2
                                       ? "Search venue"
                                       : "Search",
                                   hintStyle: GoogleFonts.montserrat(
@@ -161,8 +164,13 @@ class EventScreen extends StatelessWidget {
                 SizedBox(height: 15.h),
                 Expanded(
                   child: Obx(() {
-                    if (controller.selectedTabIndex == 1 && controller.isArtistLoading.value) {
-                      return const Center(child: CircularProgressIndicator(color: Color(0xFF0F4C5C)));
+                    if (controller.selectedTabIndex == 1 &&
+                        controller.isArtistLoading.value) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF0F4C5C),
+                        ),
+                      );
                     }
                     if (controller.selectedTabIndex.value == 0 &&
                         controller.isEventLoading.value) {
@@ -185,11 +193,14 @@ class EventScreen extends StatelessWidget {
                     if (controller.selectedTabIndex.value == 0) {
                       itemCount =
                           (controller.eventModel.data?.length ?? 0) +
-                              (controller.isLoadMore.value ? 1 : 0);
+                          (controller.isLoadMore.value ? 1 : 0);
                     } else if (controller.selectedTabIndex == 1) {
-                      itemCount = (controller.artistModel.data?.length ?? 0) + (controller.isArtistLoadMore.value ? 1 : 0);
+                      itemCount =
+                          (controller.artistModel.data?.length ?? 0) +
+                          (controller.isArtistLoadMore.value ? 1 : 0);
                     } else if (controller.selectedTabIndex.value == 2) {
-                      itemCount = controller.venueList.length +
+                      itemCount =
+                          controller.venueList.length +
                           (controller.isVenueLoadMore.value ? 1 : 0);
                     }
                     return RefreshIndicator(
@@ -201,16 +212,17 @@ class EventScreen extends StatelessWidget {
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           if (controller.selectedTabIndex.value == 0) {
-                            if (index < (controller.eventModel.data?.length ?? 0)) {
+                            if (index <
+                                (controller.eventModel.data?.length ?? 0)) {
                               return _buildEventCard(
                                 controller.eventModel.data![index],
                               );
                             } else {
                               return _loadMoreIndicator();
                             }
-                          }
-                          else if (controller.selectedTabIndex.value == 1) {
-                            if (index < (controller.artistModel.data?.length ?? 0)) {
+                          } else if (controller.selectedTabIndex.value == 1) {
+                            if (index <
+                                (controller.artistModel.data?.length ?? 0)) {
                               return _buildArtistCard(
                                 controller.artistModel.data![index],
                                 controller,
@@ -218,10 +230,11 @@ class EventScreen extends StatelessWidget {
                             } else {
                               return _loadMoreIndicator();
                             }
-                          }
-                          else {
+                          } else {
                             if (index < controller.venueList.length) {
-                              return _buildVenueCard(controller.venueList[index]);
+                              return _buildVenueCard(
+                                controller.venueList[index],
+                              );
                             } else {
                               return _loadMoreIndicator();
                             }
@@ -240,11 +253,11 @@ class EventScreen extends StatelessWidget {
   }
 
   Widget _buildTabItem(
-      String title,
-      bool isActive,
-      int index,
-      HomController controller,
-      ) {
+    String title,
+    bool isActive,
+    int index,
+    HomController controller,
+  ) {
     return Expanded(
       child: GestureDetector(
         onTap: () => controller.changeTab(index),
@@ -275,8 +288,7 @@ class EventScreen extends StatelessWidget {
   }
 
   Widget _buildEventCard(dynamic data) {
-    final String fullImageUrl =
-        ApiEndPoint.getImageUrl(data.coverImage);
+    final String fullImageUrl = ApiEndPoint.getImageUrl(data.coverImage);
     final HomController controller = Get.find<HomController>();
 
     return GestureDetector(
@@ -306,7 +318,10 @@ class EventScreen extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.8),
+                  ],
                 ),
               ),
             ),
@@ -323,15 +338,15 @@ class EventScreen extends StatelessWidget {
                   ),
                   child: (data.isFavorited ?? false)
                       ? Image.asset(
-                    AppImages.selectFavoriteIcon,
-                    height: 25.h,
-                    width: 25.w,
-                  )
+                          AppImages.selectFavoriteIcon,
+                          height: 25.h,
+                          width: 25.w,
+                        )
                       : Image.asset(
-                    AppImages.unFavoriteIcon,
-                    height: 25.h,
-                    width: 25.w,
-                  ),
+                          AppImages.unFavoriteIcon,
+                          height: 25.h,
+                          width: 25.w,
+                        ),
                 ),
               ),
             ),
@@ -383,8 +398,8 @@ class EventScreen extends StatelessWidget {
                           Text(
                             data.eventDate != null
                                 ? DateFormat(
-                              'MMM dd, yyyy',
-                            ).format(DateTime.parse(data.eventDate!))
+                                    'MMM dd, yyyy',
+                                  ).format(DateTime.parse(data.eventDate!))
                                 : "",
                             style: TextStyle(
                               color: Colors.white,
@@ -411,7 +426,6 @@ class EventScreen extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildArtistCard(dynamic data, HomController controller) {
     final String fullImageUrl = ApiEndPoint.getImageUrl(data.image);
@@ -440,7 +454,11 @@ class EventScreen extends StatelessWidget {
                     height: 80.h,
                     width: 80.h,
                     color: Colors.grey.shade300,
-                    child: Icon(Icons.person, size: 40.sp, color: Colors.grey.shade600),
+                    child: Icon(
+                      Icons.person,
+                      size: 40.sp,
+                      color: Colors.grey.shade600,
+                    ),
                   );
                 },
               ),
@@ -483,15 +501,15 @@ class EventScreen extends StatelessWidget {
                 ),
                 child: (data.isFavorited ?? false)
                     ? Image.asset(
-                  AppImages.selectFavoriteIcon,
-                  height: 25.h,
-                  width: 25.w,
-                )
+                        AppImages.selectFavoriteIcon,
+                        height: 25.h,
+                        width: 25.w,
+                      )
                     : Image.asset(
-                  AppImages.unFavoriteIcon,
-                  height: 25.h,
-                  width: 25.w,
-                ),
+                        AppImages.unFavoriteIcon,
+                        height: 25.h,
+                        width: 25.w,
+                      ),
               ),
             ),
           ],
@@ -551,8 +569,8 @@ class EventScreen extends StatelessWidget {
                     Text(
                       data.createdAt != null
                           ? DateFormat(
-                        'MMMM dd, yyyy',
-                      ).format(DateTime.parse(data.createdAt!))
+                              'MMMM dd, yyyy',
+                            ).format(DateTime.parse(data.createdAt!))
                           : "Date TBA",
                       style: GoogleFonts.montserrat(
                         fontSize: 12.sp,

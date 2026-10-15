@@ -602,39 +602,6 @@ class EventDetailsScreen extends StatelessWidget {
                     },
                   ),
                   SizedBox(height: 10.h,),
-                  // GestureDetector(
-                  //   onTap: (){
-                  //     if (controller.isPurchaseLoading.value) return;
-                  //     if (eventId != null && eventId.isNotEmpty) {
-                  //       controller.purchaseTicket(eventId);
-                  //     } else {
-                  //       Get.snackbar(
-                  //         "Error",
-                  //         "Invalid Event ID",
-                  //         backgroundColor: Colors.red,
-                  //         colorText: Colors.white,
-                  //       );
-                  //     }
-                  //   },
-                  //   child: Container(
-                  //     width: double.infinity,
-                  //     height: 50.h,
-                  //     decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(500.r),
-                  //         border: Border.all(width: 1.w,color: Color(0xFF0F4C5C))
-                  //     ),child: Center(
-                  //     child: Text(
-                  //          controller.isPurchaseLoading.value
-                  //             ? "Purchase Programme..."
-                  //              : "Purchase Programme - £${controller.eventDetailsModel?.data?.revingeCount ?? 0}",
-                  //         style: GoogleFonts.montserrat(
-                  //         fontWeight: FontWeight.w700,
-                  //         fontSize: 16.sp,
-                  //         color: Color(0xFF0F4C5C)
-                  //     )),
-                  //   ),
-                  //   ),
-                  // ),
                   if (isPurchased)
                     GestureDetector(
                       onTap: () {
