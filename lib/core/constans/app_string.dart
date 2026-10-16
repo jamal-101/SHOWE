@@ -22,6 +22,7 @@ class AppString {
   static const String confirmPass = 'Confirm Password';
   static const String or = 'Or';
   static const String continueGoogle = 'Continue with Google';
+  static const String continueApple = 'Continue with Apple';
   static const String continueFacebook = 'Continue with Facebook';
   static const String donTHave = 'Don’t have an account?';
   static const String alreadyHave = 'Already have an account?';

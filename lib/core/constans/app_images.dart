@@ -47,6 +47,7 @@ class AppImages {
 
   static const String playVideo = "$baseurlIcon/play_icon.png";
   static const String googleIcon = "$baseurlIcon/google.png";
+  static const String appleIcon = "$baseurlIcon/apple_icon.svg";
   static const String facebookIcon = "$baseurlIcon/facebook.png";
   static const String passDisable = "$baseurlIcon/passHide.png";
   static const String bellIcon = "$baseurlIcon/bell_icon.png";

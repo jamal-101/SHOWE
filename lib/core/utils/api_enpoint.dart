@@ -29,6 +29,13 @@ class ApiEndPoint {
   // static const websiteUrl = "http://168.144.106.179:3009";
   // static const imageUrl = "http://10.10.26.164:5002/files";
   // static const imageUrl = "http://168.144.106.179:3005/files";
+
+
+//========== firebase google sign in ============
+  static const String socialLogin = "/auth/social-login";
+
+//========== firebase google sign in ============
+
   static const signUp = "$baseUrl/user";
   static const userLogin = "$baseUrl/auth/login";
   static const otpVerify = "$baseUrl/auth/verify-email";

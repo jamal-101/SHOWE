@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "755395683027",
+    "project_id": "showe-app",
+    "storage_bucket": "showe-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755395683027:android:eb13b327f69d8802666a26",
+        "android_client_info": {
+          "package_name": "com.theshowegroup.digitalevent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "755395683027-a5iu48v2eh1cnt39i74mfs98ek57kr25.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theshowegroup.digitalevent",
+            "certificate_hash": "bfc693a648af37c6a1918dccb56f32d5ff55817e"
+          }
+        },
+        {
+          "client_id": "755395683027-rt3bfjjp7qismr49qp66c03a3r081vb3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf9E7HrI9kDL4sXJDJrzRLysyDV0Ro7O4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "755395683027-rt3bfjjp7qismr49qp66c03a3r081vb3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "755395683027-53t6f4vgooof7ntbm0ervlhgaqipe55t.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.theshowegroup.digitalevent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
