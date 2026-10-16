@@ -185,87 +185,89 @@ class ChangePasswordScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: GetBuilder<ProfileController>(
-        init: ProfileController(),
-        builder: (controller) {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              key: _formKey,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 10.h),
-                          Text(
-                            "Please set your new password",
-                            style: GoogleFonts.montserrat(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF1F2A37),
+      body: SafeArea(
+        child: GetBuilder<ProfileController>(
+          init: ProfileController(),
+          builder: (controller) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 10.h),
+                            Text(
+                              "Please set your new password",
+                              style: GoogleFonts.montserrat(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1F2A37),
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 30.h),
-
-                          // 🔐 ১. Current Password
-                          _buildLabel("Current Password"),
-                          _buildPasswordField(
-                            controller: controller.currentPasswordController,
-                            hint: "****************",
-                            validator: Utils.passwordValidator,
-                            isObscure: controller.isCurrentObscure,
-                            onSuffixTap: () => controller.toggleCurrentObscure(),
-                          ),
-                          SizedBox(height: 20.h),
-
-                          // 🔐 ২. New Password
-                          _buildLabel("New Password"),
-                          _buildPasswordField(
-                            controller: controller.newPasswordController,
-                            hint: "****************",
-                            validator: Utils.passwordValidator,
-                            isObscure: controller.isNewObscure,
-                            onSuffixTap: () => controller.toggleNewObscure(),
-                          ),
-                          SizedBox(height: 20.h),
-
-                          // 🔐 ৩. Confirm New Password
-                          _buildLabel("Confirm New Password"),
-                          _buildPasswordField(
-                            controller: controller.confirmPasswordController,
-                            hint: "****************",
-                            validator: (value) => Utils.confirmPasswordValidator(
-                              value,
-                              controller.newPasswordController.text,
+                            SizedBox(height: 30.h),
+        
+                            // 🔐 ১. Current Password
+                            _buildLabel("Current Password"),
+                            _buildPasswordField(
+                              controller: controller.currentPasswordController,
+                              hint: "****************",
+                              validator: Utils.passwordValidator,
+                              isObscure: controller.isCurrentObscure,
+                              onSuffixTap: () => controller.toggleCurrentObscure(),
                             ),
-                            isObscure: controller.isConfirmObscure,
-                            onSuffixTap: () => controller.toggleConfirmObscure(),
-                          ),
-                        ],
+                            SizedBox(height: 20.h),
+        
+                            // 🔐 ২. New Password
+                            _buildLabel("New Password"),
+                            _buildPasswordField(
+                              controller: controller.newPasswordController,
+                              hint: "****************",
+                              validator: Utils.passwordValidator,
+                              isObscure: controller.isNewObscure,
+                              onSuffixTap: () => controller.toggleNewObscure(),
+                            ),
+                            SizedBox(height: 20.h),
+        
+                            // 🔐 ৩. Confirm New Password
+                            _buildLabel("Confirm New Password"),
+                            _buildPasswordField(
+                              controller: controller.confirmPasswordController,
+                              hint: "****************",
+                              validator: (value) => Utils.confirmPasswordValidator(
+                                value,
+                                controller.newPasswordController.text,
+                              ),
+                              isObscure: controller.isConfirmObscure,
+                              onSuffixTap: () => controller.toggleConfirmObscure(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.h),
-                    child: CommonButton(
-                      isLoading: controller.isPasswordLoading.value,
-                      title: "Update Password",
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {
-                          controller.changePassword();
-                        }
-                      },
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10.h),
+                      child: CommonButton(
+                        isLoading: controller.isPasswordLoading.value,
+                        title: "Update Password",
+                        onTap: () {
+                          if (_formKey.currentState!.validate()) {
+                            controller.changePassword();
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -64,7 +64,8 @@ class Data {
   String? title;
   String? category;
   String? coverImage;
-  int? price;
+  // int? price;
+  num? price;
   String? eventDate;
   int? interestCount;
   String? address;

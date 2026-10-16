@@ -55,6 +55,34 @@ class HomController extends GetxController {
     super.onInit();
     fetchEvents(isRefresh: true);
     initDeepLinks();
+
+
+
+
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200) {
+        // Tab 0: Events
+        if (selectedTabIndex.value == 0 && !isLoadMore.value && !isEventLoading.value) {
+          if (eventModel.pagination != null && currentPage <= (eventModel.pagination!.totalPage ?? 1)) {
+            fetchEvents(isRefresh: false);
+          }
+        }
+        // Tab 1: Artists
+        else if (selectedTabIndex.value == 1 && !isArtistLoadMore.value && !isArtistLoading.value) {
+          if (artistModel.pagination != null && currentArtistPage <= (artistModel.pagination!.totalPage ?? 1)) {
+            fetchArtists(isRefresh: false);
+          }
+        }
+        // Tab 2: Venues
+        else if (selectedTabIndex.value == 2 && !isVenueLoadMore.value && !isVenueLoading.value) {
+          if (venuePagination != null && currentVenuePage <= (venuePagination!.totalPage ?? 1)) {
+            fetchVenues(isRefresh: false);
+          }
+        }
+      }
+    });
+
   }
 
   @override
