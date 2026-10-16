@@ -606,6 +606,7 @@ class EventDetailsScreen extends StatelessWidget {
                       onTap: () {
                         if (controller.ticketIsPurchaseLoading.value) return;
                         controller.openTicketUrl(ticketUrl);
+
                       },
                     ),
                     SizedBox(height: 10.h,),
@@ -660,7 +661,7 @@ class EventDetailsScreen extends StatelessWidget {
                         onTap: () {
                           if (controller.isPurchaseLoading.value) return;
                           if (eventId != null && eventId.isNotEmpty) {
-                            controller.purchaseTicket(eventId);
+                            controller.purchaseTicket(eventId, eventData.price ?? 0);
                           } else {
                             Get.snackbar(
                               "Error",
@@ -684,7 +685,7 @@ class EventDetailsScreen extends StatelessWidget {
                             child: Text(
                               controller.isPurchaseLoading.value
                                   ? "Purchase Programme..."
-                                  : "Purchase Programme - £${eventData.revingeCount ?? 0}",
+                                  : "Purchase Programme - £${eventData.price ?? 0}",
                               style: GoogleFonts.montserrat(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16.sp,
@@ -703,14 +704,7 @@ class EventDetailsScreen extends StatelessWidget {
       ),
     );
   }
-  //               ],
-  //             );
-  //           }),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
+
 
   Widget _buildInfoTile({
     required String imagePath,

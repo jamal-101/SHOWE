@@ -488,22 +488,63 @@ class HomController extends GetxController {
     }
   }
 
-  Future<void> purchaseTicket(String eventId) async {
+  Future<void> purchaseTicket(String eventId, dynamic price) async {
+    debugPrint(">>>> purchaseTicket called with eventId: $eventId, price: $price");
     try {
       isPurchaseLoading.value = true;
       update();
 
+      num numericPrice = 0;
+      if (price is num) {
+        numericPrice = price;
+      } else if (price is String) {
+        numericPrice = num.tryParse(price) ?? 0;
+      }
+
       String url = "/event/purchase/$eventId";
       ApiResponseModel response = await ApiService.post(url, body: {});
+      debugPrint(">>>> purchaseTicket response: ${response.statusCode}, data: ${response.data}");
       if (response.isSuccess) {
-        String paymentUrl = response.data['data'] ?? "";
-        if (paymentUrl.isNotEmpty) {
+        final responseData = response.data['data'];
+        bool isFreeOrDirectPurchase = numericPrice <= 0 || responseData is Map || (responseData is String && !responseData.startsWith('http'));
 
-          Get.to(() => PaymentWebViewScreen(paymentUrl: paymentUrl));
-
+        if (isFreeOrDirectPurchase) {
+          Get.snackbar(
+            "Success",
+            response.data['message']?.toString() ?? "Programme successfully purchased!",
+            backgroundColor: const Color(0xFF009661),
+            colorText: Colors.white,
+          );
+          Future.delayed(const Duration(milliseconds: 500), () {
+            fetchEvents(isRefresh: true);
+            if (Get.context != null) {
+              Navigator.pop(Get.context!);
+            } else {
+              Get.back();
+            }
+          });
         } else {
-          Get.snackbar("Error", "Payment link not found in response",
-              backgroundColor: Colors.red, colorText: Colors.white);
+          String paymentUrl = responseData?.toString() ?? "";
+          if (paymentUrl.isNotEmpty && paymentUrl.startsWith('http')) {
+
+            Get.to(() => PaymentWebViewScreen(paymentUrl: paymentUrl));
+
+          } else {
+            Get.snackbar(
+              "Success",
+              response.data['message']?.toString() ?? "Programme successfully purchased!",
+              backgroundColor: const Color(0xFF009661),
+              colorText: Colors.white,
+            );
+            Future.delayed(const Duration(milliseconds: 500), () {
+              fetchEvents(isRefresh: true);
+              if (Get.context != null) {
+                Navigator.pop(Get.context!);
+              } else {
+                Get.back();
+              }
+            });
+          }
         }
       } else {
         Get.snackbar("Error", response.message,
