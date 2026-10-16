@@ -41,4 +41,5 @@ class ApiEndPoint {
   static const submitUserThought = "/programmes/user-thoughts";
   static String getProgramme(String id) => "/programmes/$id";
   static String pollAnswers(String pollId) => "/programmes/polls/$pollId/answers";
+  static const disclaimer = "$baseUrl/disclaimer";
 }

@@ -99,6 +99,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/route/app_routes.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/storage_key.dart';
+import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
 import '../model/profile_model.dart';
@@ -380,6 +381,67 @@ class ProfileController extends GetxController {
       );
     } finally {
       isDeleteLoading.value = false;
+      update();
+    }
+  }
+
+  var privacyPolicyHtml = "".obs;
+  var termsConditionHtml = "".obs;
+  var isPrivacyLoading = false.obs;
+  var isTermsLoading = false.obs;
+
+  Future<void> fetchPrivacyPolicy() async {
+    try {
+      isPrivacyLoading.value = true;
+      update();
+      ApiResponseModel response = await ApiService.get("${ApiEndPoint.disclaimer}?type=privacy-user");
+      if (response.isSuccess) {
+        final data = response.data['data'];
+        if (data is String) {
+          privacyPolicyHtml.value = data;
+        } else if (data is Map) {
+          privacyPolicyHtml.value = data['description']?.toString() ??
+              data['content']?.toString() ??
+              data['disclaimer']?.toString() ??
+              data['text']?.toString() ??
+              data.values.firstWhere((v) => v is String, orElse: () => '')?.toString() ??
+              "";
+        } else if (data != null) {
+          privacyPolicyHtml.value = data.toString();
+        }
+      }
+    } catch (e) {
+      debugPrint("Fetch Privacy Policy Error: $e");
+    } finally {
+      isPrivacyLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> fetchTermsCondition() async {
+    try {
+      isTermsLoading.value = true;
+      update();
+      ApiResponseModel response = await ApiService.get("${ApiEndPoint.disclaimer}?type=terms-user");
+      if (response.isSuccess) {
+        final data = response.data['data'];
+        if (data is String) {
+          termsConditionHtml.value = data;
+        } else if (data is Map) {
+          termsConditionHtml.value = data['description']?.toString() ??
+              data['content']?.toString() ??
+              data['disclaimer']?.toString() ??
+              data['text']?.toString() ??
+              data.values.firstWhere((v) => v is String, orElse: () => '')?.toString() ??
+              "";
+        } else if (data != null) {
+          termsConditionHtml.value = data.toString();
+        }
+      }
+    } catch (e) {
+      debugPrint("Fetch Terms Condition Error: $e");
+    } finally {
+      isTermsLoading.value = false;
       update();
     }
   }

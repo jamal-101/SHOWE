@@ -1,8 +1,8 @@
-import 'package:digital_event/core/common_text/common_text.dart';
 import 'package:digital_event/core/constans/app_colors.dart';
 import 'package:digital_event/fetures/profile/controller/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,8 +12,10 @@ class TermsConditionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.appBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.appBackgroundColor,
+        surfaceTintColor: AppColors.appBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -36,26 +38,30 @@ class TermsConditionScreen extends StatelessWidget {
       body: GetBuilder<ProfileController>(
         init: ProfileController(),
         builder: (controller) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CommonText(text: 'The Showe Group Ltd',fontSize: 16.sp,fontWeight: FontWeight.w700,color: Color(0xFF000000),),
-                SizedBox(height: 20.h),
-                CommonText(
-                  text: """Version 1.0 — From 2/2/20
-These Terms of Use (“Terms”) govern your use of the SHOWE mobile application and related services (“App”).
-By creating an account or using the App, you agree to these Terms.
-If you do not agree, do not use the App.""",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16.sp,
-                  color: Color(0xFF1F2A37),
-                ),
-              ],
-            ),
-          );
+          if (controller.termsConditionHtml.value.isEmpty && !controller.isTermsLoading.value) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              controller.fetchTermsCondition();
+            });
+          }
+          return controller.isTermsLoading.value
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF0F4C5C),
+                  ),
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(16.w),
+                  child: HtmlWidget(
+                    controller.termsConditionHtml.value.isNotEmpty
+                        ? controller.termsConditionHtml.value
+                        : "<p>No terms and conditions available.</p>",
+                    textStyle: GoogleFonts.montserrat(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF1F2A37),
+                    ),
+                  ),
+                );
         },
       ),
     );
