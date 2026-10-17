@@ -75,7 +75,7 @@
     </array>
     <!-- 🔹 Permissions for Camera and Photo Library -->
     <key>NSCameraUsageDescription</key>
-    <string>This app needs camera access to take photos for event registration and profile updates.</string>
+    <string>This app requires camera access to take photos for event registration, profile updates, and face recognition verification.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app needs photo library access to upload photos for event registration and profile updates.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
