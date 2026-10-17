@@ -1,104 +1,15 @@
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-//
-// import '../../../core/route/app_routes.dart';
-// import '../../../core/storage/local_storage.dart';
-// import '../../../core/storage/storage_key.dart';
-//
-//
-// // enum Gender { male, female, other}
-//
-// class ProfileController extends GetxController{
-//
-// ///>>>>>>>>>>>>> ProfileInformation <<<<<<<<<<<<<<<///
-//   final TextEditingController nameController = TextEditingController();
-//   final TextEditingController emailController = TextEditingController();
-//   final TextEditingController phoneController = TextEditingController();
-//
-//   ///>>>>>>>>>>>>>>>>>>>>>>> SetNewPassword <<<<<<<<<<<<<<<<<<<<<<<<<///
-//   final TextEditingController currentPasswordController = TextEditingController();
-//   final TextEditingController newPasswordController = TextEditingController();
-//   final TextEditingController confirmPasswordController = TextEditingController();
-//
-//
-//   // RxString selectedGender = "Select".obs;
-//   // void updateSelectedGender(Gender genderItem) {
-//   //   switch (genderItem) {
-//   //     case Gender.male:
-//   //       selectedGender.value = "male";
-//   //       break;
-//   //     case Gender.female:
-//   //       selectedGender.value = "female";
-//   //       break;
-//   //     case Gender.other:
-//   //       selectedGender.value = "Prefer not to say";
-//   //       break;
-//   //   }
-//   // }
-//
-//   // void logout() {
-//   // }
-//
-//   Future<void> logout() async {
-//     try {
-//       await LocalStorage.removeAllPrefData();
-//       Get.offAllNamed(AppRoutes.singUpLoginScreen);
-//     } catch (e) {
-//       Get.snackbar(
-//           "Logout Error",
-//           e.toString(),
-//           snackPosition: SnackPosition.BOTTOM,
-//           backgroundColor: Colors.red,
-//           colorText: Colors.white
-//       );
-//     }
-//   }
-//
-//   ///>>>>>>>>>>>>>>>>>>>>> NotificationSwitch<<<<<<<<<<<<<<<<<<<///
-//
-//   bool isGeneralNotification = true;
-//   bool isLocationEnabled = true;
-//
-//   void toggleGeneralNotification(bool value) {
-//     isGeneralNotification = value;
-//     update();
-//   }
-//
-//   void toggleLocation(bool value) {
-//     isLocationEnabled = value;
-//     update();
-//   }
-// ///>>>>>>>>>>>>>>>>>>>>>>>>>>>>> HelpCenter <<<<<<<<<<<<<<<<<<<///
-//   final TextEditingController helpTitleController = TextEditingController();
-//   final TextEditingController helpDescriptionController = TextEditingController();
-//   void submitHelpRequest() {}
-//
-// ///>>>>>>>>>>>>>>>> otp Section <<<<<<<<<<<<<<<<///
-//   String otpCode = "";
-//   void setOtpCode(String value) {
-//     otpCode = value;
-//     update();
-//   }
-//
-//   void finalDeleteAccount() {
-//     if (otpCode.length == 6) {
-//       print("Deleting account with OTP: $otpCode");
-//       Get.back();
-//     } else {
-//       Get.snackbar("Error", "Please enter a valid 6-digit OTP");
-//     }
-//   }
-//
-// }
+
 
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/route/app_routes.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/storage_key.dart';
+import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
 import '../model/profile_model.dart';
@@ -236,9 +147,34 @@ class ProfileController extends GetxController {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+
+
+  void clearUserData() {
+    profileModel = null;
+    profileImage = null;
+    nameController.clear();
+    emailController.clear();
+    phoneController.clear();
+    rxUserName.value = '';
+    currentPasswordController.clear();
+    newPasswordController.clear();
+    confirmPasswordController.clear();
+    deleteAccountController.clear();
+    isCurrentObscure = true;
+    isNewObscure = true;
+    isConfirmObscure = true;
+    update();
+  }
+
+
+
+
   Future<void> logout() async {
     try {
-      await LocalStorage.removeAllPrefData();
+      // Backend e logout API thakle (backend dev er sathe confirm koro):
+      // await ApiService.post("/auth/logout", body: {});
+
+      await _clearSession();
       Get.offAllNamed(AppRoutes.singUpLoginScreen);
     } catch (e) {
       Get.snackbar(
@@ -250,6 +186,37 @@ class ProfileController extends GetxController {
       );
     }
   }
+
+
+  Future<void> _clearSession() async {
+    // 1. Google / Firebase sign out
+    try {
+      await GoogleSignIn.instance.signOut(); // v6 hole: GoogleSignIn().signOut()
+    } catch (e) {
+      debugPrint("Google signout error: $e");
+    }
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      debugPrint("Firebase signout error: $e");
+    }
+
+    // 2. FCM token (shudhu jodi push notification use koro)
+    // try {
+    //   await FirebaseMessaging.instance.deleteToken();
+    // } catch (e) {
+    //   debugPrint("FCM delete token error: $e");
+    // }
+
+    // 3. Local storage clear
+    await LocalStorage.removeAllPrefData();
+    await LocalStorage.getAllPrefData(); // static variable (myName, token...) refresh
+
+    // 4. Controller data clear
+    clearUserData();
+  }
+
+
 
   Future<void> changePassword() async {
     try {
@@ -354,15 +321,26 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (Get.isDialogOpen ?? false) Get.back();
 
+        final String msg =
+            response.data['message']?.toString() ?? "Account deleted successfully";
+
+        // Firebase user thakle delete (fail korle backend delete already hoyeche, tai ignore)
+        try {
+          await FirebaseAuth.instance.currentUser?.delete();
+        } catch (e) {
+          debugPrint("Firebase user delete error: $e");
+        }
+
+        await _clearSession();
+        Get.offAllNamed(AppRoutes.singUpLoginScreen);
+
         Get.snackbar(
           "Success",
-          response.data['message'] ?? "Account deleted successfully",
+          msg,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        await LocalStorage.removeAllPrefData();
-        Get.offAllNamed(AppRoutes.singUpLoginScreen);
-      } else {
+      }else {
         Get.snackbar(
           "Failed",
           response.data['message'] ?? "Something went wrong",
@@ -380,6 +358,67 @@ class ProfileController extends GetxController {
       );
     } finally {
       isDeleteLoading.value = false;
+      update();
+    }
+  }
+
+  var privacyPolicyHtml = "".obs;
+  var termsConditionHtml = "".obs;
+  var isPrivacyLoading = false.obs;
+  var isTermsLoading = false.obs;
+
+  Future<void> fetchPrivacyPolicy() async {
+    try {
+      isPrivacyLoading.value = true;
+      update();
+      ApiResponseModel response = await ApiService.get("${ApiEndPoint.disclaimer}?type=privacy-user");
+      if (response.isSuccess) {
+        final data = response.data['data'];
+        if (data is String) {
+          privacyPolicyHtml.value = data;
+        } else if (data is Map) {
+          privacyPolicyHtml.value = data['description']?.toString() ??
+              data['content']?.toString() ??
+              data['disclaimer']?.toString() ??
+              data['text']?.toString() ??
+              data.values.firstWhere((v) => v is String, orElse: () => '')?.toString() ??
+              "";
+        } else if (data != null) {
+          privacyPolicyHtml.value = data.toString();
+        }
+      }
+    } catch (e) {
+      debugPrint("Fetch Privacy Policy Error: $e");
+    } finally {
+      isPrivacyLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> fetchTermsCondition() async {
+    try {
+      isTermsLoading.value = true;
+      update();
+      ApiResponseModel response = await ApiService.get("${ApiEndPoint.disclaimer}?type=terms-user");
+      if (response.isSuccess) {
+        final data = response.data['data'];
+        if (data is String) {
+          termsConditionHtml.value = data;
+        } else if (data is Map) {
+          termsConditionHtml.value = data['description']?.toString() ??
+              data['content']?.toString() ??
+              data['disclaimer']?.toString() ??
+              data['text']?.toString() ??
+              data.values.firstWhere((v) => v is String, orElse: () => '')?.toString() ??
+              "";
+        } else if (data != null) {
+          termsConditionHtml.value = data.toString();
+        }
+      }
+    } catch (e) {
+      debugPrint("Fetch Terms Condition Error: $e");
+    } finally {
+      isTermsLoading.value = false;
       update();
     }
   }

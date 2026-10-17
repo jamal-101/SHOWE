@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:digital_event/core/common_text/common_text.dart';
 import 'package:digital_event/core/constans/app_images.dart';
 import 'package:digital_event/core/constans/app_string.dart';
@@ -120,7 +122,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
       children: [
         _buildTextField(
           label: "Email",
-          hint: "Loisbecket@gmail.com",
+          hint: "Enter Your Email",
           controller: _loginEmailController,
           validator: Utils.emailValidator,
         ),
@@ -448,19 +450,27 @@ class SingUpOrLoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20.h),
-        _socialButton(
-          AppString.continueGoogle,
-          isLoading: controller.isGoogleLoading.value,
-          AppImages.googleIcon,
-          onTap: () => controller.googleLogin(),
-        ),
+        if (Platform.isIOS)
+          _socialButton(
+            AppString.continueApple,          // notun string: "Continue with Apple"
+            isLoading: controller.isAppleLoading.value,
+            AppImages.appleIcon,            // notun asset
+            onTap: () => controller.appleLogin(),
+          )
+        else
+          _socialButton(
+            AppString.continueGoogle,
+            isLoading: controller.isGoogleLoading.value,
+            AppImages.googleIcon,
+            onTap: () => controller.googleLogin(),
+          ),
         SizedBox(height: 12.h),
-        _socialButton(
-          AppString.continueFacebook,
-          isLoading: controller.isFacebookLoading.value,
-          AppImages.facebookIcon,
-          onTap: () => controller.faceBookLogin(),
-        ),
+        // _socialButton(
+        //   AppString.continueFacebook,
+        //   isLoading: controller.isFacebookLoading.value,
+        //   AppImages.facebookIcon,
+        //   onTap: () => controller.faceBookLogin(),
+        // ),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,

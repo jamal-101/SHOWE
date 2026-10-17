@@ -62,7 +62,7 @@ class ProfileScreen extends StatelessWidget {
                 SizedBox(height: 20.h),
                 _buildSectionHeader("Others"),
                 _buildSettingsGroup([
-                  _buildListTile(AppImages.helpCenterIcon, "Help Centre", 4),
+                  // _buildListTile(AppImages.helpCenterIcon, "Help Centre", 4),
                   _buildListTile(
                     AppImages.privacyPolicyIcon,
                     "Privacy policy",
@@ -228,61 +228,64 @@ class ProfileScreen extends StatelessWidget {
     int index, {
     bool isLogout = false,
   }) {
-    return ListTile(
-      leading: Image.asset(
-        imagePath,
-        width: 22.w,
-        height: 22.w,
-        color: isLogout ? Colors.redAccent : const Color(0xFF000000),
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.montserrat(
-          fontSize: 16.sp,
-          color: isLogout ? Colors.redAccent : const Color(0xFF1F2A37),
-          fontWeight: FontWeight.w400,
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: Image.asset(
+          imagePath,
+          width: 22.w,
+          height: 22.w,
+          color: isLogout ? Colors.redAccent : const Color(0xFF000000),
         ),
+        title: Text(
+          title,
+          style: GoogleFonts.montserrat(
+            fontSize: 16.sp,
+            color: isLogout ? Colors.redAccent : const Color(0xFF1F2A37),
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey,
+        ),
+        onTap: () {
+          switch (index) {
+            case 0:
+              final ProfileController controller = Get.put(ProfileController());
+              controller.clearSelectedImage(); 
+              controller.getProfile();
+              Get.toNamed(AppRoutes.updateProfileInformationScreen);
+              break;
+            case 1:
+              Get.toNamed(AppRoutes.changePasswordScreen);
+              break;
+            case 2:
+              Get.toNamed(AppRoutes.notificationSettingScreen);
+              break;
+            case 3:
+              Get.toNamed(AppRoutes.securityScreen);
+              break;
+            case 4:
+              Get.toNamed(AppRoutes.helpCenterScreen);
+              break;
+            case 5:
+              Get.toNamed(AppRoutes.privacyPolicyScreen);
+              break;
+            case 6:
+              Get.toNamed(AppRoutes.termsConditionScreen);
+              break;
+            case 7:
+              Get.dialog(const DeleteAccountDialog());
+              break;
+            case 8:
+              Get.dialog(AccountLogoutDialog());
+              break;
+            default:
+          }
+        },
       ),
-      trailing: const Icon(
-        Icons.arrow_forward_ios,
-        size: 16,
-        color: Colors.grey,
-      ),
-      onTap: () {
-        switch (index) {
-          case 0:
-            final ProfileController controller = Get.put(ProfileController());
-            controller.clearSelectedImage(); 
-            controller.getProfile();
-            Get.toNamed(AppRoutes.updateProfileInformationScreen);
-            break;
-          case 1:
-            Get.toNamed(AppRoutes.changePasswordScreen);
-            break;
-          case 2:
-            Get.toNamed(AppRoutes.notificationSettingScreen);
-            break;
-          case 3:
-            Get.toNamed(AppRoutes.securityScreen);
-            break;
-          case 4:
-            Get.toNamed(AppRoutes.helpCenterScreen);
-            break;
-          case 5:
-            Get.toNamed(AppRoutes.privacyPolicyScreen);
-            break;
-          case 6:
-            Get.toNamed(AppRoutes.termsConditionScreen);
-            break;
-          case 7:
-            Get.dialog(const DeleteAccountDialog());
-            break;
-          case 8:
-            Get.dialog(AccountLogoutDialog());
-            break;
-          default:
-        }
-      },
     );
   }
 }

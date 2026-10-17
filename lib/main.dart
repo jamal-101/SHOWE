@@ -1,26 +1,22 @@
-// import 'package:flutter/cupertino.dart';
-// import 'app.dart';
-//
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   runApp(const MyApp());
-// }
 
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digital_event/core/storage/storage_key.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'core/storage/local_storage.dart';
 import 'app.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Explicitly opt in to edge-to-edge — on Android 15+ this is enforced
-  // regardless, but declaring it ourselves keeps window-inset reporting
-  // (and therefore SafeArea/MediaQuery.padding) consistent across Android
-  // versions instead of relying on whatever the OS defaults to.
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await GoogleSignIn.instance.initialize(
+    serverClientId: '755395683027-rt3bfjjp7qismr49qp66c03a3r081vb3.apps.googleusercontent.com',
+  );
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   SystemChrome.setSystemUIOverlayStyle(

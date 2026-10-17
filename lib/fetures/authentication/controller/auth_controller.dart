@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:digital_event/core/route/app_routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/storage/storage_key.dart';
 import '../../../core/utils/api_enpoint.dart';
@@ -13,6 +15,7 @@ class AuthController extends GetxController {
   var isGoogleLoading = false.obs;
   var isFacebookLoading = false.obs;
   var isSignUpLoading = false.obs;
+  var isAppleLoading = false.obs;
 
   RxInt remainingSeconds = 180.obs;
   Timer? _timer;
@@ -479,13 +482,106 @@ class AuthController extends GetxController {
 
   ///>>>>>>>>>>>>>>>>> google Login <<<<<<<<<<<<<<<<<///
 
-  void googleLogin() async {
-    isGoogleLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
-    isGoogleLoading.value = false;
+  ///>>>>>>>>>>>>>>>>> Social Login <<<<<<<<<<<<<<<<<///
+
+  Future<void> googleLogin() async {
+    try {
+      isGoogleLoading.value = true;
+
+      final googleUser = await GoogleSignIn.instance.authenticate();
+      final idToken = googleUser.authentication.idToken;
+
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      final userCred =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      await _socialLoginToBackend(userCred, socialType: "Google");
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) return; // user cancel korle kichu na
+      _showSocialError(e.toString());
+    } catch (e) {
+      _showSocialError(e.toString());
+    } finally {
+      isGoogleLoading.value = false;
+    }
+  }
+
+  Future<void> appleLogin() async {
+    try {
+      isAppleLoading.value = true;
+
+      final appleProvider = AppleAuthProvider()
+        ..addScope('email')
+        ..addScope('name');
+
+      final userCred =
+      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+
+      await _socialLoginToBackend(userCred, socialType: "Apple");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'canceled' || e.code == 'web-context-canceled') return;
+      _showSocialError(e.message ?? e.toString());
+    } catch (e) {
+      _showSocialError(e.toString());
+    } finally {
+      isAppleLoading.value = false;
+    }
+  }
+
+  Future<void> _socialLoginToBackend(
+      UserCredential userCred, {
+        required String socialType, // 'Google' / 'Facebook' / 'Apple'
+      }) async {
+    final user = userCred.user;
+    final firebaseToken = await user?.getIdToken();
+    if (user == null || firebaseToken == null) {
+      _showSocialError("Could not get authentication token");
+      return;
+    }
+
+    final response = await ApiService.post(
+      ApiEndPoint.socialLogin,
+      body: {
+        "name": user.displayName ?? "",
+        "email": user.email ?? "",
+        "picture": user.photoURL ?? "",
+        "appId": user.uid,
+        "social_type": socialType,
+        "token": firebaseToken,
+        "role": "USER",
+      },
+    );
+
+    if (response.isSuccess &&
+        response.data['data'] != null &&
+        response.data['data']['accessToken'] != null) {
+      await LocalStorage.setString(
+        LocalStorageKeys.token,
+        response.data['data']['accessToken'],
+      );
+      await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
+      await LocalStorage.getAllPrefData();
+      Get.offAllNamed(AppRoutes.homeScreen);
+    } else {
+      await FirebaseAuth.instance.signOut();
+      final msg = (response.data is Map ? response.data['message'] : null) ??
+          response.message;
+      _showSocialError(msg.toString());
+    }
+  }
+
+  void _showSocialError(String msg) {
+    Get.snackbar(
+      "Login Failed",
+      msg,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
   }
 
   void faceBookLogin() async {
+    // pore korbo
     isFacebookLoading.value = true;
     await Future.delayed(const Duration(seconds: 2));
     isFacebookLoading.value = false;
