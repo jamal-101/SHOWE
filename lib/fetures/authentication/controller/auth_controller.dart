@@ -484,8 +484,6 @@ class AuthController extends GetxController {
   ///>>>>>>>>>>>>>>>>> google Login <<<<<<<<<<<<<<<<<///
 
   ///>>>>>>>>>>>>>>>>> Social Login <<<<<<<<<<<<<<<<<///
-  ///
-  //================ google sign is here ====================//
 
   Future<void> googleLogin() async {
     try {
@@ -500,7 +498,7 @@ class AuthController extends GetxController {
 
       await _socialLoginToBackend(userCred, socialType: "Google");
     } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) return;
+      if (e.code == GoogleSignInExceptionCode.canceled) return; // user cancel korle kichu na
       _showSocialError(e.toString());
     } catch (e) {
       _showSocialError(e.toString());
@@ -582,7 +580,6 @@ class AuthController extends GetxController {
       colorText: Colors.white,
     );
   }
-  //================ faceBook sign is here ====================//
 
   Future<void> faceBookLogin() async {
     try {

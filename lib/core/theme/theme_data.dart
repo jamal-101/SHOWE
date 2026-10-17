@@ -7,8 +7,6 @@ ThemeData themeData = ThemeData(
   scaffoldBackgroundColor:  AppColors.appBackgroundColor,
   appBarTheme: AppBarTheme(
     backgroundColor: AppColors.appBackgroundColor,
-
-
     centerTitle: true,
   ),
 );
