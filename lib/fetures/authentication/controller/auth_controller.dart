@@ -484,6 +484,8 @@ class AuthController extends GetxController {
   ///>>>>>>>>>>>>>>>>> google Login <<<<<<<<<<<<<<<<<///
 
   ///>>>>>>>>>>>>>>>>> Social Login <<<<<<<<<<<<<<<<<///
+  ///
+  //================ google sign is here ====================//
 
   Future<void> googleLogin() async {
     try {
@@ -580,6 +582,7 @@ class AuthController extends GetxController {
       colorText: Colors.white,
     );
   }
+  //================ faceBook sign is here ====================//
 
   Future<void> faceBookLogin() async {
     try {
