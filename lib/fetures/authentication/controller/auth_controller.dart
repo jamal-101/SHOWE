@@ -497,7 +497,7 @@ class AuthController extends GetxController {
 
       await _socialLoginToBackend(userCred, socialType: "Google");
     } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) return; // user cancel korle kichu na
+      if (e.code == GoogleSignInExceptionCode.canceled) return;
       _showSocialError(e.toString());
     } catch (e) {
       _showSocialError(e.toString());
