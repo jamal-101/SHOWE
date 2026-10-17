@@ -368,7 +368,7 @@ class FaceRecognitionLoginScreen extends StatelessWidget {
                         painter: RoundedRectBorderPainter(
                           progress: controller.borderProgress.value,
                           color: const Color(0xFFF7BD56),
-                          strokeWidth: 5.0,
+                          strokeWidth: 8.0,
                           radius: 20.r,
                         ),
                         child: SizedBox(
