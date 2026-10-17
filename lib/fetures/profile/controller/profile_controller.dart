@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
@@ -201,12 +202,12 @@ class ProfileController extends GetxController {
       debugPrint("Firebase signout error: $e");
     }
 
-    // 2. FCM token (shudhu jodi push notification use koro)
-    // try {
-    //   await FirebaseMessaging.instance.deleteToken();
-    // } catch (e) {
-    //   debugPrint("FCM delete token error: $e");
-    // }
+    // 2. Facebook sign out
+    try {
+      await FacebookAuth.instance.logOut();
+    } catch (e) {
+      debugPrint("Facebook signout error: $e");
+    }
 
     // 3. Local storage clear
     await LocalStorage.removeAllPrefData();

@@ -465,12 +465,12 @@ class SingUpOrLoginScreen extends StatelessWidget {
             onTap: () => controller.googleLogin(),
           ),
         SizedBox(height: 12.h),
-        // _socialButton(
-        //   AppString.continueFacebook,
-        //   isLoading: controller.isFacebookLoading.value,
-        //   AppImages.facebookIcon,
-        //   onTap: () => controller.faceBookLogin(),
-        // ),
+        _socialButton(
+          AppString.continueFacebook,
+          isLoading: controller.isFacebookLoading.value,
+          AppImages.facebookIcon,
+          onTap: () => controller.faceBookLogin(),
+        ),
         SizedBox(height: 20.h),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
