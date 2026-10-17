@@ -366,9 +366,9 @@ class FaceRecognitionLoginScreen extends StatelessWidget {
                         : Obx(() {
                       return CustomPaint(
                         painter: RoundedRectBorderPainter(
-                          progress: controller.borderProgress.value, // 📌 সিঙ্কড প্রোগ্রেস
+                          progress: controller.borderProgress.value,
                           color: const Color(0xFFF7BD56),
-                          strokeWidth: 3.0,
+                          strokeWidth: 5.0,
                           radius: 20.r,
                         ),
                         child: SizedBox(
@@ -383,9 +383,25 @@ class FaceRecognitionLoginScreen extends StatelessWidget {
                                 if (controller.isCameraInitialized &&
                                     controller.cameraController != null &&
                                     controller.cameraController!.value.isInitialized)
-                                  CameraPreview(controller.cameraController!)
+                                  Builder(
+                                    builder: (context) {
+                                      var camera = controller.cameraController!.value;
+                                      var scale = controller.isScanningLogin ? 1.3 : 1.0;
+                                      return Transform.scale(
+                                        scale: scale,
+                                        child: Center(
+                                          child: AspectRatio(
+                                            aspectRatio: 1 / camera.aspectRatio,
+                                            child: CameraPreview(
+                                              controller.cameraController!,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
                                 else
-                                  const SizedBox.shrink(), // 📌 কোনো সার্কুলার লোডার দেখাবে না
+                                  const SizedBox.shrink(),
                                 Positioned(
                                   bottom: 20.h,
                                   child: Column(
@@ -412,6 +428,8 @@ class FaceRecognitionLoginScreen extends StatelessWidget {
                               ],
                             ),
                           ),
+
+
                         ),
                       );
                     }),

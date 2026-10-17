@@ -42,7 +42,12 @@ class TermsConditionScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CommonText(text: 'The Showe Group Ltd',fontSize: 16.sp,fontWeight: FontWeight.w700,color: Color(0xFF000000),),
+                CommonText(
+                  text: 'The Showe Group Ltd',
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF000000),
+                ),
                 SizedBox(height: 20.h),
                 CommonText(
                   text: """Version 1.0 — From 2/2/20
