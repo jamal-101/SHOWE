@@ -16,6 +16,12 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="http" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Facebook Login -->
+        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
     </queries>
 
     <application
@@ -27,6 +33,30 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAlGs5PC02hgwTYhq0ZUcUK4Y3af-wcbRY" />
+
+        <!-- Facebook Login -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="SHOWE" />
+
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name="com.theshowegroup.digitalevent.MainActivity"
@@ -43,13 +73,13 @@
                 android:resource="@style/NormalTheme"
                 />
 
-            <!-- 🔹 ডিফল্ট লঞ্চার -->
+            <!-- Default launcher -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- 🔹 Deep Link: Custom Scheme (digitalevent://) -->
+            <!-- Deep Link: Custom Scheme (digitalevent://) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -58,7 +88,7 @@
                 <data android:scheme="digitalevent" />
             </intent-filter>
 
-            <!-- 🔹 Deep Link: http/https local URL (autoVerify ছাড়া) -->
+            <!-- Deep Link: http/https local URL (without autoVerify) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -74,12 +104,105 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
 
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT"/>
-            <data android:mimeType="text/plain"/>
-        </intent>
-    </queries>
+    </application>
 </manifest>
+
+
+
+
+
+
+
+
+
+<!--<manifest xmlns:android="http://schemas.android.com/apk/res/android">-->
+<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"-->
+<!--        android:maxSdkVersion="28" />-->
+
+<!--    <uses-permission android:name="android.permission.INTERNET"/>-->
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
+
+<!--    <queries>-->
+<!--        <intent>-->
+<!--            <action android:name="android.intent.action.VIEW" />-->
+<!--            <category android:name="android.intent.category.BROWSABLE" />-->
+<!--            <data android:scheme="https" />-->
+<!--        </intent>-->
+<!--        <intent>-->
+<!--            <action android:name="android.intent.action.VIEW" />-->
+<!--            <category android:name="android.intent.category.BROWSABLE" />-->
+<!--            <data android:scheme="http" />-->
+<!--        </intent>-->
+<!--    </queries>-->
+
+<!--    <application-->
+<!--        android:label="SHOWE"-->
+<!--        android:name="${applicationName}"-->
+<!--        android:icon="@mipmap/ic_launcher"-->
+<!--        android:usesCleartextTraffic="true">-->
+
+<!--        <meta-data-->
+<!--            android:name="com.google.android.geo.API_KEY"-->
+<!--            android:value="AIzaSyAlGs5PC02hgwTYhq0ZUcUK4Y3af-wcbRY" />-->
+
+<!--        <activity-->
+<!--            android:name="com.theshowegroup.digitalevent.MainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:launchMode="singleTop"-->
+<!--            android:taskAffinity=""-->
+<!--            android:theme="@style/LaunchTheme"-->
+<!--            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"-->
+<!--            android:hardwareAccelerated="true"-->
+<!--            android:windowSoftInputMode="adjustResize">-->
+
+<!--            <meta-data-->
+<!--                android:name="io.flutter.embedding.android.NormalTheme"-->
+<!--                android:resource="@style/NormalTheme"-->
+<!--                />-->
+
+<!--            &lt;!&ndash; 🔹 ডিফল্ট লঞ্চার &ndash;&gt;-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN"/>-->
+<!--                <category android:name="android.intent.category.LAUNCHER"/>-->
+<!--            </intent-filter>-->
+
+<!--            &lt;!&ndash; 🔹 Deep Link: Custom Scheme (digitalevent://) &ndash;&gt;-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+
+<!--                <data android:scheme="digitalevent" />-->
+<!--            </intent-filter>-->
+
+<!--            &lt;!&ndash; 🔹 Deep Link: http/https local URL (autoVerify ছাড়া) &ndash;&gt;-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+
+<!--                <data android:scheme="http" />-->
+<!--                <data android:scheme="https" />-->
+<!--                <data android:host="localhost" />-->
+<!--            </intent-filter>-->
+
+<!--        </activity>-->
+
+<!--        <meta-data-->
+<!--            android:name="flutterEmbedding"-->
+<!--            android:value="2" />-->
+
+
+
+
+
+<!--    </application>-->
+
+<!--    <queries>-->
+<!--        <intent>-->
+<!--            <action android:name="android.intent.action.PROCESS_TEXT"/>-->
+<!--            <data android:mimeType="text/plain"/>-->
+<!--        </intent>-->
+<!--    </queries>-->
+<!--</manifest>-->

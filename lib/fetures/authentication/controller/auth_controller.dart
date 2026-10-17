@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../../core/storage/local_storage.dart';
@@ -580,10 +581,39 @@ class AuthController extends GetxController {
     );
   }
 
-  void faceBookLogin() async {
-    // pore korbo
-    isFacebookLoading.value = true;
-    await Future.delayed(const Duration(seconds: 2));
-    isFacebookLoading.value = false;
+  Future<void> faceBookLogin() async {
+    try {
+      isFacebookLoading.value = true;
+
+      final result = await FacebookAuth.instance.login(
+        permissions: ['public_profile', 'email'],
+      );
+
+      if (result.status == LoginStatus.cancelled) return;
+      if (result.status != LoginStatus.success) {
+        _showSocialError(result.message ?? "Facebook login failed");
+        return;
+      }
+
+      final credential = FacebookAuthProvider.credential(
+        result.accessToken!.tokenString,
+      );
+      final userCred =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      await _socialLoginToBackend(userCred, socialType: "Facebook");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        _showSocialError(
+          "An account already exists with this email. Please use the original login method.",
+        );
+      } else {
+        _showSocialError(e.message ?? e.toString());
+      }
+    } catch (e) {
+      _showSocialError(e.toString());
+    } finally {
+      isFacebookLoading.value = false;
+    }
   }
 }
