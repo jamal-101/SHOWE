@@ -59,7 +59,7 @@
         <true/>
     </dict>
 
-    <!-- 🔹 Deep Link: Custom Scheme (digitalevent://) -->
+    <!-- 🔹 Deep Link: Custom Scheme (digitalevent://) & Facebook Login -->
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -70,8 +70,20 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>digitalevent</string>
+                <string>fb1989422625011366</string>
             </array>
         </dict>
+    </array>
+    <key>FacebookAppID</key>
+    <string>1989422625011366</string>
+    <key>FacebookClientToken</key>
+    <string>7f3e16495d4da0c242288811564360cc</string>
+    <key>FacebookDisplayName</key>
+    <string>SHOWE</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>fbapi</string>
+        <string>fb-messenger-share-api</string>
     </array>
     <!-- 🔹 Permissions for Camera and Photo Library -->
     <key>NSCameraUsageDescription</key>
