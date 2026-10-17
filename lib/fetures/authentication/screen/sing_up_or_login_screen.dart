@@ -8,6 +8,7 @@ import 'package:digital_event/core/route/app_routes.dart';
 import 'package:digital_event/fetures/authentication/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/utils/app_utils.dart';
@@ -585,7 +586,7 @@ class SingUpOrLoginScreen extends StatelessWidget {
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
+        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade300),
           borderRadius: BorderRadius.circular(50.r),
@@ -602,15 +603,29 @@ class SingUpOrLoginScreen extends StatelessWidget {
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(
-                      iconPath,
-                      height: 24.h,
-                      width: 24.w,
-                      fit: BoxFit.contain,
-                    ),
+                    iconPath.endsWith('.svg')
+                        ? SvgPicture.asset(
+                            iconPath,
+                            height: 24.h,
+                            width: 24.w,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            iconPath,
+                            height: 24.h,
+                            width: 24.w,
+                            fit: BoxFit.contain,
+                          ),
                     SizedBox(width: 10.w),
-                    Text(title),
+                    Flexible(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
         ),
