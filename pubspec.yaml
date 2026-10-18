@@ -58,7 +58,6 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   shared_preferences: ^2.5.5
   device_info_plus: ^12.4.0
-  face_camera: ^0.1.4
   camera: ^0.11.4
   flutter_image_compress: ^2.4.0
   image: ^4.5.4

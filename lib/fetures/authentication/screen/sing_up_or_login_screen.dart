@@ -451,26 +451,32 @@ class SingUpOrLoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 20.h),
-        if (Platform.isIOS)
-          _socialButton(
-            AppString.continueApple,          // notun string: "Continue with Apple"
-            isLoading: controller.isAppleLoading.value,
-            AppImages.appleIcon,            // notun asset
-            onTap: () => controller.appleLogin(),
-          )
-        else
-          _socialButton(
-            AppString.continueGoogle,
-            isLoading: controller.isGoogleLoading.value,
-            AppImages.googleIcon,
-            onTap: () => controller.googleLogin(),
+        Obx(
+          () => Column(
+            children: [
+              if (Platform.isIOS)
+                _socialButton(
+                  AppString.continueApple,
+                  isLoading: controller.isAppleLoading.value,
+                  AppImages.appleIcon,
+                  onTap: () => controller.appleLogin(),
+                )
+              else
+                _socialButton(
+                  AppString.continueGoogle,
+                  isLoading: controller.isGoogleLoading.value,
+                  AppImages.googleIcon,
+                  onTap: () => controller.googleLogin(),
+                ),
+              SizedBox(height: 12.h),
+              _socialButton(
+                AppString.continueFacebook,
+                isLoading: controller.isFacebookLoading.value,
+                AppImages.facebookIcon,
+                onTap: () => controller.faceBookLogin(),
+              ),
+            ],
           ),
-        SizedBox(height: 12.h),
-        _socialButton(
-          AppString.continueFacebook,
-          isLoading: controller.isFacebookLoading.value,
-          AppImages.facebookIcon,
-          onTap: () => controller.faceBookLogin(),
         ),
         SizedBox(height: 20.h),
         Row(

@@ -510,22 +510,35 @@ class AuthController extends GetxController {
   Future<void> appleLogin() async {
     try {
       isAppleLoading.value = true;
+      debugPrint("=================== Apple Login Started ===================");
 
       final appleProvider = AppleAuthProvider()
         ..addScope('email')
         ..addScope('name');
 
+      debugPrint("Triggering FirebaseAuth signInWithProvider(appleProvider)...");
       final userCred =
       await FirebaseAuth.instance.signInWithProvider(appleProvider);
 
+      debugPrint("Apple Auth Success. Firebase User UID: ${userCred.user?.uid}");
       await _socialLoginToBackend(userCred, socialType: "Apple");
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'canceled' || e.code == 'web-context-canceled') return;
+      debugPrint("=================== Apple Login FirebaseAuthException ===================");
+      debugPrint("Error Code: ${e.code}");
+      debugPrint("Error Message: ${e.message}");
+      if (e.code == 'canceled' || e.code == 'web-context-canceled') {
+        debugPrint("User canceled Apple Sign In.");
+        return;
+      }
       _showSocialError(e.message ?? e.toString());
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint("=================== Apple Login Exception ===================");
+      debugPrint("Error: $e");
+      debugPrint("Stacktrace: $stack");
       _showSocialError(e.toString());
     } finally {
       isAppleLoading.value = false;
+      debugPrint("=================== Apple Login Finished ===================");
     }
   }
 
@@ -535,6 +548,7 @@ class AuthController extends GetxController {
       }) async {
     final user = userCred.user;
     final firebaseToken = await user?.getIdToken();
+    debugPrint("Social Login to Backend - Type: $socialType, Email: ${user?.email}");
     if (user == null || firebaseToken == null) {
       _showSocialError("Could not get authentication token");
       return;
@@ -552,6 +566,8 @@ class AuthController extends GetxController {
         "role": "USER",
       },
     );
+
+    debugPrint("Backend Response Status: ${response.isSuccess}, Message: ${response.message}");
 
     if (response.isSuccess &&
         response.data['data'] != null &&
@@ -572,6 +588,7 @@ class AuthController extends GetxController {
   }
 
   void _showSocialError(String msg) {
+    debugPrint("Social Login Error: $msg");
     Get.snackbar(
       "Login Failed",
       msg,
