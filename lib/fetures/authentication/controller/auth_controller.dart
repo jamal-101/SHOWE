@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 import 'package:digital_event/core/route/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -601,25 +604,65 @@ class AuthController extends GetxController {
   Future<void> faceBookLogin() async {
     try {
       isFacebookLoading.value = true;
+      debugPrint("=================== Facebook Login Started ===================");
 
+      // Log out first to clear any stale cached tokens
+      await FacebookAuth.instance.logOut();
+
+      // Generate a raw nonce and its SHA256 hash for Facebook OIDC ID Token
+      final rawNonce = DateTime.now().millisecondsSinceEpoch.toString();
+      final sha256Nonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
+      debugPrint("Requesting Facebook Login with sha256Nonce: $sha256Nonce (rawNonce: $rawNonce)...");
       final result = await FacebookAuth.instance.login(
         permissions: ['public_profile', 'email'],
+        loginBehavior: LoginBehavior.nativeWithFallback,
+        loginTracking: LoginTracking.enabled,
+        nonce: sha256Nonce,
       );
 
-      if (result.status == LoginStatus.cancelled) return;
+      debugPrint("Facebook Login Result Status: ${result.status}");
+
+      if (result.status == LoginStatus.cancelled) {
+        debugPrint("User canceled Facebook Login.");
+        return;
+      }
+
       if (result.status != LoginStatus.success) {
+        debugPrint("Facebook Login Error: ${result.message}");
         _showSocialError(result.message ?? "Facebook login failed");
         return;
       }
 
-      final credential = FacebookAuthProvider.credential(
-        result.accessToken!.tokenString,
-      );
-      final userCred =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final tokenString = result.accessToken?.tokenString ?? "";
+      debugPrint("Facebook Token obtained (Length: ${tokenString.length}). Authenticating with Firebase...");
 
+      UserCredential userCred;
+      if (Platform.isIOS) {
+        try {
+          debugPrint("iOS: Attempting OAuthProvider('facebook.com') with idToken and rawNonce...");
+          final credential = OAuthProvider('facebook.com').credential(
+            idToken: tokenString,
+            rawNonce: rawNonce,
+          );
+          userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+        } on FirebaseAuthException catch (iosErr) {
+          debugPrint("iOS OAuthProvider failed (${iosErr.code}: ${iosErr.message}). Trying FacebookAuthProvider as fallback...");
+          final fallbackCred = FacebookAuthProvider.credential(tokenString);
+          userCred = await FirebaseAuth.instance.signInWithCredential(fallbackCred);
+        }
+      } else {
+        debugPrint("Android: Using FacebookAuthProvider.credential...");
+        final credential = FacebookAuthProvider.credential(tokenString);
+        userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+      }
+
+      debugPrint("Firebase Auth Success with Facebook. User UID: ${userCred.user?.uid}");
       await _socialLoginToBackend(userCred, socialType: "Facebook");
     } on FirebaseAuthException catch (e) {
+      debugPrint("=================== Facebook FirebaseAuthException ===================");
+      debugPrint("Error Code: ${e.code}");
+      debugPrint("Error Message: ${e.message}");
       if (e.code == 'account-exists-with-different-credential') {
         _showSocialError(
           "An account already exists with this email. Please use the original login method.",
@@ -627,10 +670,14 @@ class AuthController extends GetxController {
       } else {
         _showSocialError(e.message ?? e.toString());
       }
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint("=================== Facebook Login Exception ===================");
+      debugPrint("Error: $e");
+      debugPrint("Stacktrace: $stack");
       _showSocialError(e.toString());
     } finally {
       isFacebookLoading.value = false;
+      debugPrint("=================== Facebook Login Finished ===================");
     }
   }
 }

@@ -92,6 +92,7 @@ class WalletScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 5.h),
                 Row(
+                  crossAxisAlignment: .start,
                   children: [
                     CommonText(
                       text: 'Note : ',
@@ -99,12 +100,15 @@ class WalletScreen extends StatelessWidget {
                       fontSize: 12.sp,
                       color: Color(0xFF1C1C1C),
                     ),
-                    CommonText(
-                      text:
-                          'Label the event so you can find it easily in My Events.',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
-                      color: Color(0xFF6B7280),
+                    Flexible(
+                      child: CommonText(
+                        text:
+                            'Label the event so you can find it easily in My Events.',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12.sp,
+                        textAlign: TextAlign.start,
+                        color: Color(0xFF6B7280),
+                      ),
                     ),
                   ],
                 ),
