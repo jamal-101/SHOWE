@@ -210,6 +210,9 @@ class AuthController extends GetxController {
             response.data['data']['accessToken'] != null) {
           String receivedToken = response.data['data']['accessToken'];
           await LocalStorage.setString(LocalStorageKeys.token, receivedToken);
+
+          await LocalStorage.resetDeviceIdForNewUser();
+
           await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
           await LocalStorage.getAllPrefData();
         }
@@ -254,6 +257,9 @@ class AuthController extends GetxController {
             response.data['data']['accessToken'] != null) {
           String token = response.data['data']['accessToken'];
           await LocalStorage.setString(LocalStorageKeys.token, token);
+
+          await LocalStorage.resetDeviceIdForNewUser();
+
           if (rememberMe.value) {
             await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
           } else {
@@ -579,6 +585,9 @@ class AuthController extends GetxController {
         LocalStorageKeys.token,
         response.data['data']['accessToken'],
       );
+
+      await LocalStorage.resetDeviceIdForNewUser();
+
       await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
       await LocalStorage.getAllPrefData();
       Get.offAllNamed(AppRoutes.homeScreen);

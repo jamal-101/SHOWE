@@ -6,9 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digital_event/core/storage/storage_key.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/storage/local_storage.dart';
 import 'app.dart';
 import 'firebase_options.dart';
+import 'package:uuid/uuid.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,26 +36,47 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+// Future<void> saveDeviceIdOnStartup() async {
+//   final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+//   String id = "";
+//
+//   try {
+//     if (Platform.isAndroid) {
+//       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+//       id = androidInfo.id;
+//     } else if (Platform.isIOS) {
+//       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+//       id = iosInfo.identifierForVendor ?? "";
+//     }
+//     if (id.isNotEmpty) {
+//       await LocalStorage.setString(LocalStorageKeys.deviceId, id);
+//
+//       print("=========================================");
+//       print("📱 Device ID Saved in main.dart: $id");
+//       print("=========================================");
+//     }
+//   } catch (e) {
+//     print("❌ Error storing device id in main.dart: $e");
+//   }
+// }
+
+
 Future<void> saveDeviceIdOnStartup() async {
-  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  String id = "";
+  final prefs = await SharedPreferences.getInstance();
+  String? existingId = prefs.getString(LocalStorageKeys.deviceId);
 
-  try {
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      id = androidInfo.id;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      id = iosInfo.identifierForVendor ?? "";
-    }
-    if (id.isNotEmpty) {
-      await LocalStorage.setString(LocalStorageKeys.deviceId, id);
+  // যদি ডিভাইসে আগে থেকে কোনো আইডি না থাকে, তবে নতুন ইউনিক আইডি তৈরি করুন
+  if (existingId == null || existingId.isEmpty) {
+    const uuid = Uuid();
+    String newUniqueId = uuid.v4();
+    await LocalStorage.setString(LocalStorageKeys.deviceId, newUniqueId);
 
-      print("=========================================");
-      print("📱 Device ID Saved in main.dart: $id");
-      print("=========================================");
-    }
-  } catch (e) {
-    print("❌ Error storing device id in main.dart: $e");
+    print("=========================================");
+    print("📱 Generated New Unique Device/Session ID: $newUniqueId");
+    print("=========================================");
+  } else {
+    print("=========================================");
+    print("📱 Existing Device ID Loaded: $existingId");
+    print("=========================================");
   }
 }

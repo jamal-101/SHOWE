@@ -189,10 +189,39 @@ class ProfileController extends GetxController {
   }
 
 
+  // Future<void> _clearSession() async {
+  //   // 1. Google / Firebase sign out
+  //   try {
+  //     await GoogleSignIn.instance.signOut(); // v6 hole: GoogleSignIn().signOut()
+  //   } catch (e) {
+  //     debugPrint("Google signout error: $e");
+  //   }
+  //   try {
+  //     await FirebaseAuth.instance.signOut();
+  //   } catch (e) {
+  //     debugPrint("Firebase signout error: $e");
+  //   }
+  //
+  //   // 2. Facebook sign out
+  //   try {
+  //     await FacebookAuth.instance.logOut();
+  //   } catch (e) {
+  //     debugPrint("Facebook signout error: $e");
+  //   }
+  //
+  //   // 3. Local storage clear
+  //   await LocalStorage.removeAllPrefData();
+  //   await LocalStorage.getAllPrefData(); // static variable (myName, token...) refresh
+  //
+  //   // 4. Controller data clear
+  //   clearUserData();
+  // }
+
+
   Future<void> _clearSession() async {
     // 1. Google / Firebase sign out
     try {
-      await GoogleSignIn.instance.signOut(); // v6 hole: GoogleSignIn().signOut()
+      await GoogleSignIn.instance.signOut();
     } catch (e) {
       debugPrint("Google signout error: $e");
     }
@@ -209,14 +238,13 @@ class ProfileController extends GetxController {
       debugPrint("Facebook signout error: $e");
     }
 
-    // 3. Local storage clear
+    // 3. Local storage clear (এখানে আইডি রিসেটের কোনো কোড থাকবে না)
     await LocalStorage.removeAllPrefData();
-    await LocalStorage.getAllPrefData(); // static variable (myName, token...) refresh
+    await LocalStorage.getAllPrefData();
 
     // 4. Controller data clear
     clearUserData();
   }
-
 
 
   Future<void> changePassword() async {
