@@ -7,11 +7,11 @@ class AppUpdateService {
       AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
 
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        // 🔹 বাধ্যতামুয়েলক আপডেট (Immediate Update)
+        //  (Immediate Update)
         if (updateInfo.immediateUpdateAllowed) {
           await InAppUpdate.performImmediateUpdate();
         }
-        // 🔹 ঐচ্ছিক আপডেট (Flexible Update)
+        // (Flexible Update)
         else if (updateInfo.flexibleUpdateAllowed) {
           await InAppUpdate.startFlexibleUpdate();
           await InAppUpdate.completeFlexibleUpdate();

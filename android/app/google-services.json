@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "755395683027-3lc96psmg5movdqhptl814ohsd7udse0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theshowegroup.digitalevent",
+            "certificate_hash": "c0e0bbfb5177f9ce4fb93629e61fd22fb244d1e4"
+          }
+        },
+        {
+          "client_id": "755395683027-72k84919lknu20bv7irk35is84s3b7l3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theshowegroup.digitalevent",
+            "certificate_hash": "6af37c15ba898073c86019a09ccb3d01dfea0b89"
+          }
+        },
+        {
           "client_id": "755395683027-a5iu48v2eh1cnt39i74mfs98ek57kr25.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
