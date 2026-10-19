@@ -7,6 +7,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'core/route/app_routes.dart';
 import 'core/theme/theme_data.dart';
+import 'core/utils/app_update_service.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,22 +20,27 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       designSize: const Size(430, 932),
       child: AnnotatedRegion(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.light,
-          ),
-        child:
-           GetMaterialApp(
-            title: 'SHOWE',
-            debugShowCheckedModeBanner: false,
-            navigatorKey: Get.key,
-            defaultTransition: Transition.fadeIn,
-            theme: themeData,
-            transitionDuration: const Duration(milliseconds: 300),
-            initialRoute: AppRoutes.splashScreen,
-            getPages: AppRoutes.routes,
-          ),
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: GetMaterialApp(
+          title: 'SHOWE',
+          debugShowCheckedModeBanner: false,
+          navigatorKey: Get.key,
+          defaultTransition: Transition.fadeIn,
+          theme: themeData,
+          transitionDuration: const Duration(milliseconds: 300),
+          initialRoute: AppRoutes.splashScreen,
+          getPages: AppRoutes.routes,
+          builder: (context, child) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              AppUpdateService.checkForUpdate(context);
+            });
+            return child ?? const SizedBox();
+          },
+        ),
       ),
     );
   }
