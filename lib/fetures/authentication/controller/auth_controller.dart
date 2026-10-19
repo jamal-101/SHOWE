@@ -13,6 +13,7 @@ import '../../../core/storage/storage_key.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
+import '../../../core/utils/fcm_service.dart';
 import '../screen/verify_otp_screen.dart';
 
 class AuthController extends GetxController {
@@ -110,11 +111,13 @@ class AuthController extends GetxController {
   }) async {
     try {
       isSignUpLoading.value = true;
+      String? fcmToken = await FCMService.getAndPrintFCMToken();
 
       Map<String, dynamic> requestBody = {
         "name": name,
         "email": email,
         "password": password,
+        "fcmToken": fcmToken ?? "",
         "role": "USER",
       };
 
@@ -194,9 +197,12 @@ class AuthController extends GetxController {
   Future<void> verifyOtp({required String email}) async {
     try {
       isOtpLoading.value = true;
+      String? fcmToken = await FCMService.getAndPrintFCMToken();
+
       Map<String, dynamic> requestBody = {
         "oneTimeCode": int.parse(otpController.text.trim()),
         "email": email,
+        "fcmToken": fcmToken ?? "",
       };
 
       ApiResponseModel response = await ApiService.post(
@@ -215,6 +221,7 @@ class AuthController extends GetxController {
 
           await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
           await LocalStorage.getAllPrefData();
+          await FCMService.getAndPrintFCMToken();
         }
 
         print("Token is: ${LocalStorage.token}");
@@ -246,7 +253,14 @@ class AuthController extends GetxController {
   }) async {
     try {
       isLoginLoading.value = true;
-      Map<String, dynamic> body = {"email": email, "password": password};
+      String? fcmToken = await FCMService.getAndPrintFCMToken();
+
+      Map<String, dynamic> body = {
+        "email": email,
+        "password": password,
+        "fcmToken": fcmToken ?? "",
+      };
+
       ApiResponseModel response = await ApiService.post(
         ApiEndPoint.userLogin,
         body: body,
@@ -267,6 +281,7 @@ class AuthController extends GetxController {
           }
 
           await LocalStorage.getAllPrefData();
+          await FCMService.getAndPrintFCMToken();
         }
 
         isLoginLoading.value = false;
@@ -563,6 +578,8 @@ class AuthController extends GetxController {
       return;
     }
 
+    String? fcmToken = await FCMService.getAndPrintFCMToken();
+
     final response = await ApiService.post(
       ApiEndPoint.socialLogin,
       body: {
@@ -572,6 +589,7 @@ class AuthController extends GetxController {
         "appId": user.uid,
         "social_type": socialType,
         "token": firebaseToken,
+        "fcmToken": fcmToken ?? "",
         "role": "USER",
       },
     );
@@ -590,6 +608,7 @@ class AuthController extends GetxController {
 
       await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
       await LocalStorage.getAllPrefData();
+      await FCMService.getAndPrintFCMToken();
       Get.offAllNamed(AppRoutes.homeScreen);
     } else {
       await FirebaseAuth.instance.signOut();

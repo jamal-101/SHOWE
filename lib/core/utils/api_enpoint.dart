@@ -1,9 +1,12 @@
 class ApiEndPoint {
 
-  // static const baseUrl = "http://168.144.106.179:3005/api/v1";
-  // static const baseUrl = "https://api.showe.biz//api/v1";
-  // static const websiteUrl = "http://168.144.106.179:3009";
-  // static const imageUrl = "https://api.showe.biz/files";
+//================= this is local  url ===============
+//   static const baseUrl = "http://10.10.26.164:5003/api/v1";
+//   static const websiteUrl = "http://168.144.106.179:3009";
+//   static const imageUrl = "http://10.10.26.164:5003/files";
+
+  //================= this is live url ===============
+
   static const baseUrl = "https://api.showe.biz/api/v1";
   static const websiteUrl = "https://showe.biz";
   static const imageUrl = "https://api.showe.biz/files";

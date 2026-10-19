@@ -763,7 +763,7 @@ class _CastGridPreviewState extends State<CastGridPreview> {
             crossAxisCount: cols,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            childAspectRatio: openId != null ? 0.55 : 0.72,
+            childAspectRatio: openId != null ? 0.50 : 0.72,
           ),
           itemBuilder: (context, i) {
             final m = members[i];
@@ -785,53 +785,56 @@ class _CastGridPreviewState extends State<CastGridPreview> {
                         aspectRatio: 1,
                         child: ProgrammeMedia(src: m.image, fit: BoxFit.cover),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            m.name ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              color: ink,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            m.role ?? '',
-                            style: TextStyle(fontSize: 11, color: faint),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if (isOpen && m.bio != null) ...[
-                            const SizedBox(height: 8),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              m.bio!,
+                              m.name ?? '',
                               style: TextStyle(
-                                fontSize: 11.5,
-                                color: muted,
-                                height: 1.35,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: ink,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ],
-                          if (isOpen && m.linkUrl != null) ...[
-                            const SizedBox(height: 8),
-                            GestureDetector(
-                              onTap: () => openExternalUrl(m.linkUrl),
-                              child: Text(
-                                m.linkLabel ?? 'Visit',
+                            Text(
+                              m.role ?? '',
+                              style: TextStyle(fontSize: 11, color: faint),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (isOpen && m.bio != null) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                m.bio!,
                                 style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: primary,
+                                  fontSize: 11.5,
+                                  color: muted,
+                                  height: 1.35,
                                 ),
                               ),
-                            ),
+                            ],
+                            if (isOpen && m.linkUrl != null) ...[
+                              const SizedBox(height: 8),
+                              GestureDetector(
+                                onTap: () => openExternalUrl(m.linkUrl),
+                                child: Text(
+                                  m.linkLabel ?? 'Visit',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: primary,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
                   ],
