@@ -509,6 +509,10 @@ class HomController extends GetxController {
         bool isFreeOrDirectPurchase = numericPrice <= 0 || responseData is Map || (responseData is String && !responseData.startsWith('http'));
 
         if (isFreeOrDirectPurchase) {
+          if (eventDetailsModel?.data != null) {
+            eventDetailsModel!.data!.isAlreadyProgrammePurchased = true;
+          }
+          update();
           Get.snackbar(
             "Success",
             response.data['message']?.toString() ?? "Programme successfully purchased!",
@@ -530,6 +534,10 @@ class HomController extends GetxController {
             Get.to(() => PaymentWebViewScreen(paymentUrl: paymentUrl));
 
           } else {
+            if (eventDetailsModel?.data != null) {
+              eventDetailsModel!.data!.isAlreadyProgrammePurchased = true;
+            }
+            update();
             Get.snackbar(
               "Success",
               response.data['message']?.toString() ?? "Programme successfully purchased!",

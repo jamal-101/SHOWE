@@ -587,6 +587,13 @@ class EventDetailsScreen extends StatelessWidget {
           final ticketUrl = eventData.getTicketsUrl;
           final isPurchased = eventData.isAlreadyProgrammePurchased ?? false;
 
+          final bool hasProgramme = (eventData.programme != null && eventData.programme!.isNotEmpty) ||
+              (eventData.programmeData != null);
+
+          final double programmePrice = eventData.pricePence != null
+              ? (eventData.pricePence! / 100)
+              : (eventData.price?.toDouble() ?? 0.0);
+
           return SafeArea(
             child: Padding(
               padding: EdgeInsets.only(
@@ -599,18 +606,8 @@ class EventDetailsScreen extends StatelessWidget {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CommonButton(
-                      title: controller.ticketIsPurchaseLoading.value
-                          ? "Processing..."
-                          : "Get Ticket - £${price ?? 0}",
-                      onTap: () {
-                        if (controller.ticketIsPurchaseLoading.value) return;
-                        controller.openTicketUrl(ticketUrl);
-
-                      },
-                    ),
-                    SizedBox(height: 10.h,),
-                    if (isPurchased)
+                    // if (isPurchased)
+                    if (hasProgramme && isPurchased)
                       GestureDetector(
                         onTap: () {
                          Get.toNamed(AppRoutes.myProgramScreen);
@@ -656,7 +653,8 @@ class EventDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       )
-                    else
+                    // else
+                    else if (hasProgramme && !isPurchased)
                       GestureDetector(
                         onTap: () {
                           if (controller.isPurchaseLoading.value) return;
@@ -685,7 +683,8 @@ class EventDetailsScreen extends StatelessWidget {
                             child: Text(
                               controller.isPurchaseLoading.value
                                   ? "Purchase Programme..."
-                                  : "Purchase Programme - £${eventData.price ?? 0}",
+                                  // : "Purchase Programme - £${eventData.price ?? 0}",
+                                  : "Purchase Programme - £${programmePrice.toStringAsFixed(2)}",
                               style: GoogleFonts.montserrat(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16.sp,
@@ -695,6 +694,18 @@ class EventDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                    // SizedBox(height: 10.h,),
+                    if (hasProgramme) SizedBox(height: 10.h),
+                    CommonButton(
+                      title: controller.ticketIsPurchaseLoading.value
+                          ? "Processing..."
+                          : "Get Ticket - £${price ?? 0}",
+                      onTap: () {
+                        if (controller.ticketIsPurchaseLoading.value) return;
+                        controller.openTicketUrl(ticketUrl);
+
+                      },
+                    ),
                   ],
                 );
               }),

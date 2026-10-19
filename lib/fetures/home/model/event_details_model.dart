@@ -56,6 +56,8 @@ class Data {
   bool? isFavorited;
   List<dynamic>? someInterestPeopsle;
   bool? isAlreadyProgrammePurchased;
+  Programme? programmeData;
+  num? pricePence;
 
   Data({
     this.sId,
@@ -90,6 +92,8 @@ class Data {
     this.isFavorited,
     this.someInterestPeopsle,
     bool? isAlreadyProgrammePurchased,
+    this.programmeData,
+    this.pricePence,
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -119,10 +123,11 @@ class Data {
     eventDate = json['event_date'];
     vanue = json['vanue'] != null ? Vanue.fromJson(json['vanue']) : null;
 
-    // 🛠️ Safe Casting: programme যদি String না হয়ে Map/Object হিসেবে আসে
     if (json['programme'] != null) {
       if (json['programme'] is Map) {
-        programme = json['programme']['title'] ?? json['programme']['name'] ?? json['programme'].toString();
+        programmeData = Programme.fromJson(Map<String, dynamic>.from(json['programme']));
+        programme = programmeData?.title;
+        pricePence = programmeData?.pricePence;
       } else {
         programme = json['programme'].toString();
       }
@@ -200,6 +205,13 @@ class Data {
     if (social != null) {
       data['social'] = social!.toJson();
     }
+
+    if (programmeData != null) {
+      data['programme'] = programmeData!.toJson();
+    } else {
+      data['programme'] = programme;
+    }
+
     if (nearbyRestaurants != null) {
       data['nearby_restaurants'] = nearbyRestaurants!.map((v) => v.toJson()).toList();
     }
@@ -524,6 +536,32 @@ class Artist {
     data['name'] = name;
     data['image'] = image;
     data['type'] = type;
+    return data;
+  }
+}
+
+
+class Programme {
+  String? sId;
+  String? title;
+  bool? isFree;
+  num? pricePence;
+
+  Programme({this.sId, this.title, this.isFree, this.pricePence});
+
+  Programme.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    title = json['title'];
+    isFree = json['is_free'];
+    pricePence = json['price_pence'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_id'] = sId;
+    data['title'] = title;
+    data['is_free'] = isFree;
+    data['price_pence'] = pricePence;
     return data;
   }
 }
