@@ -1,13 +1,11 @@
-
-import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:digital_event/core/storage/storage_key.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/storage/local_storage.dart';
+import 'core/utils/fcm_service.dart';
 import 'app.dart';
 import 'firebase_options.dart';
 import 'package:uuid/uuid.dart';
@@ -33,6 +31,9 @@ Future<void> main() async {
 
   await saveDeviceIdOnStartup();
   await LocalStorage.getAllPrefData();
+  if (LocalStorage.isLogIn) {
+    FCMService.getAndPrintFCMToken();
+  }
   runApp(const MyApp());
 }
 
