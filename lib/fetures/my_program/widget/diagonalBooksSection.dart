@@ -1,4 +1,3 @@
-import 'package:digital_event/core/route/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,7 @@ class _DiagonalBooksSectionState extends State<DiagonalBooksSection> {
   late PageController _pageController;
   double _currentPage = 0.0;
 
-  final int _loopCount = 10000000;
+  final int _loopCount = 10000;
 
   // @override
   // void initState() {

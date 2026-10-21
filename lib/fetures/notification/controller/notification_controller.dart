@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/storage/local_storage.dart';
 import '../../../core/utils/api_enpoint.dart';
@@ -41,14 +38,46 @@ class NotificationController extends GetxController {
           notifications = notificationModel.data?.notifications ?? [];
         }
       }
-      // else {
-      //   Get.snackbar("Error", response.message);
-      // }
     } catch (e) {
       debugPrint("Error fetching notifications: $e");
     } finally {
       isLoading.value = false;
       update();
+    }
+  }
+
+  Future<void> markAllAsRead() async {
+    try {
+      unreadCount.value = 0;
+      for (var item in notifications) {
+        item.isRead = true;
+      }
+      update();
+
+      ApiResponseModel response = await ApiService.patch("/notification");
+      if (!response.isSuccess) {
+        await ApiService.patch("/notification/read-all");
+      }
+    } catch (e) {
+      debugPrint("Error marking notifications as read: $e");
+    }
+  }
+
+  Future<void> markAsRead(String? id) async {
+    if (id == null || id.isEmpty) return;
+    try {
+      if (unreadCount.value > 0) {
+        unreadCount.value -= 1;
+      }
+      final index = notifications.indexWhere((item) => item.sId == id);
+      if (index != -1) {
+        notifications[index].isRead = true;
+      }
+      update();
+
+      await ApiService.patch("/notification/$id");
+    } catch (e) {
+      debugPrint("Error marking single notification as read: $e");
     }
   }
   String formatTime(String? dateStr) {

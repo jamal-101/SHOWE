@@ -10,6 +10,7 @@ import '../../../core/storage/storage_key.dart';
 import '../../../core/utils/api_enpoint.dart';
 import '../../../core/utils/api_response_model.dart';
 import '../../../core/utils/api_service.dart';
+import '../../../core/utils/fcm_service.dart';
 import '../../home/screen/home_screen.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:image/image.dart' as img;
@@ -218,9 +219,11 @@ class ProfileInformationController extends GetxController {
       if (image == null) throw Exception("Failed to capture image");
 
       capturedImage = await _fixImageRotation(image.path);
+      String? fcmToken = await FCMService.getAndPrintFCMToken();
 
       dio.FormData formData = dio.FormData.fromMap({
         "device_id": LocalStorage.deviceId,
+        "fcmToken": fcmToken ?? "",
         "image": await dio.MultipartFile.fromFile(
           capturedImage!.path,
           filename: "face_login.jpg",
@@ -257,6 +260,7 @@ class ProfileInformationController extends GetxController {
           await LocalStorage.setString(LocalStorageKeys.token, newAccessToken);
           await LocalStorage.setBool(LocalStorageKeys.isLogIn, true);
           await LocalStorage.getAllPrefData();
+          await FCMService.getAndPrintFCMToken();
         }
         showSuccessDialog();
       } else {

@@ -454,20 +454,21 @@ class SingUpOrLoginScreen extends StatelessWidget {
         Obx(
           () => Column(
             children: [
-              if (Platform.isIOS)
+              if (Platform.isIOS) ...[
                 _socialButton(
                   AppString.continueApple,
                   isLoading: controller.isAppleLoading.value,
                   AppImages.appleIcon,
                   onTap: () => controller.appleLogin(),
-                )
-              else
-                _socialButton(
-                  AppString.continueGoogle,
-                  isLoading: controller.isGoogleLoading.value,
-                  AppImages.googleIcon,
-                  onTap: () => controller.googleLogin(),
                 ),
+                SizedBox(height: 12.h),
+              ],
+              _socialButton(
+                AppString.continueGoogle,
+                isLoading: controller.isGoogleLoading.value,
+                AppImages.googleIcon,
+                onTap: () => controller.googleLogin(),
+              ),
               SizedBox(height: 12.h),
               _socialButton(
                 AppString.continueFacebook,

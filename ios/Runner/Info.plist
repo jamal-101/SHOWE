@@ -59,9 +59,21 @@
         <true/>
     </dict>
 
-    <!-- 🔹 Deep Link: Custom Scheme (digitalevent://) & Facebook Login -->
+    <!-- 🔹 Google Sign-In Configuration -->
+    <key>GIDClientID</key>
+    <string>755395683027-53t6f4vgooof7ntbm0ervlhgaqipe55t.apps.googleusercontent.com</string>
+
+    <!-- 🔹 Deep Link: Custom Scheme (digitalevent://), Facebook Login, & Google Sign-In -->
     <key>CFBundleURLTypes</key>
     <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.755395683027-53t6f4vgooof7ntbm0ervlhgaqipe55t</string>
+            </array>
+        </dict>
         <dict>
             <key>CFBundleTypeRole</key>
             <string>Editor</string>
@@ -112,5 +124,12 @@
     <string>This app requires access to your location to display nearby events and services.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>This app requires access to your location to display nearby events and services.</string>
+
+    <!-- 🔹 Background Modes for Push Notifications -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+        <string>remote-notification</string>
+    </array>
 </dict>
 </plist>
