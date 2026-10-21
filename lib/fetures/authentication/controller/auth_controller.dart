@@ -440,9 +440,7 @@ class AuthController extends GetxController {
         "newPassword": newPass,
         "confirmPassword": confirmPass,
       };
-      Map<String, String> headers = {
-        "Authorization": resetToken,
-      };
+      Map<String, String> headers = {"Authorization": resetToken};
 
       ApiResponseModel response = await ApiService.post(
         "/auth/reset-password",
@@ -502,12 +500,14 @@ class AuthController extends GetxController {
       final idToken = googleUser.authentication.idToken;
 
       final credential = GoogleAuthProvider.credential(idToken: idToken);
-      final userCred =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCred = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
 
       await _socialLoginToBackend(userCred, socialType: "Google");
     } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) return; // user cancel korle kichu na
+      if (e.code == GoogleSignInExceptionCode.canceled)
+        return; // user cancel korle kichu na
       _showSocialError(e.toString());
     } catch (e) {
       _showSocialError(e.toString());
@@ -525,14 +525,21 @@ class AuthController extends GetxController {
         ..addScope('email')
         ..addScope('name');
 
-      debugPrint("Triggering FirebaseAuth signInWithProvider(appleProvider)...");
-      final userCred =
-      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+      debugPrint(
+        "Triggering FirebaseAuth signInWithProvider(appleProvider)...",
+      );
+      final userCred = await FirebaseAuth.instance.signInWithProvider(
+        appleProvider,
+      );
 
-      debugPrint("Apple Auth Success. Firebase User UID: ${userCred.user?.uid}");
+      debugPrint(
+        "Apple Auth Success. Firebase User UID: ${userCred.user?.uid}",
+      );
       await _socialLoginToBackend(userCred, socialType: "Apple");
     } on FirebaseAuthException catch (e) {
-      debugPrint("=================== Apple Login FirebaseAuthException ===================");
+      debugPrint(
+        "=================== Apple Login FirebaseAuthException ===================",
+      );
       debugPrint("Error Code: ${e.code}");
       debugPrint("Error Message: ${e.message}");
       if (e.code == 'canceled' || e.code == 'web-context-canceled') {
@@ -541,23 +548,29 @@ class AuthController extends GetxController {
       }
       _showSocialError(e.message ?? e.toString());
     } catch (e, stack) {
-      debugPrint("=================== Apple Login Exception ===================");
+      debugPrint(
+        "=================== Apple Login Exception ===================",
+      );
       debugPrint("Error: $e");
       debugPrint("Stacktrace: $stack");
       _showSocialError(e.toString());
     } finally {
       isAppleLoading.value = false;
-      debugPrint("=================== Apple Login Finished ===================");
+      debugPrint(
+        "=================== Apple Login Finished ===================",
+      );
     }
   }
 
   Future<void> _socialLoginToBackend(
-      UserCredential userCred, {
-        required String socialType, // 'Google' / 'Facebook' / 'Apple'
-      }) async {
+    UserCredential userCred, {
+    required String socialType,
+  }) async {
     final user = userCred.user;
     final firebaseToken = await user?.getIdToken();
-    debugPrint("Social Login to Backend - Type: $socialType, Email: ${user?.email}");
+    debugPrint(
+      "Social Login to Backend - Type: $socialType, Email: ${user?.email}",
+    );
     if (user == null || firebaseToken == null) {
       _showSocialError("Could not get authentication token");
       return;
@@ -576,7 +589,9 @@ class AuthController extends GetxController {
       },
     );
 
-    debugPrint("Backend Response Status: ${response.isSuccess}, Message: ${response.message}");
+    debugPrint(
+      "Backend Response Status: ${response.isSuccess}, Message: ${response.message}",
+    );
 
     if (response.isSuccess &&
         response.data['data'] != null &&
@@ -593,7 +608,8 @@ class AuthController extends GetxController {
       Get.offAllNamed(AppRoutes.homeScreen);
     } else {
       await FirebaseAuth.instance.signOut();
-      final msg = (response.data is Map ? response.data['message'] : null) ??
+      final msg =
+          (response.data['message']) ??
           response.message;
       _showSocialError(msg.toString());
     }
@@ -613,7 +629,9 @@ class AuthController extends GetxController {
   Future<void> faceBookLogin() async {
     try {
       isFacebookLoading.value = true;
-      debugPrint("=================== Facebook Login Started ===================");
+      debugPrint(
+        "=================== Facebook Login Started ===================",
+      );
 
       // Log out first to clear any stale cached tokens
       await FacebookAuth.instance.logOut();
@@ -622,7 +640,9 @@ class AuthController extends GetxController {
       final rawNonce = DateTime.now().millisecondsSinceEpoch.toString();
       final sha256Nonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
-      debugPrint("Requesting Facebook Login with sha256Nonce: $sha256Nonce (rawNonce: $rawNonce)...");
+      debugPrint(
+        "Requesting Facebook Login with sha256Nonce: $sha256Nonce (rawNonce: $rawNonce)...",
+      );
       final result = await FacebookAuth.instance.login(
         permissions: ['public_profile', 'email'],
         loginBehavior: LoginBehavior.nativeWithFallback,
@@ -644,21 +664,30 @@ class AuthController extends GetxController {
       }
 
       final tokenString = result.accessToken?.tokenString ?? "";
-      debugPrint("Facebook Token obtained (Length: ${tokenString.length}). Authenticating with Firebase...");
+      debugPrint(
+        "Facebook Token obtained (Length: ${tokenString.length}). Authenticating with Firebase...",
+      );
 
       UserCredential userCred;
       if (Platform.isIOS) {
         try {
-          debugPrint("iOS: Attempting OAuthProvider('facebook.com') with idToken and rawNonce...");
-          final credential = OAuthProvider('facebook.com').credential(
-            idToken: tokenString,
-            rawNonce: rawNonce,
+          debugPrint(
+            "iOS: Attempting OAuthProvider('facebook.com') with idToken and rawNonce...",
           );
-          userCred = await FirebaseAuth.instance.signInWithCredential(credential);
+          final credential = OAuthProvider(
+            'facebook.com',
+          ).credential(idToken: tokenString, rawNonce: rawNonce);
+          userCred = await FirebaseAuth.instance.signInWithCredential(
+            credential,
+          );
         } on FirebaseAuthException catch (iosErr) {
-          debugPrint("iOS OAuthProvider failed (${iosErr.code}: ${iosErr.message}). Trying FacebookAuthProvider as fallback...");
+          debugPrint(
+            "iOS OAuthProvider failed (${iosErr.code}: ${iosErr.message}). Trying FacebookAuthProvider as fallback...",
+          );
           final fallbackCred = FacebookAuthProvider.credential(tokenString);
-          userCred = await FirebaseAuth.instance.signInWithCredential(fallbackCred);
+          userCred = await FirebaseAuth.instance.signInWithCredential(
+            fallbackCred,
+          );
         }
       } else {
         debugPrint("Android: Using FacebookAuthProvider.credential...");
@@ -666,10 +695,14 @@ class AuthController extends GetxController {
         userCred = await FirebaseAuth.instance.signInWithCredential(credential);
       }
 
-      debugPrint("Firebase Auth Success with Facebook. User UID: ${userCred.user?.uid}");
+      debugPrint(
+        "Firebase Auth Success with Facebook. User UID: ${userCred.user?.uid}",
+      );
       await _socialLoginToBackend(userCred, socialType: "Facebook");
     } on FirebaseAuthException catch (e) {
-      debugPrint("=================== Facebook FirebaseAuthException ===================");
+      debugPrint(
+        "=================== Facebook FirebaseAuthException ===================",
+      );
       debugPrint("Error Code: ${e.code}");
       debugPrint("Error Message: ${e.message}");
       if (e.code == 'account-exists-with-different-credential') {
@@ -680,13 +713,17 @@ class AuthController extends GetxController {
         _showSocialError(e.message ?? e.toString());
       }
     } catch (e, stack) {
-      debugPrint("=================== Facebook Login Exception ===================");
+      debugPrint(
+        "=================== Facebook Login Exception ===================",
+      );
       debugPrint("Error: $e");
       debugPrint("Stacktrace: $stack");
       _showSocialError(e.toString());
     } finally {
       isFacebookLoading.value = false;
-      debugPrint("=================== Facebook Login Finished ===================");
+      debugPrint(
+        "=================== Facebook Login Finished ===================",
+      );
     }
   }
 }

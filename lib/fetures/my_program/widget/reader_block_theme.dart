@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../model/single_proram_model.dart';
@@ -42,7 +44,8 @@ class ReaderBlockTheme extends InheritedWidget {
     return context.dependOnInheritedWidgetOfExactType<ReaderBlockTheme>();
   }
 
-  factory ReaderBlockTheme.fromLayout(Layout? layout, {required Widget child}) {
+  // factory ReaderBlockTheme.fromLayout(Layout? layout, {required Widget child}) {
+  factory ReaderBlockTheme.fromLayout(Layout? layout, {Pages? page, required Widget child}) {
     final resolvedBg = resolveLayoutBackground(layout);
     final cardHint = parseProgrammeHex(layout?.cardBackground);
     final isDark = resolvedBg.alpha > 0
@@ -52,14 +55,46 @@ class ReaderBlockTheme extends InheritedWidget {
             layout?.background == 'dark' ||
             layout?.background == 'accent';
 
-    final ink = parseProgrammeHex(layout?.textColor) ??
-        (isDark ? const Color(0xFFFBFAF7) : const Color(0xFF1A1A1A));
-    final title = parseProgrammeHex(layout?.titleColor) ?? ink;
-    final eyebrow = parseProgrammeHex(layout?.eyebrowColor) ??
-        (isDark ? const Color(0xFFF5A800) : const Color(0xFF6B6560));
+    // final ink = parseProgrammeHex(layout?.textColor) ??
+    //     (isDark ? const Color(0xFFFBFAF7) : const Color(0xFF1A1A1A));
+    // final title = parseProgrammeHex(layout?.titleColor) ?? ink;
+    // final eyebrow = parseProgrammeHex(layout?.eyebrowColor) ??
+    //     (isDark ? const Color(0xFFF5A800) : const Color(0xFF6B6560));
+    // final cardBg = parseProgrammeHex(layout?.cardBackground) ??
+    //     (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white);
+    // final cardText = parseProgrammeHex(layout?.cardTextColor) ?? ink;
+
+
+
+
+    final effectiveBg = (resolvedBg.alpha == 0 && page != null)
+        ? resolvePageSurface(page)
+        : resolvedBg;
+
+
+    final bg = effectiveBg.alpha > 0
+        ? effectiveBg
+        : (isDark ? const Color(0xFF05171A) : const Color(0xFFFBFAF7));
+
+    const lightInk = Color(0xFFFBFAF7);
+    const darkInk = Color(0xFF1A1A1A);
+    final autoInk = isDark ? lightInk : darkInk;
+
+    final ink = ensureContrast(parseProgrammeHex(layout?.textColor), bg, autoInk, min: 4.5);
+    final title = ensureContrast(parseProgrammeHex(layout?.titleColor), bg, ink, min: 4.5);
+    final eyebrow = ensureContrast(
+      parseProgrammeHex(layout?.eyebrowColor),
+      bg,
+      isDark ? const Color(0xFFF5A800) : const Color(0xFF6B6560),
+      min: 3.0,
+    );
+
     final cardBg = parseProgrammeHex(layout?.cardBackground) ??
         (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white);
-    final cardText = parseProgrammeHex(layout?.cardTextColor) ?? ink;
+    final cardText = ensureContrast(parseProgrammeHex(layout?.cardTextColor), cardBg,
+        cardBg.computeLuminance() < 0.35 ? lightInk : darkInk, min: 4.5);
+
+
 
     return ReaderBlockTheme(
       ink: ink,
@@ -90,4 +125,19 @@ class ReaderBlockTheme extends InheritedWidget {
         cardBg != oldWidget.cardBg ||
         isDarkBg != oldWidget.isDarkBg;
   }
+}
+
+
+double contrastRatio(Color a, Color b) {
+  final l1 = a.computeLuminance();
+  final l2 = b.computeLuminance();
+  final hi = math.max(l1, l2);
+  final lo = math.min(l1, l2);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+/// fg jodi bg-er sathe porjapto contrast na dey, fallback use hobe.
+Color ensureContrast(Color? fg, Color bg, Color fallback, {double min = 3.5}) {
+  if (fg == null) return fallback;
+  return contrastRatio(fg, bg) >= min ? fg : fallback;
 }
