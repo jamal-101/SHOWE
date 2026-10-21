@@ -52,9 +52,17 @@ class NotificationScreen extends StatelessWidget {
             );
           }
 
+          // Mark all as read when user views notification list
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (controller.unreadCount.value > 0) {
+              controller.markAllAsRead();
+            }
+          });
+
           return RefreshIndicator(
             onRefresh: () async {
               await controller.fetchNotifications();
+              await controller.markAllAsRead();
             },
             child: ListView.separated(
               padding: EdgeInsets.symmetric(vertical: 10.h),
@@ -69,8 +77,9 @@ class NotificationScreen extends StatelessWidget {
                 NotificationItem item = controller.notifications[index];
 
                 return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+                  behavior: HitTestBehavior.opaque,
                   onTap: () {
+                    controller.markAsRead(item.sId);
                     if (item.extraPath != null && item.extraPath!.isNotEmpty) {
                       controller.openNotificationUrl(
                         context,

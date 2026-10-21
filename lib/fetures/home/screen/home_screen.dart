@@ -58,8 +58,62 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Get.toNamed(AppRoutes.notificationScreen)?.then((_) {
+                  //       notificationController.fetchNotifications();
+                  //     });
+                  //   },
+                  //   child: Stack(
+                  //     clipBehavior: Clip.none,
+                  //     children: [
+                  //       Container(
+                  //         padding: EdgeInsets.all(10.w),
+                  //         decoration: BoxDecoration(
+                  //           color: Colors.blueGrey.withValues(alpha: 0.1),
+                  //           shape: BoxShape.circle,
+                  //         ),
+                  //         child: Image.asset(
+                  //           AppImages.bellIcon,
+                  //           height: 22.h,
+                  //           width: 22.w,
+                  //         ),
+                  //       ),
+                  //       Obx(() {
+                  //         int count = notificationController.unreadCount.value;
+                  //         if (count <= 0) return const SizedBox.shrink();
+                  //         return Positioned(
+                  //           top: -2.h,
+                  //           right: -2.w,
+                  //           child: Container(
+                  //             padding: EdgeInsets.all(4.w),
+                  //             decoration: const BoxDecoration(
+                  //               color: Colors.redAccent,
+                  //               shape: BoxShape.circle,
+                  //             ),
+                  //             constraints: BoxConstraints(
+                  //               minWidth: 16.w,
+                  //               minHeight: 16.h,
+                  //             ),
+                  //             child: Center(
+                  //               child: Text(
+                  //                 count > 99 ? '99+' : '$count',
+                  //                 style: TextStyle(
+                  //                   color: Colors.white,
+                  //                   fontSize: 9.sp,
+                  //                   fontWeight: FontWeight.bold,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }),
+                  //     ],
+                  //   ),
+                  // ),
                   GestureDetector(
                     onTap: () {
+                      notificationController.markAllAsRead();
                       Get.toNamed(AppRoutes.notificationScreen)?.then((_) {
                         notificationController.fetchNotifications();
                       });
@@ -111,6 +165,7 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+
                 ],
               ),
 
