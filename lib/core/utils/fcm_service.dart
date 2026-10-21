@@ -20,13 +20,6 @@ class FCMService {
 
       debugPrint('🔔 FCM Permission Status: ${settings.authorizationStatus}');
 
-      // Configure foreground notification presentation options for iOS
-      await messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-
       // Get FCM Token
       String? token = await messaging.getToken();
 
