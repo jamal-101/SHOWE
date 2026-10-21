@@ -117,7 +117,8 @@ class HeroPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasCover = data.coverImage != null && data.coverImage!.trim().isNotEmpty;
+    final hasCover =
+        data.coverImage != null && data.coverImage!.trim().isNotEmpty;
     final coverUrl = getProgrammeImageUrl(data.coverImage);
     final isVideo = isProgrammeVideoUrl(coverUrl);
 
@@ -134,25 +135,25 @@ class HeroPreview extends StatelessWidget {
 
     Widget media = hasCover
         ? ProgrammeMedia(
-      src: data.coverImage,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: h,
-      autoPlay: true,
-      showMuteChip: true,
-      allowFullscreen: true,
-    )
+            src: data.coverImage,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: h,
+            autoPlay: true,
+            showMuteChip: true,
+            allowFullscreen: true,
+          )
         : Container(
-      width: double.infinity,
-      height: h,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF014B52), Color(0xFF01363C)],
-        ),
-      ),
-    );
+            width: double.infinity,
+            height: h,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF014B52), Color(0xFF01363C)],
+              ),
+            ),
+          );
 
     if (heroTag != null && heroTag!.isNotEmpty && hasCover) {
       media = Hero(tag: heroTag!, child: media);
@@ -199,7 +200,9 @@ class HeroPreview extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                         height: 1.15,
                         letterSpacing: -0.3,
-                        shadows: [Shadow(blurRadius: 10, color: Colors.black54)],
+                        shadows: [
+                          Shadow(blurRadius: 10, color: Colors.black54),
+                        ],
                       ),
                     ),
                   if (data.subtitle != null) ...[
@@ -321,7 +324,9 @@ class _HeroVideoPreviewState extends State<_HeroVideoPreview> {
                         fontWeight: FontWeight.w800,
                         height: 1.15,
                         letterSpacing: -0.3,
-                        shadows: [Shadow(blurRadius: 10, color: Colors.black54)],
+                        shadows: [
+                          Shadow(blurRadius: 10, color: Colors.black54),
+                        ],
                       ),
                     ),
                   if (widget.data.subtitle != null) ...[
@@ -427,10 +432,10 @@ class SchedulePreview extends StatelessWidget {
                   child: Text(
                     item.time ?? '',
                     style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14,
-                        color: timeColor,
-                        fontFeatures: const [FontFeature.tabularFigures()]
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                      color: timeColor,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ),
@@ -565,13 +570,18 @@ class BehindScenesPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final images = data.images ?? [];
+    final t = ReaderBlockTheme.maybeOf(context);
+    final muted = t?.inkMuted ?? const Color(0xFF6B6560);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         eyebrowLabel(data.title ?? 'Behind the scenes'),
         if (data.body != null) ...[
           SizedBox(height: 8.h),
-          Text(data.body!, style: TextStyle(fontSize: 14.sp, color: Colors.black54, height: 1.5)),
+          Text(
+            data.body!,
+            style: TextStyle(fontSize: 14.sp, color: muted, height: 1.5),
+          ),
         ],
         SizedBox(height: 12.h),
         GridView.builder(
@@ -605,6 +615,7 @@ class SponsorThanksPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sponsors = data.sponsors ?? [];
+    final p = _Pal.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -627,9 +638,11 @@ class SponsorThanksPreview extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  // color: Colors.white,
+                  color: p.cardBg,
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: const Color(0xFFE5E0D8)),
+                  // border: Border.all(color: const Color(0xFFE5E0D8)),
+                  border: Border.all(color: p.line),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -640,12 +653,21 @@ class SponsorThanksPreview extends StatelessWidget {
                         child: ProgrammeMedia(src: s.logo, fit: BoxFit.contain),
                       )
                     else
-                      Icon(Icons.favorite, size: 14.sp, color: const Color(0xFFF5A800)),
+                      Icon(
+                        Icons.favorite,
+                        size: 14.sp,
+                        color: const Color(0xFFF5A800),
+                      ),
                     SizedBox(height: 6.h),
                     Text(
                       s.name ?? '',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
+                      // style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.sp,
+                        color: p.cardText,
+                      ),
                     ),
                   ],
                 ),
@@ -664,12 +686,15 @@ class RefreshmentsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = _Pal.of(context);
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2EFE9),
+        // color: const Color(0xFFF2EFE9),
+        color: p.cardBg,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE5E0D8)),
+        // border: Border.all(color: const Color(0xFFE5E0D8)),
+        border: Border.all(color: p.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,11 +711,19 @@ class RefreshmentsPreview extends StatelessWidget {
           SizedBox(height: 12.h),
           Text(
             data.title ?? '',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp),
+            // style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp),
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+              color: p.cardText,
+            ),
           ),
           if (data.description != null) ...[
             SizedBox(height: 6.h),
-            Text(data.description!, style: TextStyle(fontSize: 13.sp, color: Colors.black54)),
+            Text(
+              data.description!,
+              style: TextStyle(fontSize: 13.sp, color: p.muted),
+            ),
           ],
           if (data.ctaLabel != null) ...[
             SizedBox(height: 12.h),
@@ -707,7 +740,11 @@ class RefreshmentsPreview extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 4.w),
-                  Icon(Icons.arrow_forward, size: 14.sp, color: const Color(0xFF014B52)),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 14.sp,
+                    color: const Color(0xFF014B52),
+                  ),
                 ],
               ),
             ),
@@ -941,7 +978,10 @@ class CastSpotlightPreview extends StatelessWidget {
                   GestureDetector(
                     onTap: () => openExternalUrl(data.linkUrl),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
                         color: primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20.r),
@@ -1016,11 +1056,7 @@ class _CastSpotlightFullscreen extends StatelessWidget {
             SizedBox(height: 8.h),
             Text(
               data.bio!,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: inkMuted,
-                height: 1.5,
-              ),
+              style: TextStyle(fontSize: 13.sp, color: inkMuted, height: 1.5),
             ),
           ],
         ],
@@ -1039,10 +1075,7 @@ class _CastSpotlightFullscreen extends StatelessWidget {
         child: Stack(
           children: [
             if (isVideo)
-              FullscreenVideoPlayer(
-                url: url,
-                footer: _footer(),
-              )
+              FullscreenVideoPlayer(url: url, footer: _footer())
             else
               Column(
                 children: [
@@ -1193,9 +1226,6 @@ class NarrativeTextPreview extends StatelessWidget {
 //   }
 // }
 
-
-
-
 class ImageStoryPreview extends StatelessWidget {
   final BlockData data;
   const ImageStoryPreview({super.key, required this.data});
@@ -1208,12 +1238,12 @@ class ImageStoryPreview extends StatelessWidget {
     final pos = data.imagePosition ?? 'top';
     final image = data.image != null
         ? ProgrammeMedia(
-      src: data.image,
-      fit: BoxFit.cover,
-      borderRadius: BorderRadius.circular(8.r),
-      width: pos == 'top' ? double.infinity : 96.w,
-      height: pos == 'top' ? null : 96.w,
-    )
+            src: data.image,
+            fit: BoxFit.cover,
+            borderRadius: BorderRadius.circular(8.r),
+            width: pos == 'top' ? double.infinity : 96.w,
+            height: pos == 'top' ? null : 96.w,
+          )
         : null;
 
     final bodyStyle = TextStyle(fontSize: 13.5.sp, color: muted, height: 1.5);
@@ -1255,7 +1285,6 @@ class ImageStoryPreview extends StatelessWidget {
   }
 }
 
-
 // ───────────────────────── Module 4 ─────────────────────────
 
 class PollPreview extends StatefulWidget {
@@ -1274,25 +1303,38 @@ class _PollAnswerItem {
   final int count;
   final double? percentage;
 
-  _PollAnswerItem({this.answerId, this.answer, required this.count, this.percentage});
+  _PollAnswerItem({
+    this.answerId,
+    this.answer,
+    required this.count,
+    this.percentage,
+  });
 
   factory _PollAnswerItem.fromJson(Map<String, dynamic> json) {
     return _PollAnswerItem(
       answerId: json['answer_id']?.toString(),
       answer: json['answer']?.toString(),
       count: (json['count'] is num) ? (json['count'] as num).toInt() : 0,
-      percentage: (json['percentage'] is num) ? (json['percentage'] as num).toDouble() : null,
+      percentage: (json['percentage'] is num)
+          ? (json['percentage'] as num).toDouble()
+          : null,
     );
   }
 }
 
-_PollAnswerItem? _matchPollAnswer(List<_PollAnswerItem>? liveAnswers, {String? optionId, String? optionLabel}) {
+_PollAnswerItem? _matchPollAnswer(
+  List<_PollAnswerItem>? liveAnswers, {
+  String? optionId,
+  String? optionLabel,
+}) {
   if (liveAnswers == null) return null;
   for (final a in liveAnswers) {
     if (a.answerId != null && a.answerId == optionId) return a;
   }
   for (final a in liveAnswers) {
-    if (a.answer != null && optionLabel != null && a.answer!.toLowerCase() == optionLabel.toLowerCase()) {
+    if (a.answer != null &&
+        optionLabel != null &&
+        a.answer!.toLowerCase() == optionLabel.toLowerCase()) {
       return a;
     }
   }
@@ -1345,7 +1387,9 @@ class _PollPreviewState extends State<PollPreview> {
         setState(() {
           answers = raw
               .whereType<Map>()
-              .map((e) => _PollAnswerItem.fromJson(Map<String, dynamic>.from(e)))
+              .map(
+                (e) => _PollAnswerItem.fromJson(Map<String, dynamic>.from(e)),
+              )
               .toList();
         });
       }
@@ -1365,11 +1409,7 @@ class _PollPreviewState extends State<PollPreview> {
 
     final res = await ApiService.post(
       ApiEndPoint.answerPoll,
-      body: {
-        "poll_id": widget.data.id,
-        "answer": o.label,
-        "answer_id": o.id,
-      },
+      body: {"poll_id": widget.data.id, "answer": o.label, "answer_id": o.id},
     );
 
     if (!mounted) return;
@@ -1394,17 +1434,221 @@ class _PollPreviewState extends State<PollPreview> {
     }
   }
 
-  _PollAnswerItem? _matchAnswer(List<_PollAnswerItem>? liveAnswers, Options option) {
-    return _matchPollAnswer(liveAnswers, optionId: option.id, optionLabel: option.label);
+  _PollAnswerItem? _matchAnswer(
+    List<_PollAnswerItem>? liveAnswers,
+    Options option,
+  ) {
+    return _matchPollAnswer(
+      liveAnswers,
+      optionId: option.id,
+      optionLabel: option.label,
+    );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final options = widget.data.options ?? [];
+  //   final staticResults = widget.data.results ?? [];
+  //   // Prefer the live counts fetched from /polls/<id>/answers; fall back to
+  //   // the static snapshot the programme loaded with if we don't have them
+  //   // yet (e.g. still loading, or results aren't public for this poll).
+  //   final liveAnswers = answers;
+  //   final total = liveAnswers != null
+  //       ? liveAnswers.fold<int>(0, (a, r) => a + r.count)
+  //       : staticResults.fold<int>(0, (a, r) => a + (r.count ?? 0));
+  //
+  //   return Container(
+  //     padding: EdgeInsets.all(16.w),
+  //     decoration: BoxDecoration(
+  //       color: const Color(0xFFF2EFE9),
+  //       borderRadius: BorderRadius.circular(12.r),
+  //       border: Border.all(color: const Color(0xFFE5E0D8)),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           widget.data.question ?? '',
+  //           style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700),
+  //         ),
+  //         SizedBox(height: 12.h),
+  //         GridView.builder(
+  //           shrinkWrap: true,
+  //           physics: const NeverScrollableScrollPhysics(),
+  //           itemCount: options.length,
+  //           gridDelegate: aSliverGrid(2),
+  //           itemBuilder: (context, i) {
+  //             final o = options[i];
+  //             final selected = voted == o.id;
+  //             return GestureDetector(
+  //               onTap: () => _submitVote(o, i),
+  //               child: Container(
+  //                 alignment: Alignment.center,
+  //                 padding: EdgeInsets.symmetric(horizontal: 8.w),
+  //                 decoration: BoxDecoration(
+  //                   color: selected ? const Color(0xFF014B52) : Colors.white,
+  //                   borderRadius: BorderRadius.circular(8.r),
+  //                   border: Border.all(
+  //                     color: selected
+  //                         ? const Color(0xFF014B52)
+  //                         : const Color(0xFFE5E0D8),
+  //                   ),
+  //                 ),
+  //                 child: selected && submitting
+  //                     ? SizedBox(
+  //                         width: 16.w,
+  //                         height: 16.w,
+  //                         child: const CircularProgressIndicator(
+  //                           strokeWidth: 2,
+  //                           valueColor: AlwaysStoppedAnimation(Colors.white),
+  //                         ),
+  //                       )
+  //                     : Text(
+  //                         '${o.emoji ?? ''} ${o.label ?? ''}'.trim(),
+  //                         textAlign: TextAlign.center,
+  //                         style: TextStyle(
+  //                           fontWeight: FontWeight.w600,
+  //                           fontSize: 13.sp,
+  //                           color: selected ? Colors.white : Colors.black87,
+  //                         ),
+  //                       ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //         if (errorText != null) ...[
+  //           SizedBox(height: 12.h),
+  //           Text(
+  //             errorText!,
+  //             style: TextStyle(
+  //               fontSize: 12.5.sp,
+  //               color: Colors.red.shade700,
+  //               fontWeight: FontWeight.w600,
+  //             ),
+  //           ),
+  //         ],
+  //         if (voted != null &&
+  //             !submitting &&
+  //             errorText == null &&
+  //             widget.data.thankYouMessage != null) ...[
+  //           SizedBox(height: 12.h),
+  //           Text(
+  //             widget.data.thankYouMessage!,
+  //             style: TextStyle(
+  //               fontSize: 12.5.sp,
+  //               color: Colors.green.shade700,
+  //               fontWeight: FontWeight.w600,
+  //             ),
+  //           ),
+  //         ],
+  //         if (widget.data.showResultsLive == true || voted != null) ...[
+  //           SizedBox(height: 16.h),
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Text(
+  //                 'RESULTS',
+  //                 style: TextStyle(
+  //                   fontSize: 10.sp,
+  //                   fontWeight: FontWeight.w700,
+  //                   color: Colors.black45,
+  //                   letterSpacing: 0.5,
+  //                 ),
+  //               ),
+  //               if (loadingAnswers)
+  //                 Row(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     SizedBox(
+  //                       width: 10.w,
+  //                       height: 10.w,
+  //                       child: const CircularProgressIndicator(
+  //                         strokeWidth: 1.5,
+  //                         color: Colors.black45,
+  //                       ),
+  //                     ),
+  //                     SizedBox(width: 4.w),
+  //                     Text(
+  //                       'Loading...',
+  //                       style: TextStyle(
+  //                         fontSize: 10.sp,
+  //                         color: Colors.black45,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 )
+  //               else
+  //                 Text(
+  //                   '$total ${total == 1 ? 'vote' : 'votes'}',
+  //                   style: TextStyle(fontSize: 10.sp, color: Colors.black45),
+  //                 ),
+  //             ],
+  //           ),
+  //           SizedBox(height: 8.h),
+  //           ...options.asMap().entries.map((e) {
+  //             final option = e.value;
+  //             // Match the same way the web does: by answer_id first, then
+  //             // by label, and only fall back to the initial static snapshot
+  //             // if we don't have live answers at all yet.
+  //             final _PollAnswerItem? match = _matchAnswer(liveAnswers, option);
+  //             final int count =
+  //                 match?.count ??
+  //                 (e.key < staticResults.length
+  //                     ? (staticResults[e.key].count ?? 0)
+  //                     : 0);
+  //             final pct = total > 0 ? (count / total * 100).round() : 0;
+  //             final width = (pct < 8 ? 8 : pct) / 100;
+  //             return Padding(
+  //               padding: EdgeInsets.only(bottom: 8.h),
+  //               child: Column(
+  //                 children: [
+  //                   Row(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                     children: [
+  //                       Text(
+  //                         option.label ?? '',
+  //                         style: TextStyle(
+  //                           fontSize: 11.sp,
+  //                           color: Colors.black54,
+  //                         ),
+  //                       ),
+  //                       Text(
+  //                         '$count',
+  //                         style: TextStyle(
+  //                           fontSize: 11.sp,
+  //                           color: Colors.black54,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 4.h),
+  //                   ClipRRect(
+  //                     borderRadius: BorderRadius.circular(99),
+  //                     child: LinearProgressIndicator(
+  //                       value: width,
+  //                       minHeight: 8.h,
+  //                       backgroundColor: Colors.white,
+  //                       color: const Color(0xFF014B52),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             );
+  //           }),
+  //         ],
+  //       ],
+  //     ),
+  //   );
+  // }
+
+
 
   @override
   Widget build(BuildContext context) {
+    final p = _Pal.of(context);
+
     final options = widget.data.options ?? [];
     final staticResults = widget.data.results ?? [];
-    // Prefer the live counts fetched from /polls/<id>/answers; fall back to
-    // the static snapshot the programme loaded with if we don't have them
-    // yet (e.g. still loading, or results aren't public for this poll).
     final liveAnswers = answers;
     final total = liveAnswers != null
         ? liveAnswers.fold<int>(0, (a, r) => a + r.count)
@@ -1413,16 +1657,20 @@ class _PollPreviewState extends State<PollPreview> {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2EFE9),
+        color: p.cardBg,                                   // was 0xFFF2EFE9
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE5E0D8)),
+        border: Border.all(color: p.line),                 // was 0xFFE5E0D8
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             widget.data.question ?? '',
-            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              color: p.cardText,                           // added
+            ),
           ),
           SizedBox(height: 12.h),
           GridView.builder(
@@ -1439,10 +1687,12 @@ class _PollPreviewState extends State<PollPreview> {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFF014B52) : Colors.white,
+                    color: selected
+                        ? const Color(0xFF014B52)
+                        : p.cardText.withValues(alpha: 0.08), // was Colors.white
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(
-                      color: selected ? const Color(0xFF014B52) : const Color(0xFFE5E0D8),
+                      color: selected ? const Color(0xFF014B52) : p.line,
                     ),
                   ),
                   child: selected && submitting
@@ -1460,7 +1710,7 @@ class _PollPreviewState extends State<PollPreview> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 13.sp,
-                      color: selected ? Colors.white : Colors.black87,
+                      color: selected ? Colors.white : p.cardText, // was black87
                     ),
                   ),
                 ),
@@ -1471,14 +1721,23 @@ class _PollPreviewState extends State<PollPreview> {
             SizedBox(height: 12.h),
             Text(
               errorText!,
-              style: TextStyle(fontSize: 12.5.sp, color: Colors.red.shade700, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 12.5.sp,
+                  color: Colors.red.shade700,
+                  fontWeight: FontWeight.w600),
             ),
           ],
-          if (voted != null && !submitting && errorText == null && widget.data.thankYouMessage != null) ...[
+          if (voted != null &&
+              !submitting &&
+              errorText == null &&
+              widget.data.thankYouMessage != null) ...[
             SizedBox(height: 12.h),
             Text(
               widget.data.thankYouMessage!,
-              style: TextStyle(fontSize: 12.5.sp, color: Colors.green.shade700, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 12.5.sp,
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.w600),
             ),
           ],
           if (widget.data.showResultsLive == true || voted != null) ...[
@@ -1488,7 +1747,11 @@ class _PollPreviewState extends State<PollPreview> {
               children: [
                 Text(
                   'RESULTS',
-                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w700, color: Colors.black45, letterSpacing: 0.5),
+                  style: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w700,
+                      color: p.faint,                      // was black45
+                      letterSpacing: 0.5),
                 ),
                 if (loadingAnswers)
                   Row(
@@ -1497,27 +1760,29 @@ class _PollPreviewState extends State<PollPreview> {
                       SizedBox(
                         width: 10.w,
                         height: 10.w,
-                        child: const CircularProgressIndicator(strokeWidth: 1.5, color: Colors.black45),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 1.5, color: p.faint), // was black45
                       ),
                       SizedBox(width: 4.w),
-                      Text('Loading...', style: TextStyle(fontSize: 10.sp, color: Colors.black45)),
+                      Text('Loading...',
+                          style: TextStyle(fontSize: 10.sp, color: p.faint)),
                     ],
                   )
                 else
                   Text(
                     '$total ${total == 1 ? 'vote' : 'votes'}',
-                    style: TextStyle(fontSize: 10.sp, color: Colors.black45),
+                    style: TextStyle(fontSize: 10.sp, color: p.faint),
                   ),
               ],
             ),
             SizedBox(height: 8.h),
             ...options.asMap().entries.map((e) {
               final option = e.value;
-              // Match the same way the web does: by answer_id first, then
-              // by label, and only fall back to the initial static snapshot
-              // if we don't have live answers at all yet.
               final _PollAnswerItem? match = _matchAnswer(liveAnswers, option);
-              final int count = match?.count ?? (e.key < staticResults.length ? (staticResults[e.key].count ?? 0) : 0);
+              final int count = match?.count ??
+                  (e.key < staticResults.length
+                      ? (staticResults[e.key].count ?? 0)
+                      : 0);
               final pct = total > 0 ? (count / total * 100).round() : 0;
               final width = (pct < 8 ? 8 : pct) / 100;
               return Padding(
@@ -1527,8 +1792,10 @@ class _PollPreviewState extends State<PollPreview> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(option.label ?? '', style: TextStyle(fontSize: 11.sp, color: Colors.black54)),
-                        Text('$count', style: TextStyle(fontSize: 11.sp, color: Colors.black54)),
+                        Text(option.label ?? '',
+                            style: TextStyle(fontSize: 11.sp, color: p.muted)),
+                        Text('$count',
+                            style: TextStyle(fontSize: 11.sp, color: p.muted)),
                       ],
                     ),
                     SizedBox(height: 4.h),
@@ -1537,7 +1804,7 @@ class _PollPreviewState extends State<PollPreview> {
                       child: LinearProgressIndicator(
                         value: width,
                         minHeight: 8.h,
-                        backgroundColor: Colors.white,
+                        backgroundColor: p.cardText.withValues(alpha: 0.12), // was white
                         color: const Color(0xFF014B52),
                       ),
                     ),
@@ -1588,7 +1855,10 @@ class _ReviewPreviewState extends State<ReviewPreview> {
 
     if (thought.isEmpty || submitting) return;
     if (programmeId == null) {
-      setState(() => errorText = "Couldn't find this programme, please reopen it and try again.");
+      setState(
+        () => errorText =
+            "Couldn't find this programme, please reopen it and try again.",
+      );
       return;
     }
 
@@ -1599,10 +1869,7 @@ class _ReviewPreviewState extends State<ReviewPreview> {
 
     final res = await ApiService.post(
       ApiEndPoint.submitUserThought,
-      body: {
-        "proggrame": programmeId,
-        "thought": thought,
-      },
+      body: {"proggrame": programmeId, "thought": thought},
     );
 
     if (!mounted) return;
@@ -1640,7 +1907,11 @@ class _ReviewPreviewState extends State<ReviewPreview> {
         child: Text(
           'Thanks for your review! ✓',
           textAlign: TextAlign.center,
-          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.green.shade700, fontSize: 13.sp),
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.green.shade700,
+            fontSize: 13.sp,
+          ),
         ),
       );
     }
@@ -1650,7 +1921,11 @@ class _ReviewPreviewState extends State<ReviewPreview> {
       children: [
         Text(
           widget.data.prompt ?? 'Leave a review',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w700, color: headingColor),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w700,
+            color: headingColor,
+          ),
         ),
         SizedBox(height: 8.h),
         TextField(
@@ -1664,19 +1939,28 @@ class _ReviewPreviewState extends State<ReviewPreview> {
             counterText: '',
             filled: true,
             fillColor: Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: const BorderSide(color: Color(0xFF014B52)),
             ),
           ),
         ),
-        Text('$chars / $max', style: TextStyle(fontSize: 11.sp, color: counterColor)),
+        Text(
+          '$chars / $max',
+          style: TextStyle(fontSize: 11.sp, color: counterColor),
+        ),
         if (errorText != null) ...[
           SizedBox(height: 8.h),
           Text(
             errorText!,
-            style: TextStyle(fontSize: 12.sp, color: Colors.red.shade700, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.red.shade700,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
         SizedBox(height: 12.h),
@@ -1686,24 +1970,34 @@ class _ReviewPreviewState extends State<ReviewPreview> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF014B52),
-              disabledBackgroundColor: const Color(0xFF014B52).withValues(alpha: 0.4),
+              disabledBackgroundColor: const Color(
+                0xFF014B52,
+              ).withValues(alpha: 0.4),
               disabledForegroundColor: Colors.white.withValues(alpha: 0.7),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
             ),
-            onPressed: (controller.text.trim().isEmpty || submitting) ? null : _submitThought,
+            onPressed: (controller.text.trim().isEmpty || submitting)
+                ? null
+                : _submitThought,
             child: submitting
                 ? SizedBox(
-              width: 18.w,
-              height: 18.w,
-              child: const CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation(Colors.white),
-              ),
-            )
+                    width: 18.w,
+                    height: 18.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(Colors.white),
+                    ),
+                  )
                 : Text(
-              widget.data.submitLabel ?? 'Submit',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13.sp),
-            ),
+                    widget.data.submitLabel ?? 'Submit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13.sp,
+                    ),
+                  ),
           ),
         ),
       ],
@@ -1787,8 +2081,15 @@ class MerchandisePreview extends StatelessWidget {
                   Container(
                     width: 32.w,
                     height: 32.w,
-                    decoration: BoxDecoration(color: primary, shape: BoxShape.circle),
-                    child: Icon(Icons.shopping_bag, size: 14.sp, color: Colors.white),
+                    decoration: BoxDecoration(
+                      color: primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.shopping_bag,
+                      size: 14.sp,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
@@ -1807,6 +2108,7 @@ class FutureShowsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shows = data.shows ?? [];
+    final p = _Pal.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1823,7 +2125,8 @@ class FutureShowsPreview extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 10.h),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: const Color(0xFFE5E0D8)),
+                // border: Border.all(color: const Color(0xFFE5E0D8)),
+                border: Border.all(color: p.line),
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
@@ -1839,9 +2142,21 @@ class FutureShowsPreview extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(s.name ?? '', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                        // Text(s.name ?? '', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                        Text(
+                          s.name ?? '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.sp,
+                            color: p.title,
+                          ),
+                        ),
                         if (s.date != null)
-                          Text(s.date!, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+                          // Text(s.date!, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+                          Text(
+                            s.date!,
+                            style: TextStyle(fontSize: 12.sp, color: p.muted),
+                          ),
                       ],
                     ),
                   ),
@@ -1869,10 +2184,14 @@ class _DonationPreviewState extends State<DonationPreview> {
   @override
   Widget build(BuildContext context) {
     final amounts = widget.data.presetAmounts ?? [];
+    final p = _Pal.of(context);
     return Container(
       decoration: BoxDecoration(
+        // color: ,
+        color: p.cardBg,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE5E0D8)),
+        // border: Border.all(color: const Color(0xFFE5E0D8)),
+        border: Border.all(color: p.cardBg),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -1891,11 +2210,27 @@ class _DonationPreviewState extends State<DonationPreview> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (widget.data.image == null)
-                  Icon(Icons.favorite, color: const Color(0xFFF5A800), size: 18.sp),
-                Text(widget.data.title ?? '', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.sp)),
+                  Icon(
+                    Icons.favorite,
+                    color: const Color(0xFFF5A800),
+                    size: 18.sp,
+                  ),
+                Text(
+                  widget.data.title ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16.sp,
+                    // color:
+                    color: p.cardText
+                  ),
+                ),
                 if (widget.data.body != null) ...[
                   SizedBox(height: 6.h),
-                  Text(widget.data.body!, style: TextStyle(fontSize: 13.sp, color: Colors.black54)),
+                  Text(
+                    widget.data.body!,
+                    // style: TextStyle(fontSize: 13.sp, color: Colors.black54),
+                    style: TextStyle(fontSize: 13.sp, color: p.muted),
+                  ),
                 ],
                 SizedBox(height: 12.h),
                 Row(
@@ -1909,10 +2244,14 @@ class _DonationPreviewState extends State<DonationPreview> {
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 10.h),
                             decoration: BoxDecoration(
-                              color: sel ? const Color(0xFF014B52) : Colors.white,
+                              color: sel
+                                  ? const Color(0xFF014B52)
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(8.r),
                               border: Border.all(
-                                color: sel ? const Color(0xFF014B52) : const Color(0xFFE5E0D8),
+                                color: sel
+                                    ? const Color(0xFF014B52)
+                                    : const Color(0xFFE5E0D8),
                               ),
                             ),
                             alignment: Alignment.center,
@@ -1921,7 +2260,8 @@ class _DonationPreviewState extends State<DonationPreview> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 13.sp,
-                                color: sel ? Colors.white : Colors.black87,
+                                // color: sel ? Colors.white : Colors.black87,
+                                color: sel ? p.cardText.withValues(alpha: 0.08) : p.cardText
                               ),
                             ),
                           ),
@@ -1938,18 +2278,25 @@ class _DonationPreviewState extends State<DonationPreview> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFF5A800),
                       foregroundColor: Colors.black87,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
                     ),
                     onPressed: () {
                       var url = widget.data.ctaUrl ?? '';
                       if (selected != null && url.isNotEmpty) {
-                        url = url.contains('?') ? '$url&amount=$selected' : '$url?amount=$selected';
+                        url = url.contains('?')
+                            ? '$url&amount=$selected'
+                            : '$url?amount=$selected';
                       }
                       openExternalUrl(url);
                     },
                     child: Text(
                       '${widget.data.ctaLabel ?? 'Donate'}${selected != null ? ' — £$selected' : ''}',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.sp,
+                      ),
                     ),
                   ),
                 ),
@@ -1969,6 +2316,7 @@ class OffersPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final offers = data.offers ?? [];
+    final p = _Pal.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1989,20 +2337,40 @@ class OffersPreview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(o.title ?? '', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                Text(
+                  o.title ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.sp,
+                    // color :
+                    color: p.title,
+                  ),
+                ),
                 if (o.description != null)
-                  Text(o.description!, style: TextStyle(fontSize: 12.5.sp, color: Colors.black54)),
+                  Text(
+                    o.description!,
+                    // style: TextStyle(fontSize: 12.5.sp, color: Colors.black54),
+                    style: TextStyle(fontSize: 12.5.sp, color: p.muted),
+                  ),
                 if (o.code != null) ...[
                   SizedBox(height: 8.h),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black87,
                       borderRadius: BorderRadius.circular(4.r),
                     ),
                     child: Text(
                       o.code!,
-                      style: TextStyle(color: Colors.white, fontSize: 11.sp, fontWeight: FontWeight.w800, fontFamily: 'monospace'),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'monospace',
+                      ),
                     ),
                   ),
                 ],
@@ -2042,19 +2410,23 @@ class _AdsPreviewState extends State<AdsPreview> {
     final list = _extractList(res.isSuccess ? res.data : null);
     if (!mounted) return;
     setState(() {
-      ads = list.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+      ads = list
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     });
   }
 
   Future<void> _onTap(Map<String, dynamic> ad) async {
     final id = (ad['_id'] ?? ad['id'] ?? '').toString();
-    final redirect = (ad['redirect_url'] ??
-        ad['redirectUrl'] ??
-        ad['link'] ??
-        ad['url'] ??
-        ad['website'] ??
-        '#')
-        .toString();
+    final redirect =
+        (ad['redirect_url'] ??
+                ad['redirectUrl'] ??
+                ad['link'] ??
+                ad['url'] ??
+                ad['website'] ??
+                '#')
+            .toString();
     try {
       if (id.isNotEmpty) await ApiService.get('/ads/$id');
     } catch (_) {}
@@ -2063,6 +2435,7 @@ class _AdsPreviewState extends State<AdsPreview> {
 
   @override
   Widget build(BuildContext context) {
+    final p = _Pal.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2074,9 +2447,16 @@ class _AdsPreviewState extends State<AdsPreview> {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: const Color(0xFFE5E0D8), style: BorderStyle.solid),
+              border: Border.all(
+                color: const Color(0xFFE5E0D8),
+                style: BorderStyle.solid,
+              ),
             ),
-            child: Text('Select ads to display', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54, fontSize: 13.sp)),
+            child: Text(
+              'Select ads to display',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54, fontSize: 13.sp),
+            ),
           )
         else
           ...ads.map((ad) {
@@ -2086,7 +2466,8 @@ class _AdsPreviewState extends State<AdsPreview> {
               child: Container(
                 margin: EdgeInsets.only(bottom: 12.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  // color: Colors.white,
+                  color: p.cardBg,
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(color: const Color(0xFFE5E0D8)),
                 ),
@@ -2099,15 +2480,29 @@ class _AdsPreviewState extends State<AdsPreview> {
                         children: [
                           AspectRatio(
                             aspectRatio: 16 / 9,
-                            child: ProgrammeMedia(src: image.toString(), fit: BoxFit.cover),
+                            child: ProgrammeMedia(
+                              src: image.toString(),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                           Positioned(
                             top: 8,
                             right: 8,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               color: Colors.black54,
-                              child: Text('SPONSORED', style: TextStyle(color: Colors.white, fontSize: 9.sp, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                              child: Text(
+                                'SPONSORED',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1,
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -2117,11 +2512,35 @@ class _AdsPreviewState extends State<AdsPreview> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${ad['title'] ?? ''}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                          Text(
+                            '${ad['title'] ?? ''}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13.sp,
+                              // color:
+                              color: p.cardText,
+                            ),
+                          ),
                           if (ad['description'] != null)
-                            Text('${ad['description']}', maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+                            Text(
+                              '${ad['description']}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                // color: Colors.black54,
+                                color: p.muted,
+                              ),
+                            ),
                           SizedBox(height: 8.h),
-                          Text('Learn more →', style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w800, color: const Color(0xFF014B52))),
+                          Text(
+                            'Learn more →',
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFF014B52),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -2167,7 +2586,8 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
     setState(() => generating = true);
     await Future.delayed(const Duration(milliseconds: 50));
     try {
-      final boundary = cardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          cardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return;
       final image = await boundary.toImage(pixelRatio: 3);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -2195,7 +2615,9 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please allow photo access to save your memory card.'),
+            content: Text(
+              'Please allow photo access to save your memory card.',
+            ),
           ),
         );
         return;
@@ -2216,9 +2638,9 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not save memory: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not save memory: $e')));
     } finally {
       if (mounted) setState(() => saving = false);
     }
@@ -2254,8 +2676,19 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('MEMORY CREATED!', style: TextStyle(color: const Color(0xFFF5A800), fontSize: 11.sp, fontWeight: FontWeight.w800, letterSpacing: 1)),
-                  Text(widget.data.successMessage ?? 'Your memory card is ready.', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
+                  Text(
+                    'MEMORY CREATED!',
+                    style: TextStyle(
+                      color: const Color(0xFFF5A800),
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  Text(
+                    widget.data.successMessage ?? 'Your memory card is ready.',
+                    style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                  ),
                 ],
               ),
             ),
@@ -2272,21 +2705,28 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                     width: double.infinity,
                     height: 44.h,
                     child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF014B52)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF014B52),
+                      ),
                       onPressed: saving ? null : _save,
                       icon: saving
                           ? SizedBox(
-                        width: 16.w,
-                        height: 16.w,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation(Colors.white),
-                        ),
-                      )
+                              width: 16.w,
+                              height: 16.w,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
                           : const Icon(Icons.download, color: Colors.white),
                       label: Text(
                         saving ? 'Saving...' : 'Save Memory',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -2412,63 +2852,60 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                         onTap: _pickImage,
                         child: imageFile != null
                             ? ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: AspectRatio(
-                            aspectRatio: 4 / 3,
-                            child: Image.file(
-                              File(imageFile!.path),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: AspectRatio(
+                                  aspectRatio: 4 / 3,
+                                  child: Image.file(
+                                    File(imageFile!.path),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
                             : Container(
-                          width: double.infinity,
-                          constraints: BoxConstraints(minHeight: 140.h),
-                          decoration: BoxDecoration(
-                            color: sunken,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: line,
-                              width: 2,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 56.w,
-                                height: 56.w,
+                                width: double.infinity,
+                                constraints: BoxConstraints(minHeight: 140.h),
                                 decoration: BoxDecoration(
-                                  color: cardBg,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: line),
+                                  color: sunken,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(color: line, width: 2),
                                 ),
-                                child: Icon(
-                                  Icons.photo_camera_outlined,
-                                  color: inkMuted,
-                                  size: 24.sp,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 56.w,
+                                      height: 56.w,
+                                      decoration: BoxDecoration(
+                                        color: cardBg,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: line),
+                                      ),
+                                      child: Icon(
+                                        Icons.photo_camera_outlined,
+                                        color: inkMuted,
+                                        size: 24.sp,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    Text(
+                                      'Add your photo',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13.sp,
+                                        color: inkMuted,
+                                      ),
+                                    ),
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      'Tap to choose from your gallery',
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        color: inkFaint,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              SizedBox(height: 10.h),
-                              Text(
-                                'Add your photo',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 13.sp,
-                                  color: inkMuted,
-                                ),
-                              ),
-                              SizedBox(height: 2.h),
-                              Text(
-                                'Tap to choose from your gallery',
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  color: inkFaint,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                       SizedBox(height: 12.h),
                     ],
@@ -2476,10 +2913,14 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                       TextField(
                         controller: textCtrl,
                         maxLines: 3,
-                        style: TextStyle(color: const Color(0xFF1A1A1A), fontSize: 13.sp),
+                        style: TextStyle(
+                          color: const Color(0xFF1A1A1A),
+                          fontSize: 13.sp,
+                        ),
                         onChanged: (_) => setState(() {}),
                         decoration: InputDecoration(
-                          hintText: widget.data.placeholder ?? 'Write your memory...',
+                          hintText:
+                              widget.data.placeholder ?? 'Write your memory...',
                           hintStyle: TextStyle(color: inkFaint),
                           filled: true,
                           fillColor: Colors.white,
@@ -2507,9 +2948,7 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                         height: 44.h,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: hasContent
-                                ? primary
-                                : sunken,
+                            backgroundColor: hasContent ? primary : sunken,
                             foregroundColor: hasContent
                                 ? Colors.white
                                 : inkFaint,
@@ -2523,30 +2962,33 @@ class _MemoryCapturePreviewState extends State<MemoryCapturePreview> {
                                   : BorderSide(color: line),
                             ),
                           ),
-                          onPressed: hasContent && !generating ? _generate : null,
+                          onPressed: hasContent && !generating
+                              ? _generate
+                              : null,
                           child: generating
                               ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
                               : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.auto_awesome, size: 14.sp),
-                              SizedBox(width: 6.w),
-                              Text(
-                                widget.data.submitLabel ?? 'Create my memory',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 13.sp,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.auto_awesome, size: 14.sp),
+                                    SizedBox(width: 6.w),
+                                    Text(
+                                      widget.data.submitLabel ??
+                                          'Create my memory',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13.sp,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     if (widget.data.privacyNote != null) ...[
@@ -2590,18 +3032,49 @@ class _MemoryCardVisual extends StatelessWidget {
         children: [
           Container(width: 40, height: 3, color: const Color(0xFFF5A800)),
           const SizedBox(height: 12),
-          const Text('MY SHOWE MEMORY', style: TextStyle(color: Color(0xFFF5A800), fontWeight: FontWeight.bold, letterSpacing: 2, fontSize: 11)),
+          const Text(
+            'MY SHOWE MEMORY',
+            style: TextStyle(
+              color: Color(0xFFF5A800),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+              fontSize: 11,
+            ),
+          ),
           const SizedBox(height: 16),
           if (imagePath != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.file(File(imagePath!), height: 200, width: double.infinity, fit: BoxFit.cover),
+              child: Image.file(
+                File(imagePath!),
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           const SizedBox(height: 20),
-          Text('"$text"', style: const TextStyle(color: Color(0xFFFBFAF7), fontSize: 16, height: 1.4, fontStyle: FontStyle.italic)),
+          Text(
+            '"$text"',
+            style: const TextStyle(
+              color: Color(0xFFFBFAF7),
+              fontSize: 16,
+              height: 1.4,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
           const SizedBox(height: 24),
-          const Text('Showe', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          const Text('Captured at the event', style: TextStyle(color: Colors.white38, fontSize: 11)),
+          const Text(
+            'Showe',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const Text(
+            'Captured at the event',
+            style: TextStyle(color: Colors.white38, fontSize: 11),
+          ),
         ],
       ),
     );
@@ -2614,7 +3087,12 @@ class RecapPreview extends StatefulWidget {
   final BlockData data;
   final Data? programme;
   final Pages? page;
-  const RecapPreview({super.key, required this.data, this.programme, this.page});
+  const RecapPreview({
+    super.key,
+    required this.data,
+    this.programme,
+    this.page,
+  });
 
   @override
   State<RecapPreview> createState() => _RecapPreviewState();
@@ -2636,15 +3114,19 @@ class _RecapPreviewState extends State<RecapPreview> {
   }
 
   List<Blocks> get scopedPolls {
-    final all = widget.programme?.pages
-        ?.expand((p) => p.blocks ?? <Blocks>[])
-        .where((b) => b.type == 'poll')
-        .toList() ??
+    final all =
+        widget.programme?.pages
+            ?.expand((p) => p.blocks ?? <Blocks>[])
+            .where((b) => b.type == 'poll')
+            .toList() ??
         [];
-    final pagePolls = widget.page?.blocks?.where((b) => b.type == 'poll').toList() ?? [];
+    final pagePolls =
+        widget.page?.blocks?.where((b) => b.type == 'poll').toList() ?? [];
     final ids = widget.data.pollIdsToInclude ?? [];
     if (ids.isEmpty) return pagePolls;
-    return all.where((b) => ids.contains(b.id) || ids.contains(b.data?.id)).toList();
+    return all
+        .where((b) => ids.contains(b.id) || ids.contains(b.data?.id))
+        .toList();
   }
 
   @override
@@ -2661,19 +3143,23 @@ class _RecapPreviewState extends State<RecapPreview> {
     // Same live-results endpoint the poll block itself uses — the recap
     // is just a rollup of those same polls, so it must read from the same
     // source instead of the static (always-zero) snapshot in the JSON.
-    await Future.wait(polls.map((poll) async {
-      final pollId = poll.data?.id ?? poll.id;
-      if (pollId == null) return;
-      final res = await ApiService.get(ApiEndPoint.pollAnswers(pollId));
-      if (!res.isSuccess || !mounted) return;
-      final raw = res.data['data'];
-      if (raw is List) {
-        answersByPoll[pollId] = raw
-            .whereType<Map>()
-            .map((e) => _PollAnswerItem.fromJson(Map<String, dynamic>.from(e)))
-            .toList();
-      }
-    }));
+    await Future.wait(
+      polls.map((poll) async {
+        final pollId = poll.data?.id ?? poll.id;
+        if (pollId == null) return;
+        final res = await ApiService.get(ApiEndPoint.pollAnswers(pollId));
+        if (!res.isSuccess || !mounted) return;
+        final raw = res.data['data'];
+        if (raw is List) {
+          answersByPoll[pollId] = raw
+              .whereType<Map>()
+              .map(
+                (e) => _PollAnswerItem.fromJson(Map<String, dynamic>.from(e)),
+              )
+              .toList();
+        }
+      }),
+    );
 
     if (mounted) setState(() => loading = false);
   }
@@ -2695,17 +3181,35 @@ class _RecapPreviewState extends State<RecapPreview> {
         children: [
           eyebrowLabel('Recap', color: const Color(0xFFF5A800)),
           SizedBox(height: 8.h),
-          Text(data.title ?? '', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16.sp)),
+          Text(
+            data.title ?? '',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+            ),
+          ),
           if (data.description != null)
-            Text(data.description!, style: TextStyle(color: Colors.white70, fontSize: 13.sp)),
+            Text(
+              data.description!,
+              style: TextStyle(color: Colors.white70, fontSize: 13.sp),
+            ),
           SizedBox(height: 10.h),
           Row(
             children: [
-              Icon(Icons.notifications, size: 12.sp, color: const Color(0xFFF5A800)),
+              Icon(
+                Icons.notifications,
+                size: 12.sp,
+                color: const Color(0xFFF5A800),
+              ),
               SizedBox(width: 6.w),
               Text(
                 'Available ${data.releaseAfterHours ?? 0}h after the event',
-                style: TextStyle(color: const Color(0xFFF5A800), fontSize: 11.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  color: const Color(0xFFF5A800),
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -2720,78 +3224,131 @@ class _RecapPreviewState extends State<RecapPreview> {
             ),
             child: !isReleased
                 ? Text(
-              'Poll results will unlock after ${data.releaseAfterHours ?? 0} hours.',
-              style: TextStyle(color: Colors.white70, fontSize: 12.sp),
-            )
+                    'Poll results will unlock after ${data.releaseAfterHours ?? 0} hours.',
+                    style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                  )
                 : polls.isEmpty
-                ? Text('No polls selected for this recap yet.', style: TextStyle(color: Colors.white70, fontSize: 12.sp))
+                ? Text(
+                    'No polls selected for this recap yet.',
+                    style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                  )
                 : loading
                 ? Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 14.w,
-                    height: 14.w,
-                    child: const CircularProgressIndicator(strokeWidth: 2, color: Colors.white70),
-                  ),
-                  SizedBox(width: 8.w),
-                  Text('Loading results...', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
-                ],
-              ),
-            )
-                : Column(
-              children: polls.map((poll) {
-                final opts = poll.data?.options ?? [];
-                final staticResults = poll.data?.results ?? [];
-                final pollId = poll.data?.id ?? poll.id;
-                final liveAnswers = answersByPoll[pollId];
-                final total = liveAnswers != null
-                    ? liveAnswers.fold<int>(0, (a, r) => a + r.count)
-                    : staticResults.fold<int>(0, (a, r) => a + (r.count ?? 0));
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('POLL RESULT', style: TextStyle(color: Colors.white38, fontSize: 10.sp, fontWeight: FontWeight.w800, letterSpacing: 1)),
-                      Text(poll.data?.question ?? '', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.sp)),
-                      ...opts.asMap().entries.map((e) {
-                        final option = e.value;
-                        final match = _matchPollAnswer(liveAnswers, optionId: option.id, optionLabel: option.label);
-                        final count = match?.count ?? (e.key < staticResults.length ? (staticResults[e.key].count ?? 0) : 0);
-                        final pct = total > 0 ? (count / total * 100).round() : 0;
-                        return Padding(
-                          padding: EdgeInsets.only(top: 8.h),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(option.label ?? '', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
-                                  Text('$count${total > 0 ? ' ($pct%)' : ''}', style: TextStyle(color: Colors.white70, fontSize: 12.sp)),
-                                ],
-                              ),
-                              SizedBox(height: 4.h),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(99),
-                                child: LinearProgressIndicator(
-                                  value: (pct < 6 ? 6 : pct) / 100,
-                                  minHeight: 8.h,
-                                  backgroundColor: Colors.white10,
-                                  color: const Color(0xFFF5A800),
-                                ),
-                              ),
-                            ],
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 14.w,
+                          height: 14.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white70,
                           ),
-                        );
-                      }),
-                    ],
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'Loading results...',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: polls.map((poll) {
+                      final opts = poll.data?.options ?? [];
+                      final staticResults = poll.data?.results ?? [];
+                      final pollId = poll.data?.id ?? poll.id;
+                      final liveAnswers = answersByPoll[pollId];
+                      final total = liveAnswers != null
+                          ? liveAnswers.fold<int>(0, (a, r) => a + r.count)
+                          : staticResults.fold<int>(
+                              0,
+                              (a, r) => a + (r.count ?? 0),
+                            );
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'POLL RESULT',
+                              style: TextStyle(
+                                color: Colors.white38,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            Text(
+                              poll.data?.question ?? '',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                            ...opts.asMap().entries.map((e) {
+                              final option = e.value;
+                              final match = _matchPollAnswer(
+                                liveAnswers,
+                                optionId: option.id,
+                                optionLabel: option.label,
+                              );
+                              final count =
+                                  match?.count ??
+                                  (e.key < staticResults.length
+                                      ? (staticResults[e.key].count ?? 0)
+                                      : 0);
+                              final pct = total > 0
+                                  ? (count / total * 100).round()
+                                  : 0;
+                              return Padding(
+                                padding: EdgeInsets.only(top: 8.h),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          option.label ?? '',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          '$count${total > 0 ? ' ($pct%)' : ''}',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(99),
+                                      child: LinearProgressIndicator(
+                                        value: (pct < 6 ? 6 : pct) / 100,
+                                        minHeight: 8.h,
+                                        backgroundColor: Colors.white10,
+                                        color: const Color(0xFFF5A800),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
-                );
-              }).toList(),
-            ),
           ),
         ],
       ),
@@ -2822,11 +3379,17 @@ class _RecommendationsPreviewState extends State<RecommendationsPreview> {
       setState(() => items = []);
       return;
     }
-    final res = await ApiService.post('/recommendations/bulk-gets', body: {'ids': ids});
+    final res = await ApiService.post(
+      '/recommendations/bulk-gets',
+      body: {'ids': ids},
+    );
     final list = _extractList(res.isSuccess ? res.data : null);
     if (!mounted) return;
     setState(() {
-      items = list.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+      items = list
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     });
   }
 
@@ -2852,6 +3415,7 @@ class _RecommendationsPreviewState extends State<RecommendationsPreview> {
 
   @override
   Widget build(BuildContext context) {
+    final p = _Pal.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2862,10 +3426,17 @@ class _RecommendationsPreviewState extends State<RecommendationsPreview> {
             width: double.infinity,
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
+              // color: ,
+              color: p.cardBg,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: const Color(0xFFE5E0D8)),
+              // border: Border.all(color: const Color(0xFFE5E0D8)),
+              border: Border.all(color: p.cardBg),
             ),
-            child: Text('Select items to display', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54, fontSize: 13.sp)),
+            child: Text(
+              'Select items to display',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black54, fontSize: 13.sp),
+            ),
           )
         else
           ...items.map((rec) {
@@ -2898,34 +3469,82 @@ class _RecommendationsPreviewState extends State<RecommendationsPreview> {
                           Row(
                             children: [
                               Expanded(
-                                child: Text('${rec['name'] ?? ''}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                child: Text(
+                                  '${rec['name'] ?? ''}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13.sp,
+                                    // color:
+                                    color: p.cardText,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               Container(
-                                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6.w,
+                                  vertical: 2.h,
+                                ),
                                 decoration: BoxDecoration(
                                   color: meta.$3.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(6.r),
-                                  border: Border.all(color: meta.$3.withValues(alpha: 0.2)),
+                                  border: Border.all(
+                                    color: meta.$3.withValues(alpha: 0.2),
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(meta.$1, size: 10.sp, color: meta.$3),
                                     SizedBox(width: 3.w),
-                                    Text(meta.$2, style: TextStyle(fontSize: 8.sp, fontWeight: FontWeight.w800, color: meta.$3)),
+                                    Text(
+                                      meta.$2,
+                                      style: TextStyle(
+                                        fontSize: 8.sp,
+                                        fontWeight: FontWeight.w800,
+                                        color: meta.$3,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                          Text('${rec['category'] ?? ''}'.toUpperCase(), style: TextStyle(fontSize: 10.sp, color: Colors.black38)),
+                          Text(
+                            '${rec['category'] ?? ''}'.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              // color: Colors.black38,
+                              color: p.faint,
+                            ),
+                          ),
                           Row(
                             children: [
                               if (widget.data.showRating == true) ...[
-                                Icon(Icons.star, size: 12.sp, color: const Color(0xFFF5A800)),
-                                Text(' ${rec['rating'] ?? ''}', style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600)),
+                                Icon(
+                                  Icons.star,
+                                  size: 12.sp,
+                                  color: const Color(0xFFF5A800),
+                                ),
+                                Text(
+                                  ' ${rec['rating'] ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
+                                    // color:
+                                    color: p.cardText,
+                                  ),
+                                ),
                               ],
                               if (widget.data.showDistance == true)
-                                Text(' · ${rec['distance'] ?? ''}', style: TextStyle(fontSize: 11.sp, color: Colors.black54)),
+                                Text(
+                                  ' · ${rec['distance'] ?? ''}',
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    // color: Colors.black54,
+                                    color: p.muted,
+                                  ),
+                                ),
                             ],
                           ),
                         ],
@@ -2970,14 +3589,20 @@ class PushNotificationPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = _Pal.of(context);
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // color: Colors.white,
+        color:  p.cardBg,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: const Color(0xFFE5E0D8)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -2989,17 +3614,37 @@ class PushNotificationPreview extends StatelessWidget {
                 width: 16.w,
                 height: 16.w,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(color: const Color(0xFF014B52), borderRadius: BorderRadius.circular(3.r)),
-                child: Text('S', style: TextStyle(color: Colors.white, fontSize: 8.sp, fontWeight: FontWeight.w800)),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF014B52),
+                  borderRadius: BorderRadius.circular(3.r),
+                ),
+                child: Text(
+                  'S',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8.sp,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               SizedBox(width: 6.w),
-              Text('SHOWE · $triggerLabel', style: TextStyle(fontSize: 10.sp, color: Colors.black38)),
+              Text(
+                'SHOWE · $triggerLabel',
+                style: TextStyle(fontSize: 10.sp, color: p.faint),
+              ),
             ],
           ),
           SizedBox(height: 6.h),
-          Text(data.title ?? '', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp)),
+          Text(
+            data.title ?? '',
+            // style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp,color: p.cardText),
+          ),
           if (data.message != null)
-            Text(data.message!, style: TextStyle(fontSize: 12.sp, color: Colors.black54)),
+            Text(
+              data.message!,
+              style: TextStyle(fontSize: 12.sp, color: p.muted),
+            ),
         ],
       ),
     );
@@ -3083,7 +3728,11 @@ class MapPreview extends StatelessWidget {
                       )
                     else
                       Center(
-                        child: Icon(Icons.location_on, color: primary, size: 28.sp),
+                        child: Icon(
+                          Icons.location_on,
+                          color: primary,
+                          size: 28.sp,
+                        ),
                       ),
                     Positioned(
                       left: 8.w,
@@ -3133,7 +3782,11 @@ class MapPreview extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(width: 6.w),
-                              Icon(Icons.open_in_new, size: 16.sp, color: primary),
+                              Icon(
+                                Icons.open_in_new,
+                                size: 16.sp,
+                                color: primary,
+                              ),
                             ],
                           ),
                         ),
@@ -3152,15 +3805,27 @@ class MapPreview extends StatelessWidget {
                       runSpacing: 8.h,
                       children: [
                         if (data.showParking == true)
-                          _chip(Icons.local_parking, 'Parking available', Colors.green),
+                          _chip(
+                            Icons.local_parking,
+                            'Parking available',
+                            Colors.green,
+                          ),
                         if (data.showAccessibilityRoute == true)
-                          _chip(Icons.accessible, 'Accessibility route shown', primary),
+                          _chip(
+                            Icons.accessible,
+                            'Accessibility route shown',
+                            primary,
+                          ),
                       ],
                     ),
                     SizedBox(height: 8.h),
                     Row(
                       children: [
-                        Icon(Icons.check_circle, size: 13.sp, color: Colors.green.shade700),
+                        Icon(
+                          Icons.check_circle,
+                          size: 13.sp,
+                          color: Colors.green.shade700,
+                        ),
                         SizedBox(width: 6.w),
                         Expanded(
                           child: Text(
@@ -3195,7 +3860,14 @@ class MapPreview extends StatelessWidget {
         children: [
           Icon(icon, size: 13.sp, color: color),
           SizedBox(width: 6.w),
-          Text(text, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600, color: color)),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
@@ -3226,7 +3898,9 @@ class _AddressMapPreviewState extends State<_AddressMapPreview> {
 
   Future<void> _resolve() async {
     final cachedSnap = await ProgrammeMapCache.getSnapshotFile(widget.address);
-    final cachedCoords = await ProgrammeMapCache.getCachedCoords(widget.address);
+    final cachedCoords = await ProgrammeMapCache.getCachedCoords(
+      widget.address,
+    );
 
     if (cachedSnap != null) {
       if (!mounted) return;
@@ -3322,40 +3996,107 @@ class _AddressMapPreviewState extends State<_AddressMapPreview> {
   }
 }
 
+// class DirectionsPreview extends StatelessWidget {
+//   final BlockData data;
+//   const DirectionsPreview({super.key, required this.data});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final p = _Pal.of(context);
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         eyebrowLabel(data.title ?? 'Getting here'),
+//         SizedBox(height: 12.h),
+//         if (data.byTrain != null) _card('BY TRAIN', data.byTrain!),
+//         if (data.byCar != null) _card('BY CAR', data.byCar!),
+//         if (data.byBus != null) _card('BY BUS', data.byBus!),
+//         if (data.parkingInfo != null) _card('PARKING', data.parkingInfo!),
+//       ],
+//     );
+//   }
+//
+//   Widget _card(String label, String value,) {
+//     return Container(
+//       width: double.infinity,
+//       margin: EdgeInsets.only(bottom: 8.h),
+//       padding: EdgeInsets.all(12.w),
+//       decoration: BoxDecoration(
+//         color: const Color(0xFFF2EFE9),
+//         borderRadius: BorderRadius.circular(8.r),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             label,
+//             style: TextStyle(
+//               fontSize: 11.sp,
+//               fontWeight: FontWeight.w800,
+//               letterSpacing: 1,
+//             ),
+//           ),
+//           SizedBox(height: 4.h),
+//           Text(
+//             value,
+//             style: TextStyle(fontSize: 13.sp, color: Colors.black54),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+
+
 class DirectionsPreview extends StatelessWidget {
   final BlockData data;
   const DirectionsPreview({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    final p = _Pal.of(context); // <-- palette ekhane banano holo
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         eyebrowLabel(data.title ?? 'Getting here'),
         SizedBox(height: 12.h),
-        if (data.byTrain != null) _card('BY TRAIN', data.byTrain!),
-        if (data.byCar != null) _card('BY CAR', data.byCar!),
-        if (data.byBus != null) _card('BY BUS', data.byBus!),
-        if (data.parkingInfo != null) _card('PARKING', data.parkingInfo!),
+        if (data.byTrain != null) _card(p, 'BY TRAIN', data.byTrain!),
+        if (data.byCar != null) _card(p, 'BY CAR', data.byCar!),
+        if (data.byBus != null) _card(p, 'BY BUS', data.byBus!),
+        if (data.parkingInfo != null) _card(p, 'PARKING', data.parkingInfo!),
       ],
     );
   }
 
-  Widget _card(String label, String value) {
+  // p ekhon parameter hishebe ashche, tai context lagche na
+  Widget _card(_Pal p, String label, String value) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 8.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2EFE9),
+        color: p.cardBg,
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w800, letterSpacing: 1)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
+              color: p.cardText,
+            ),
+          ),
           SizedBox(height: 4.h),
-          Text(value, style: TextStyle(fontSize: 13.sp, color: Colors.black54)),
+          Text(
+            value,
+            style: TextStyle(fontSize: 13.sp, color: p.muted),
+          ),
         ],
       ),
     );
@@ -3363,3 +4104,29 @@ class DirectionsPreview extends StatelessWidget {
 }
 
 
+class _Pal {
+  final Color cardBg, cardText, muted, faint, line, title, primary;
+  _Pal._(
+    this.cardBg,
+    this.cardText,
+    this.muted,
+    this.faint,
+    this.line,
+    this.title,
+    this.primary,
+  );
+
+  factory _Pal.of(BuildContext context) {
+    final t = ReaderBlockTheme.maybeOf(context);
+    final cardText = t?.cardText ?? const Color(0xFF1A1A1A);
+    return _Pal._(
+      t?.cardBg ?? const Color(0xFFF2EFE9),
+      cardText,
+      t?.inkMuted ?? cardText.withValues(alpha: 0.7),
+      t?.inkFaint ?? cardText.withValues(alpha: 0.5),
+      t?.line ?? const Color(0xFFE5E0D8),
+      t?.title ?? const Color(0xFF1A1A1A),
+      t?.primary ?? const Color(0xFF014B52),
+    );
+  }
+}
