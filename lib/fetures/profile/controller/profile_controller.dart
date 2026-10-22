@@ -170,12 +170,43 @@ class ProfileController extends GetxController {
 
 
 
-  Future<void> logout() async {
-    try {
-      // Backend e logout API thakle (backend dev er sathe confirm koro):
-      // await ApiService.post("/auth/logout", body: {});
+  // Future<void> logout() async {
+  //   try {
+  //
+  //
+  //     await _clearSession();
+  //     Get.offAllNamed(AppRoutes.singUpLoginScreen);
+  //   } catch (e) {
+  //     Get.snackbar(
+  //       "Logout Error",
+  //       e.toString(),
+  //       snackPosition: SnackPosition.BOTTOM,
+  //       backgroundColor: Colors.red,
+  //       colorText: Colors.white,
+  //     );
+  //   }
+  // }
 
+
+
+  RxBool isLogoutLoading = false.obs;
+
+  Future<void> logout() async {
+    if (isLogoutLoading.value) return;
+    try {
+      isLogoutLoading.value = true;
+      update();
+
+      // 1. Age backend ke bolo (token ekhono ache), jate FCM token remove hoy
+      try {
+        final ApiResponseModel response = await ApiService.post("${ApiEndPoint.baseUrl}/auth/logout");
+        debugPrint("Logout API status: ${response.statusCode}");
+      } catch (e) {
+        debugPrint("Logout API error: $e");
+      }
       await _clearSession();
+
+      // 3. Login screen e jao
       Get.offAllNamed(AppRoutes.singUpLoginScreen);
     } catch (e) {
       Get.snackbar(
@@ -185,6 +216,8 @@ class ProfileController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      isLogoutLoading.value = false;
     }
   }
 

@@ -593,6 +593,13 @@ class AuthController extends GetxController {
 
     String? fcmToken = await FCMService.getAndPrintFCMToken();
 
+
+    debugPrint("========== SOCIAL LOGIN FCM ==========");
+    debugPrint("Social Type : $socialType");
+    debugPrint("FCM Token   : $fcmToken");
+    debugPrint("Token empty?: ${fcmToken == null || fcmToken.isEmpty}");
+    debugPrint("======================================");
+
     final response = await ApiService.post(
       ApiEndPoint.socialLogin,
       body: {
@@ -601,8 +608,9 @@ class AuthController extends GetxController {
         "picture": user.photoURL ?? "",
         "appId": user.uid,
         "social_type": socialType,
-        "token": firebaseToken,
-        "fcmToken": fcmToken ?? "",
+        // "token": firebaseToken,
+        // "fcmToken": fcmToken ?? "",
+        "token": fcmToken ?? "",
         "role": "USER",
       },
     );

@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:digital_event/core/storage/storage_key.dart';
@@ -7,16 +8,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/storage/local_storage.dart';
 import 'core/utils/fcm_service.dart';
 import 'app.dart';
+import 'core/utils/local_notification_service.dart';
 import 'firebase_options.dart';
 import 'package:uuid/uuid.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  LocalNotificationService.initialize();
+
   await GoogleSignIn.instance.initialize(
     serverClientId: '755395683027-rt3bfjjp7qismr49qp66c03a3r081vb3.apps.googleusercontent.com',
   );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -34,6 +45,31 @@ Future<void> main() async {
   if (LocalStorage.isLogIn) {
     FCMService.getAndPrintFCMToken();
   }
+
+  // App khola obosthay push ashle
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    debugPrint("🔔 [FOREGROUND] title: ${message.notification?.title}");
+    debugPrint("🔔 [FOREGROUND] body: ${message.notification?.body}");
+    debugPrint("🔔 [FOREGROUND] data: ${message.data}");
+
+    LocalNotificationService.showNotification(message);
+    // LocalNotificationService.showNotification(message);
+  });
+
+// Background e thaka obosthay notification e tap korle
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    debugPrint("🔔 [TAPPED] title: ${message.notification?.title}");
+    debugPrint("🔔 [TAPPED] data: ${message.data}");
+  });
+
+// App bondho (terminated) thakar por notification e tap kore khulle
+  final initial = await FirebaseMessaging.instance.getInitialMessage();
+  if (initial != null) {
+    debugPrint("🔔 [LAUNCHED FROM PUSH] title: ${initial.notification?.title}");
+    debugPrint("🔔 [LAUNCHED FROM PUSH] data: ${initial.data}");
+  }
+
+
   runApp(const MyApp());
 }
 
@@ -80,4 +116,15 @@ Future<void> saveDeviceIdOnStartup() async {
     print("📱 Existing Device ID Loaded: $existingId");
     print("=========================================");
   }
+}
+
+
+
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  debugPrint("🔔 [BACKGROUND] title: ${message.notification?.title}");
+  debugPrint("🔔 [BACKGROUND] body: ${message.notification?.body}");
+  debugPrint("🔔 [BACKGROUND] data: ${message.data}");
 }

@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "755395683027-dmumh1h22n7iprikj6qvk9rf5bkoukc3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theshowegroup.digitalevent",
+            "certificate_hash": "9f09afb8c7ff5986e226441105ebe03acc4890f1"
+          }
+        },
+        {
           "client_id": "755395683027-rt3bfjjp7qismr49qp66c03a3r081vb3.apps.googleusercontent.com",
           "client_type": 3
         }
