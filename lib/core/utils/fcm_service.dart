@@ -7,6 +7,13 @@ class FCMService {
     try {
       FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+      // Enable foreground notification presentation options for iOS
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
       // Request permission for iOS & Android notifications
       NotificationSettings settings = await messaging.requestPermission(
         alert: true,
@@ -19,6 +26,17 @@ class FCMService {
       );
 
       debugPrint('🔔 FCM Permission Status: ${settings.authorizationStatus}');
+
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        String? apnsToken = await messaging.getAPNSToken();
+        debugPrint('🍎 APNs Token: $apnsToken');
+        if (apnsToken == null) {
+          // Wait briefly for iOS APNs token registration
+          await Future.delayed(const Duration(seconds: 2));
+          apnsToken = await messaging.getAPNSToken();
+          debugPrint('🍎 APNs Token (after retry): $apnsToken');
+        }
+      }
 
       // Get FCM Token
       String? token = await messaging.getToken();
