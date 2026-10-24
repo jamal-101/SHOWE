@@ -768,6 +768,93 @@ class CastGridPreview extends StatefulWidget {
 class _CastGridPreviewState extends State<CastGridPreview> {
   String? openId;
 
+  Widget _buildMemberCard({
+    required Members m,
+    required int index,
+    required Color ink,
+    required Color faint,
+    required Color muted,
+    required Color cardBg,
+    required Color line,
+    required Color primary,
+  }) {
+    final memberKey = (m.id != null && m.id!.isNotEmpty) ? m.id! : '${m.name}_$index';
+    final isOpen = openId == memberKey;
+
+    return GestureDetector(
+      onTap: () => setState(() => openId = isOpen ? null : memberKey),
+      child: Container(
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: line),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (m.image != null)
+              AspectRatio(
+                aspectRatio: 1,
+                child: ProgrammeMedia(src: m.image, fit: BoxFit.cover),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    m.name ?? '',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: ink,
+                    ),
+                    maxLines: isOpen ? null : 1,
+                    overflow: isOpen ? TextOverflow.visible : TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    m.role ?? '',
+                    style: TextStyle(fontSize: 11, color: faint),
+                    maxLines: isOpen ? null : 1,
+                    overflow: isOpen ? TextOverflow.visible : TextOverflow.ellipsis,
+                  ),
+                  if (isOpen && m.bio != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      m.bio!,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: muted,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                  if (isOpen && m.linkUrl != null) ...[
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () => openExternalUrl(m.linkUrl),
+                      child: Text(
+                        m.linkLabel ?? 'Visit',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = ReaderBlockTheme.maybeOf(context);
@@ -779,6 +866,11 @@ class _CastGridPreviewState extends State<CastGridPreview> {
     final primary = t?.primary ?? const Color(0xFF014B52);
     final members = widget.data.members ?? [];
     final cols = widget.data.columns == 3 ? 3 : 2;
+
+    final List<List<MapEntry<int, Members>>> colMembers = List.generate(cols, (_) => []);
+    for (int i = 0; i < members.length; i++) {
+      colMembers[i % cols].add(MapEntry(i, members[i]));
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -792,93 +884,32 @@ class _CastGridPreviewState extends State<CastGridPreview> {
           ),
         ],
         const SizedBox(height: 12),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: members.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: cols,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: openId != null ? 0.50 : 0.72,
-          ),
-          itemBuilder: (context, i) {
-            final m = members[i];
-            final isOpen = openId == m.id;
-            return GestureDetector(
-              onTap: () => setState(() => openId = isOpen ? null : m.id),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: cardBg,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: line),
-                ),
-                clipBehavior: Clip.antiAlias,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int c = 0; c < cols; c++) ...[
+              if (c > 0) const SizedBox(width: 10),
+              Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (m.image != null)
-                      AspectRatio(
-                        aspectRatio: 1,
-                        child: ProgrammeMedia(src: m.image, fit: BoxFit.cover),
+                    for (final entry in colMembers[c]) ...[
+                      _buildMemberCard(
+                        m: entry.value,
+                        index: entry.key,
+                        ink: ink,
+                        faint: faint,
+                        muted: muted,
+                        cardBg: cardBg,
+                        line: line,
+                        primary: primary,
                       ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              m.name ?? '',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: ink,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              m.role ?? '',
-                              style: TextStyle(fontSize: 11, color: faint),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (isOpen && m.bio != null) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                m.bio!,
-                                style: TextStyle(
-                                  fontSize: 11.5,
-                                  color: muted,
-                                  height: 1.35,
-                                ),
-                              ),
-                            ],
-                            if (isOpen && m.linkUrl != null) ...[
-                              const SizedBox(height: 8),
-                              GestureDetector(
-                                onTap: () => openExternalUrl(m.linkUrl),
-                                child: Text(
-                                  m.linkLabel ?? 'Visit',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w800,
-                                    color: primary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
+                      const SizedBox(height: 10),
+                    ],
                   ],
                 ),
               ),
-            );
-          },
+            ],
+          ],
         ),
       ],
     );
